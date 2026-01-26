@@ -82,18 +82,23 @@ else
                                       statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : 
                                       statusColor == "amber" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : 
                                       "bg-slate-500/10 text-slate-400 border-slate-500/20")">
-                                    @statusColor
+                                    @(monitor.LastStatus.HasValue ? monitor.LastStatus.ToString() : "Paused")
                                 </span>
 
                                 <!-- Integrations (Placeholder) -->
                                 <div class="flex items-center gap-1.5 ml-auto sm:ml-0">
-                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                        title="Slack Integration">
+                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity" title="Slack Integration">
                                         <i data-lucide="slack" class="w-3.5 h-3.5"></i>
                                     </div>
-                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                        title="Email Notifications">
+                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity" title="Email Notifications">
                                         <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity" title="Webhook">
+                                        <i data-lucide="webhook" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                    <!-- Overflow Indicator (Demo) -->
+                                    <div class="w-6 h-6 rounded-md bg-white/5 border border-white/5 flex items-center justify-center text-[9px] font-bold text-text-secondary cursor-help" title="+2 more integrations">
+                                        +2
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +137,7 @@ else
                     <!-- Right Side: Stats & Actions -->
                     <div
                         class="flex items-center justify-between lg:justify-end gap-8 border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
-                        <div class="flex flex-col items-end">
+                        <div class="flex flex-col items-start lg:items-end">
                             <p class="text-[10px] uppercase tracking-widest text-text-secondary mb-1">Last Beat</p>
                             <div class="flex items-center gap-2">
                                 <span class="text-sm font-bold text-white">@(monitor.LastPingAt?.ToString("MMM dd, HH:mm") ??
