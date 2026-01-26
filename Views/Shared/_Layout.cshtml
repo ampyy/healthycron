@@ -1,0 +1,363 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HealthyCron</title>
+    <meta name="description"
+        content="Never miss a job run. Real-time cron monitoring, heartbeat checks, and instant alerts for engineering teams.">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D1117;
+            color: #E5E5E5;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #4F94FF 0%, #9B5DE5 50%, #4F94FF 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 4s ease infinite;
+        }
+
+        @@keyframes gradient-shift {
+
+            0%,
+            100% {
+                background-position: 0% center;
+            }
+
+            50% {
+                background-position: 100% center;
+            }
+        }
+
+        /* Glow Button */
+        .glow-btn {
+            position: relative;
+            background: linear-gradient(135deg, #4F94FF, #9B5DE5);
+            transition: all 0.3s ease;
+        }
+
+        .glow-btn::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #4F94FF, #9B5DE5);
+            border-radius: inherit;
+            filter: blur(12px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .glow-btn:hover::before {
+            opacity: 0.6;
+        }
+
+        .glow-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(48, 54, 61, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(22, 27, 34, 0.8);
+            border-color: rgba(79, 148, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        /* Navbar Scroll */
+        .navbar-scrolled {
+            background: rgba(13, 17, 23, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        /* Fade In Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Logo Carousel */
+        .logo-scroll {
+            animation: scroll-left 30s linear infinite;
+        }
+
+        @@keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Testimonial Carousel */
+        .testimonial-track {
+            animation: testimonial-scroll 40s linear infinite;
+        }
+
+        @@keyframes testimonial-scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Pulse Dot */
+        .pulse-dot {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @@keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Background Gradient Animation */
+        .bg-gradient-animated {
+            background: radial-gradient(ellipse at 20% 20%, rgba(79, 148, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(155, 93, 229, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(79, 148, 255, 0.03) 0%, transparent 70%);
+            animation: bg-shift 10s ease-in-out infinite alternate;
+        }
+
+        @@keyframes bg-shift {
+            0% {
+                background-position: 0% 0%, 100% 100%, 50% 50%;
+            }
+
+            100% {
+                background-position: 100% 100%, 0% 0%, 50% 50%;
+            }
+        }
+
+        /* FAQ Accordion */
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .faq-content.open {
+            max-height: 200px;
+        }
+
+        .tab-btn.active {
+            background: rgba(79, 148, 255, 0.1);
+            border-color: #4F94FF;
+        }
+
+        .feature-image {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.4s ease;
+        }
+
+        .feature-image.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0D1117;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363D;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4F94FF;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+    <partial name="_Navbar" />
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <partial name="_Footer" />
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // FAQ toggle
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('svg');
+            content.classList.toggle('open');
+            icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+        }
+
+        // Feature tabs logic
+        let currentTab = 0;
+        let tabInterval;
+
+        function switchFeatureTab(index) {
+            currentTab = index;
+
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            // Update content
+            document.querySelectorAll('.feature-image').forEach((img, i) => {
+                if (i === index) {
+                    img.classList.add('active');
+                    img.classList.remove('absolute', 'inset-0');
+                    img.style.position = 'relative';
+                } else {
+                    img.classList.remove('active');
+                    img.classList.add('absolute', 'inset-0');
+                    img.style.position = 'absolute';
+                }
+            });
+
+            // Reset interval
+            clearInterval(tabInterval);
+            startTabRotation();
+        }
+
+        function startTabRotation() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            if (tabs.length === 0) return;
+
+            tabInterval = setInterval(() => {
+                currentTab = (currentTab + 1) % tabs.length;
+                switchFeatureTab(currentTab);
+            }, 5000);
+        }
+
+        // Scroll reveal animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Close mobile menu if open
+                    if (mobileMenu) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Initialize features if they exist
+        window.addEventListener('load', () => {
+            if (document.querySelector('.tab-btn')) {
+                startTabRotation();
+            }
+        });
+
+        // Global logout function
+        async function handleLogout() {
+            try {
+                const response = await fetch('/auth/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error.');
+            }
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

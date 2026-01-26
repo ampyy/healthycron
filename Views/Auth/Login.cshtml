@@ -1,0 +1,191 @@
+@{
+    ViewData["Title"] = "Sign in to HealthyCron";
+}
+
+<section class="relative min-h-screen flex items-center justify-center py-12 px-4 overflow-hidden bg-gradient-animated">
+    <div class="absolute top-1/4 left-10 w-72 h-72 bg-blue/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-purple/10 rounded-full blur-3xl"></div>
+
+    <div class="w-full max-w-md z-10">
+        <div class="text-center mb-8">
+            <a href="/" class="inline-flex items-center gap-2 mb-6">
+                <div
+                    class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue to-purple flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold text-white">HealthyCron</span>
+            </a>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Welcome back</h1>
+            <p class="text-text-secondary">Sign in to your account</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl">
+            <!-- Magic Link Form -->
+            <form id="magicLoginForm" class="space-y-5">
+                <div>
+                    <label for="magicEmail" class="block text-sm font-medium text-white mb-2">Email address</label>
+                    <input type="email" id="magicEmail" name="email" required
+                        class="w-full bg-navy-light border border-border-color rounded-lg px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-blue/50 focus:border-transparent transition-all"
+                        placeholder="you@company.com">
+                </div>
+
+                <button type="submit" id="magicSubmitBtn"
+                    class="glow-btn w-full py-3.5 rounded-lg text-base font-semibold text-white transition-all">
+                    Continue with Magic Link
+                </button>
+            </form>
+
+            <div id="magicSuccess" class="hidden mt-6 p-4 rounded-lg bg-blue/10 border border-blue/30">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <div>
+                        <p class="text-blue font-semibold mb-1">Check your inbox</p>
+                        <p class="text-sm text-text-secondary">We've sent a magic login link to <span
+                                id="magicEmailDisplay" class="text-white font-medium"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-border-color"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <button type="button" onclick="togglePasswordForm()" id="toggleBtn"
+                        class="px-4 py-1 bg-navy text-text-secondary hover:text-white transition-colors">
+                        Or use password
+                    </button>
+                </div>
+            </div>
+
+            <!-- Password Login Form -->
+            <form id="passwordLoginForm" class="space-y-5 hidden">
+                <div>
+                    <label for="loginEmail" class="block text-sm font-medium text-white mb-2">Email address</label>
+                    <input type="email" id="loginEmail" name="email" required
+                        class="w-full bg-navy-light border border-border-color rounded-lg px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-blue/50 focus:border-transparent transition-all"
+                        placeholder="you@company.com">
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="loginPassword" class="block text-sm font-medium text-white">Password</label>
+                        <a href="#" class="text-xs text-blue hover:text-purple transition-colors">Forgot?</a>
+                    </div>
+                    <input type="password" id="loginPassword" name="password" required
+                        class="w-full bg-navy-light border border-border-color rounded-lg px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-blue/50 focus:border-transparent transition-all"
+                        placeholder="••••••••">
+                </div>
+
+                <button type="submit" id="passwordSubmitBtn"
+                    class="glow-btn w-full py-3.5 rounded-lg text-base font-semibold text-white transition-all">
+                    Sign in with Password
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-text-secondary">
+                    Don't have an account?
+                    <a href="/signup" class="text-blue hover:text-purple transition-colors font-semibold ml-1">Sign
+                        up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const magicForm = document.getElementById('magicLoginForm');
+        const passwordForm = document.getElementById('passwordLoginForm');
+        const magicSubmitBtn = document.getElementById('magicSubmitBtn');
+        const passwordSubmitBtn = document.getElementById('passwordSubmitBtn');
+        const magicSuccess = document.getElementById('magicSuccess');
+        const magicEmailDisplay = document.getElementById('magicEmailDisplay');
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        function togglePasswordForm() {
+            const isHidden = passwordForm.classList.contains('hidden');
+            if (isHidden) {
+                passwordForm.classList.remove('hidden');
+                magicForm.classList.add('hidden');
+                magicSuccess.classList.add('hidden');
+                toggleBtn.textContent = 'Or use magic link';
+            } else {
+                passwordForm.classList.add('hidden');
+                magicForm.classList.remove('hidden');
+                toggleBtn.textContent = 'Or use password';
+            }
+        }
+
+        // Magic link logic
+        magicForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('magicEmail').value;
+            magicSubmitBtn.disabled = true;
+            magicSubmitBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Sending...</span>';
+
+            try {
+                const response = await fetch('/auth/request-magic-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                if (response.ok) {
+                    magicForm.classList.add('hidden');
+                    magicEmailDisplay.textContent = email;
+                    magicSuccess.classList.remove('hidden');
+                } else {
+                    alert('Something went wrong. Please try again.');
+                    magicSubmitBtn.disabled = false;
+                    magicSubmitBtn.innerHTML = 'Continue with Magic Link';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error.');
+                magicSubmitBtn.disabled = false;
+                magicSubmitBtn.innerHTML = 'Continue with Magic Link';
+            }
+        });
+
+        // Password login logic
+        passwordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            passwordSubmitBtn.disabled = true;
+            passwordSubmitBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Signing in...</span>';
+
+            try {
+                const response = await fetch('/auth/login-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Invalid email or password.');
+                    passwordSubmitBtn.disabled = false;
+                    passwordSubmitBtn.innerHTML = 'Sign in with Password';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error.');
+                passwordSubmitBtn.disabled = false;
+                passwordSubmitBtn.innerHTML = 'Sign in with Password';
+            }
+        });
+    </script>
+}

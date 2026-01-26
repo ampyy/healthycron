@@ -1,0 +1,5 @@
+-- seperate database and all changes
+-- new email id and upstash + railway changes there we will deploy it there // try AWS
+-- email changes right now sheets is being used
+-- buy a google email id pack
+-- by godaddy

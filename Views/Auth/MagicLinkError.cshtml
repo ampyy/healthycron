@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Magic Link Error";
+    var error = ViewBag.Error as string ?? "Invalid or expired magic link.";
+}
+
+<section class="relative min-h-screen flex items-center justify-center py-12 px-4 overflow-hidden bg-gradient-animated">
+    <div class="absolute top-1/4 left-10 w-72 h-72 bg-blue/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-purple/10 rounded-full blur-3xl"></div>
+
+    <div class="w-full max-w-md z-10">
+        <div class="glass-card rounded-2xl p-8 shadow-2xl text-center">
+            <!-- Error Icon -->
+            <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+
+            <!-- Error Message -->
+            <h1 class="text-2xl font-bold text-white mb-3">Authentication Failed</h1>
+            <p class="text-text-secondary mb-8">@error</p>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <a href="/login"
+                    class="glow-btn w-full py-3 rounded-lg text-base font-semibold text-white transition-all inline-block">
+                    Try Again
+                </a>
+                <a href="/"
+                    class="block w-full py-3 rounded-lg text-base font-semibold text-text-secondary hover:text-white border border-border-color hover:border-blue transition-all">
+                    Go to Homepage
+                </a>
+            </div>
+
+            <!-- Help Text -->
+            <div class="mt-8 pt-6 border-t border-border-color">
+                <p class="text-sm text-text-secondary">
+                    Magic links expire after 15 minutes. Request a new one from the login page.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

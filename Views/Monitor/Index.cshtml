@@ -1,0 +1,162 @@
+@model HealthyCron.Models.Monitor
+@{
+    var project = ViewBag.Project as HealthyCron.Models.Project;
+    ViewData["Title"] = $"{Model.Name} - Monitor";
+    Layout = "_DashboardLayout";
+}
+
+<!-- Breadcrumb -->
+<div class="mb-6">
+    <div class="flex items-center gap-2 text-text-secondary text-sm">
+        <a href="/dashboard" class="hover:text-white transition-colors">Projects</a>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        <a href="/@(project?.Slug ?? "unknown")/monitors" class="hover:text-white transition-colors">@(project?.Name ?? "Project")</a>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="text-white">@Model.Name</span>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="flex items-start justify-between mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-white mb-2">@Model.Name</h1>
+        <div class="flex items-center gap-4 text-text-secondary">
+            <div class="flex items-center gap-2">
+                <span
+                    class="inline-block w-2.5 h-2.5 rounded-full @(Model.LastStatus == HealthyCron.Models.MonitorStatus.Up ? "bg-green-500" : (Model.LastStatus == HealthyCron.Models.MonitorStatus.Down ? "bg-red-500" : (Model.LastStatus == HealthyCron.Models.MonitorStatus.Late ? "bg-yellow-500" : "bg-gray-500")))"></span>
+                <span>@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Up ? "Active" : (Model.LastStatus ==
+                      HealthyCron.Models.MonitorStatus.Down ? "Down" : (Model.LastStatus ==
+                      HealthyCron.Models.MonitorStatus.Late ? "Late" : "Paused")))</span>
+            </div>
+            <span>•</span>
+            <div
+                class="font-mono bg-navy-light text-white px-2 py-1 rounded select-all cursor-pointer border border-border-color">
+                @Model.Id
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="glass-card rounded-xl p-6">
+        <h2 class="text-lg font-bold text-white mb-4">Configuration</h2>
+        <div class="space-y-4">
+            <div>
+                <p class="text-sm text-text-secondary mb-1">Schedule</p>
+                <p class="text-white">
+                    @if (Model.ScheduleType == HealthyCron.Models.ScheduleType.Interval)
+                    {
+                        <text>Every @Model.PeriodSeconds
+                            seconds</text>
+                    }
+                    else if (Model.ScheduleType == HealthyCron.Models.ScheduleType.Cron)
+                    {
+                        <text>Cron:
+                            @Model.CronExpression (@Model.CronTimezone)</text>
+                    }
+                    else
+                    {
+                        <text>Calendar: @Model.CalendarExpression (@Model.CalendarTimezone)</text>
+                    }
+                </p>
+            </div>
+            <div>
+                <p class="text-sm text-text-secondary mb-1">Grace Period</p>
+                <p class="text-white">@Model.GraceSeconds seconds</p>
+            </div>
+            <div>
+                <p class="text-sm text-text-secondary mb-1">Slug</p>
+                <p class="text-white">@Model.Slug</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-6">
+        <h2 class="text-lg font-bold text-white mb-4">Status</h2>
+        <div class="space-y-4">
+            <div>
+                <p class="text-sm text-text-secondary mb-1">Last Ping</p>
+                <p class="text-white">@(Model.LastPingAt?.ToString("MMM dd, yyyy HH:mm:ss") ?? "Never")</p>
+            </div>
+            <div>
+                <p class="text-sm text-text-secondary mb-1">Next Expected</p>
+                <p class="text-white">@(Model.NextExpectedAt?.ToString("MMM dd, yyyy HH:mm:ss") ?? "Not Scheduled")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ping Instructions -->
+<div class="mt-8">
+    <div class="glass-card rounded-xl p-6">
+        <h2 class="text-lg font-bold text-white mb-4">How to Ping</h2>
+        <p class="text-text-secondary mb-6">Send a GET request to this endpoint when your job runs successfully:</p>
+
+        <!-- Simple Endpoint (UUID) -->
+        <div class="mb-6">
+            <div class="flex items-center gap-2 mb-3">
+                <code id="ping-url-uuid"
+                    class="flex-1 bg-navy text-white px-4 py-2 rounded border border-border-color font-mono text-sm">
+                    http://localhost:5032/ping/@Model.Id
+                </code>
+                <button onclick="copyToClipboard('ping-url-uuid')"
+                    class="px-4 py-2 bg-blue hover:bg-blue/80 text-white rounded-lg text-sm font-semibold transition-colors">
+                    Copy
+                </button>
+            </div>
+            <div class="bg-navy rounded-lg p-4 border border-border-color space-y-3">
+                <div>
+                    <p class="text-xs text-text-secondary mb-2">cURL:</p>
+                    <code class="text-white text-sm">curl http://localhost:5032/ping/@Model.Id</code>
+                </div>
+                <div>
+                    <p class="text-xs text-text-secondary mb-2">PowerShell:</p>
+                    <code
+                        class="text-white text-sm">Invoke-WebRequest -Uri "http://localhost:5032/ping/@Model.Id"</code>
+                </div>
+                <div>
+                    <p class="text-xs text-text-secondary mb-2">Python:</p>
+                    <code
+                        class="text-white text-sm">import requests; requests.get("http://localhost:5032/ping/@Model.Id")</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-purple/10 border border-purple/30 rounded-lg p-4">
+            <p class="text-sm text-white">
+                <strong>💡 Tip:</strong> Add the ping URL to your cron job or scheduled task to automatically report
+                when it runs.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent.trim();
+
+        navigator.clipboard.writeText(text).then(() => {
+            // Visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.add('bg-green-500');
+            button.classList.remove('bg-blue');
+
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('bg-green-500');
+                button.classList.add('bg-blue');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy to clipboard');
+        });
+    }
+</script>

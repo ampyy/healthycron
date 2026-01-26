@@ -1,0 +1,104 @@
+@* FAQ *@
+<section id="faq" class="py-24 bg-navy-light/30">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+            <p class="text-text-secondary">Everything you need to know about HealthyCron.</p>
+        </div>
+
+        <div class="space-y-4 fade-in">
+            <div class="glass-card rounded-xl overflow-hidden">
+                <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left"
+                    onclick="toggleFaq(this)">
+                    <span class="font-medium text-white">What is cron job monitoring?</span>
+                    <svg class="w-5 h-5 text-text-secondary transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="faq-content px-6 pb-4">
+                    <p class="text-sm text-text-secondary">Cron job monitoring tracks your scheduled tasks and alerts
+                        you when they fail, run late, or don't run at all. It ensures your background processes stay
+                        healthy.</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden">
+                <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left"
+                    onclick="toggleFaq(this)">
+                    <span class="font-medium text-white">How quickly do alerts get delivered?</span>
+                    <svg class="w-5 h-5 text-text-secondary transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="faq-content px-6 pb-4">
+                    <p class="text-sm text-text-secondary">Alerts are delivered within seconds of detecting an issue. We
+                        have a 99.99% alert delivery rate and support multiple channels including Slack, PagerDuty, and
+                        email.</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden">
+                <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left"
+                    onclick="toggleFaq(this)">
+                    <span class="font-medium text-white">Can I monitor jobs running in different environments?</span>
+                    <svg class="w-5 h-5 text-text-secondary transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="faq-content px-6 pb-4">
+                    <p class="text-sm text-text-secondary">Yes! HealthyCron supports environment tags so you can
+                        organize monitors by production, staging, development, or any custom environment you define.</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden">
+                <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left"
+                    onclick="toggleFaq(this)">
+                    <span class="font-medium text-white">Is there a free tier available?</span>
+                    <svg class="w-5 h-5 text-text-secondary transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="faq-content px-6 pb-4">
+                    <p class="text-sm text-text-secondary">Absolutely! Our free tier includes up to 5 monitors, email
+                        alerts, and 7-day log retention. Perfect for personal projects and small applications.</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden">
+                <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left"
+                    onclick="toggleFaq(this)">
+                    <span class="font-medium text-white">How do I integrate HealthyCron with my existing setup?</span>
+                    <svg class="w-5 h-5 text-text-secondary transition-transform" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="faq-content px-6 pb-4">
+                    <p class="text-sm text-text-secondary">Integration takes just 2 minutes. Simply add a ping to your
+                        cron job using curl, wget, or our SDK. We provide copy-paste snippets for all major languages
+                        and platforms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* CTA Section *@
+<section class="py-24">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center fade-in">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">Ready to Stop Missing Failures?</h2>
+        <p class="text-lg text-text-secondary mb-8 max-w-2xl mx-auto">Join thousands of engineering teams who trust
+            HealthyCron to keep their scheduled jobs running smoothly.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/signup" class="glow-btn px-8 py-4 rounded-xl text-base font-semibold text-white">Signup</a>
+            <a href="#"
+                class="px-8 py-4 rounded-xl text-base font-medium text-white bg-navy-light border border-border-color hover:border-blue/50 transition-colors">Talk
+                to Sales</a>
+        </div>
+    </div>
+</section>

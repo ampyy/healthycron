@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Join HealthyCron";
+}
+
+<section class="relative min-h-screen flex items-center justify-center py-12 px-4 overflow-hidden bg-gradient-animated">
+    <div class="absolute top-1/4 left-10 w-72 h-72 bg-blue/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-purple/10 rounded-full blur-3xl"></div>
+
+    <div class="w-full max-w-md z-10">
+        <div class="text-center mb-8">
+            <a href="/" class="inline-flex items-center gap-2 mb-6">
+                <div
+                    class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue to-purple flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold text-white">HealthyCron</span>
+            </a>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Create your account</h1>
+            <p class="text-text-secondary">Get started with your free account</p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl">
+            <form id="signupForm" class="space-y-5">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-white mb-2">Email address</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full bg-navy-light border border-border-color rounded-lg px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-blue/50 focus:border-transparent transition-all"
+                        placeholder="you@company.com">
+                </div>
+
+                <button type="submit" id="submitBtn"
+                    class="glow-btn w-full py-3.5 rounded-lg text-base font-semibold text-white transition-all">
+                    Continue with Email
+                </button>
+            </form>
+
+            <div id="successMessage" class="hidden mt-6 p-4 rounded-lg bg-blue/10 border border-blue/30">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <div>
+                        <p class="text-blue font-semibold mb-1">Check your inbox</p>
+                        <p class="text-sm text-text-secondary">We've sent a magic login link to <span id="emailDisplay"
+                                class="text-white font-medium"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-text-secondary">
+                    Already have an account?
+                    <a href="/login" class="text-blue hover:text-purple transition-colors font-semibold ml-1">Sign
+                        in</a>
+                </p>
+            </div>
+        </div>
+
+        <p class="text-center text-xs text-text-secondary mt-6">
+            By continuing, you agree to our Terms of Service and Privacy Policy
+        </p>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const signupForm = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const emailDisplay = document.getElementById('emailDisplay');
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Sending...</span>';
+
+            try {
+                const response = await fetch('/auth/request-magic-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                if (response.ok) {
+                    signupForm.classList.add('hidden');
+                    emailDisplay.textContent = email;
+                    successMessage.classList.remove('hidden');
+                } else {
+                    alert('Something went wrong. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Continue with Email';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Connection error. Please check your network.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Continue with Email';
+            }
+        });
+    </script>
+}

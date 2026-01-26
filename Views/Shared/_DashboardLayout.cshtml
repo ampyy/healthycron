@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HealthyCron</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0D1117',
+                        'navy-light': '#161B22',
+                        blue: '#4F94FF',
+                        purple: '#9B5DE5',
+                        'text-secondary': '#8B949E',
+                        'border-color': '#30363D'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D1117;
+            color: #E5E5E5;
+        }
+
+        .sidebar-transition {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-sidebar {
+            background: rgba(22, 27, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(48, 54, 61, 0.5);
+        }
+
+        .glass-sidebar.minimized {
+            width: 80px;
+        }
+
+        .main-content {
+            padding-left: 0;
+            transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @@media(min-width: 1024px) {
+            .main-content {
+                padding-left: 16rem;
+            }
+
+            .main-content.minimized {
+                padding-left: 80px;
+            }
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(79, 148, 255, 0.1) 0%, transparent 100%);
+            border-left: 3px solid #4F94FF;
+            color: #fff;
+        }
+
+        .minimized .sidebar-text {
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            display: none;
+        }
+
+        .minimized #minimize-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0D1117;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363D;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleMobileSidebar()">
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="glass-sidebar fixed inset-y-0 left-0 z-50 w-64 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col group/sidebar">
+
+        <!-- Minimize Toggle (Desktop) -->
+        <button id="minimize-btn" onclick="toggleSidebarMinimize()"
+            class="hidden lg:flex absolute -right-3 top-20 w-6 h-6 bg-navy-light border border-border-color rounded-full items-center justify-center text-text-secondary hover:text-white z-50 transition-all shadow-lg active:scale-95">
+            <i data-lucide="chevron-left" class="w-3.5 h-3.5 transition-transform duration-300" id="minimize-icon"></i>
+        </button>
+
+        <!-- Logo -->
+        <div class="h-16 flex items-center px-6 border-b border-border-color shrink-0 overflow-hidden">
+            <a href="/dashboard" class="flex items-center gap-3 min-w-[200px]">
+                <div
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue to-purple flex items-center justify-center shrink-0">
+                    <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+                </div>
+                <span
+                    class="text-xl font-bold text-white tracking-tight sidebar-text transition-opacity duration-300">HealthyCron</span>
+            </a>
+        </div>
+
+        <!-- User Profile (Mini) -->
+        <div class="px-4 py-6 border-b border-border-color sidebar-text">
+            <div class="bg-navy-light/50 rounded-xl p-3 border border-white/5">
+                <p class="text-[10px] uppercase tracking-widest text-text-secondary mb-1">Account</p>
+                <p class="text-sm font-bold text-white truncate">@ViewBag.UserEmail</p>
+            </div>
+        </div>
+
+        <!-- Links -->
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+            <a href="/dashboard"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">Overview</span>
+            </a>
+            <a href="/dashboard/projects"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Action"]?.ToString() == "Projects" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" ? "active" : "")">
+                <i data-lucide="folder" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">My Projects</span>
+            </a>
+            <div class="px-6 py-4 sidebar-text">
+                <div class="h-px bg-white/5 w-full"></div>
+            </div>
+            <a href="#"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white/50 cursor-not-allowed transition-all">
+                <i data-lucide="bell" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">Alerts <span
+                        class="text-[10px] bg-white/5 px-1.5 py-0.5 rounded ml-auto">PRO</span></span>
+            </a>
+            <a href="#"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white/50 cursor-not-allowed transition-all">
+                <i data-lucide="layers" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">Integrations</span>
+            </a>
+            <a href="#"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white/50 cursor-not-allowed transition-all">
+                <i data-lucide="book-open" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">Documentation</span>
+            </a>
+            <a href="#"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white/50 cursor-not-allowed transition-all">
+                <i data-lucide="credit-card" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">Billing</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-border-color shrink-0 overflow-hidden">
+            <button onclick="handleLogout()"
+                class="flex items-center gap-3 w-full px-4 py-2 text-sm text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all font-bold">
+                <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text truncate">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="main-content" class="flex-1 flex flex-col h-screen transition-all duration-300 main-content">
+        <!-- Top Bar -->
+        <header
+            class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-border-color bg-navy/50 backdrop-blur-md">
+            <button class="lg:hidden text-text-secondary hover:text-white p-2" onclick="toggleMobileSidebar()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
+            <!-- Spacer for desktop to align right -->
+            <div class="hidden lg:block"></div>
+
+            <div class="flex items-center gap-4">
+                @{
+                    var userEmail = ViewBag.UserEmail as string;
+                }
+                <span class="text-sm text-text-secondary hidden sm:block">@userEmail</span>
+                <button onclick="handleLogout()"
+                    class="px-4 py-2 text-sm bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-lg transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8">
+            @RenderBody()
+        </main>
+    </div>
+
+    <style>
+        .glass-sidebar.minimized {
+            width: 80px;
+        }
+
+        .main-content.minimized {
+            padding-left: 80px;
+        }
+
+        .minimized .sidebar-text {
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+        }
+
+        .minimized #minimize-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+
+    <script>
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function toggleSidebarMinimize() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+
+            sidebar.classList.toggle('minimized');
+            mainContent.classList.toggle('minimized');
+
+            // Persist preference
+            localStorage.setItem('sidebar-minimized', sidebar.classList.contains('minimized'));
+        }
+
+        // Initialize sidebar state
+        document.addEventListener('DOMContentLoaded', () => {
+            const isMinimized = localStorage.getItem('sidebar-minimized') === 'true';
+            if (isMinimized && window.innerWidth >= 1024) {
+                document.getElementById('sidebar').classList.add('minimized');
+                document.getElementById('main-content').classList.add('minimized');
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        async function handleLogout() {
+            try {
+                const response = await fetch('/auth/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) window.location.href = '/login';
+                else alert('Logout failed.');
+            } catch (err) {
+                console.error(err);
+                alert('Connection error.');
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
