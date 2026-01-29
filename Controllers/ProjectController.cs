@@ -3,6 +3,7 @@ using HealthyCron.Filters;
 using HealthyCron.Models;
 using Microsoft.AspNetCore.Mvc;
 using HealthyCron.Logic.Service;
+using HealthyCron.Logic.Interfaces;
 using CronMonitor = HealthyCron.Models.Monitor;
 
 namespace HealthyCron.Controllers
@@ -14,12 +15,14 @@ namespace HealthyCron.Controllers
         private readonly IProjectRepository _projectRepository;
         private readonly IMonitorRepository _monitorRepository;
         private readonly ProjectService _projectService;
+        private readonly IAccessKeyService _accessKeyService;
 
-        public ProjectController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, ProjectService projectService)
+        public ProjectController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, ProjectService projectService, IAccessKeyService accessKeyService)
         {
             _projectRepository = projectRepository;
             _monitorRepository = monitorRepository;
             _projectService = projectService;
+            _accessKeyService = accessKeyService;
         }
 
         [HttpGet("/{slug}/monitors")]
@@ -41,17 +44,76 @@ namespace HealthyCron.Controllers
             return View(monitors);
         }
 
-
-
-        private int GetSecondsMultiplier(string unit)
+        [HttpGet("{slug}/settings")]
+        public async Task<IActionResult> Settings(string slug)
         {
-            return unit switch
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null || project.UserId != user!.Id)
             {
-                "minutes" => 60,
-                "hours" => 3600,
-                "days" => 86400,
-                _ => 1 // seconds
+                return NotFound();
+            }
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+            ViewBag.AccessKeys = await _accessKeyService.GetKeysByProjectIdAsync(project.Id);
+            return View();
+        }
+
+        [HttpPost("{slug}/update")]
+        public async Task<IActionResult> UpdateProject(string slug, [FromForm] string name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            project.Name = name;
+
+            await _projectRepository.UpdateProjectAsync(project);
+
+            return RedirectToAction("Settings", new { slug = project.Slug });
+        }
+
+        [HttpPost("{slug}/delete")]
+        public async Task<IActionResult> DeleteProject(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            await _projectRepository.DeleteProjectAsync(project.Id);
+
+            return RedirectToAction("Projects", "Dashboard");
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateProject([FromForm] string name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var slug = _projectService.GenerateSlug(name);
+
+            if (await _projectRepository.SlugExistsAsync(slug))
+            {
+                slug = $"{slug}-{DateTime.UtcNow.Ticks}";
+            }
+
+            var project = new Project
+            {
+                UserId = user!.Id,
+                Name = name,
+                Slug = slug,
+                CreatedAt = DateTime.UtcNow
             };
+
+            await _projectRepository.CreateProjectAsync(project);
+
+            return RedirectToAction("Projects", "Dashboard");
         }
     }
 }

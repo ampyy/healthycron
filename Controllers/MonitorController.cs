@@ -2,6 +2,7 @@ using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
 using HealthyCron.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using CronMonitor = HealthyCron.Models.Monitor;
 
 namespace HealthyCron.Controllers
@@ -83,6 +84,71 @@ namespace HealthyCron.Controllers
             return Ok(new { success = true, redirectUrl = $"/monitor/{monitor.Slug}" });
         }
 
+        [HttpPost("update-details")]
+        public async Task<IActionResult> UpdateDetails([FromBody] MonitorDetailsUpdateModel model)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(model.Id);
+            if (monitor == null) return NotFound("Monitor not found");
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound("Access denied");
+
+            // Slug uniqueness check if changed
+            if (!string.Equals(monitor.Slug, model.Slug, StringComparison.OrdinalIgnoreCase))
+            {
+                var newSlug = !string.IsNullOrWhiteSpace(model.Slug) ? model.Slug : _projectService.GenerateSlug(model.Name);
+                if (await _monitorRepository.SlugExistsAsync(project.Id, newSlug))
+                {
+                    return BadRequest("Slug already exists in this project");
+                }
+                monitor.Slug = newSlug;
+            }
+
+            monitor.Name = model.Name;
+            monitor.UpdatedAt = DateTime.UtcNow;
+
+            await _monitorRepository.UpdateMonitorAsync(monitor);
+            return Ok(new { success = true, redirectUrl = $"/monitor/{monitor.Slug}" });
+        }
+
+        [HttpPost("update-schedule")]
+        public async Task<IActionResult> UpdateSchedule([FromBody] MonitorScheduleUpdateModel model)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(model.Id);
+            if (monitor == null) return NotFound("Monitor not found");
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound("Access denied");
+
+            monitor.ScheduleType = model.ScheduleType;
+            monitor.GraceSeconds = model.GraceSeconds * GetSecondsMultiplier(model.GraceUnit);
+            monitor.UpdatedAt = DateTime.UtcNow;
+
+            switch (model.ScheduleType)
+            {
+                case ScheduleType.Interval:
+                    monitor.PeriodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
+                    break;
+                case ScheduleType.Cron:
+                    monitor.CronExpression = model.CronExpression;
+                    monitor.CronTimezone = model.CronTimezone;
+                    break;
+                case ScheduleType.Calendar:
+                    monitor.CalendarExpression = model.CalendarExpression;
+                    monitor.CalendarTimezone = model.CalendarTimezone;
+                    break;
+            }
+
+            await _monitorRepository.UpdateMonitorAsync(monitor);
+            return Ok(new { success = true });
+        }
+
         private int GetSecondsMultiplier(string unit)
         {
             return unit switch
@@ -115,7 +181,78 @@ namespace HealthyCron.Controllers
 
             ViewBag.Project = project;
             ViewBag.UserEmail = user.Email;
+
+            var pings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 100);
+            ViewBag.RecentPings = pings;
+
+            // Graph Data: Last 24 hours grouped by hour
+            var now = DateTime.UtcNow;
+            var hourlyData = new int[24];
+            for (int i = 0; i < 24; i++)
+            {
+                var hourStart = now.AddHours(-(i + 1));
+                var hourEnd = now.AddHours(-i);
+                hourlyData[23 - i] = pings.Count(p => p.ReceivedAt >= hourStart && p.ReceivedAt < hourEnd);
+            }
+            ViewBag.GraphData = hourlyData;
+
             return View(monitor);
+        }
+
+        [HttpPost("{id:guid}/pause")]
+        public async Task<IActionResult> Pause(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            var newStatus = monitor.LastStatus == MonitorStatus.Paused ? MonitorStatus.Up : MonitorStatus.Paused;
+            await _monitorRepository.UpdateStatusAsync(id, newStatus);
+
+            return Ok(new { success = true, status = newStatus.ToString() });
+        }
+
+        [HttpPost("{id:guid}/delete")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            await _monitorRepository.DeleteMonitorAsync(id);
+
+            return Ok(new { success = true, redirectUrl = $"/{project.Slug}/monitors" });
+        }
+
+        [HttpGet("api/{projectId:guid}/status")]
+        public async Task<IActionResult> ApiStatus(Guid projectId)
+        {
+            var accessKey = HttpContext.Items["AccessKey"] as ProjectAccessKey;
+            if (accessKey == null || accessKey.ProjectId != projectId)
+            {
+                return Unauthorized(new { message = "Invalid or missing API key" });
+            }
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(projectId);
+            return Json(monitors.Select(m => new
+            {
+                m.Id,
+                m.Name,
+                m.Slug,
+                m.LastStatus,
+                m.LastPingAt,
+                m.NextExpectedAt
+            }));
         }
     }
 }

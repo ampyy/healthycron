@@ -8,6 +8,8 @@ namespace HealthyCron.Data.Interfaces
         Task<Project?> GetProjectBySlugAsync(string slug);
         Task<IEnumerable<Project>> GetProjectsByUserIdAsync(Guid userId);
         Task<Guid> CreateProjectAsync(Project project);
+        Task<bool> UpdateProjectAsync(Project project);
+        Task<bool> DeleteProjectAsync(Guid id);
         Task<bool> SlugExistsAsync(string slug);
     }
 }

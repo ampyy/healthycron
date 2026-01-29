@@ -6,8 +6,7 @@ namespace HealthyCron.Models
         public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
-        public string Color { get; set; } = "blue";
-        public string Icon { get; set; } = "folder";
+        public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
         public int MonitorCount { get; set; }
         public int InteractionsCount { get; set; }

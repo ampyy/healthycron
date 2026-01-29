@@ -1,0 +1,410 @@
+@{
+    var project = ViewBag.Project as HealthyCron.Models.Project;
+    var user = ViewBag.User as HealthyCron.Models.User;
+    var keys = (ViewBag.AccessKeys as IEnumerable<HealthyCron.Models.ProjectAccessKey>) ?? Enumerable.Empty<HealthyCron.Models.ProjectAccessKey>();
+    ViewData["Title"] = $"{(project != null ? project.Name : "Project")} - Settings";
+    Layout = "_DashboardLayout";
+}
+
+<div class="max-w-4xl mx-auto pb-20">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Settings</span>
+    </div>
+
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <i data-lucide="settings" class="text-blue"></i>
+            Project Settings
+        </h1>
+    </div>
+
+    <!-- General Settings -->
+    <section class="glass-card rounded-2xl overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center gap-2">
+            <i data-lucide="info" class="w-5 h-5 text-blue-500"></i>
+            <h2 class="font-bold text-white">General Information</h2>
+        </div>
+        <form action="/project/@project.Slug/update" method="POST" class="p-6">
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Project Name</label>
+                    <input type="text" name="name" value="@project.Name" required
+                        class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
+                </div>
+            </div>
+            <div class="pt-6 mt-6 border-t border-white/5 flex justify-end">
+                <button type="submit" class="bg-blue hover:bg-blue/80 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue/20">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- API Keys Section -->
+    <section class="glass-card rounded-2xl overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="key" class="w-5 h-5 text-blue"></i>
+                <h2 class="font-bold text-white">Project Access Keys</h2>
+            </div>
+        </div>
+        <div class="p-0">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5">
+                            <th class="px-6 py-4">Type</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Prefix</th>
+                            <th class="px-6 py-4">Created</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        @{
+                            var keyTypes = new[] { 
+                                new { Type = HealthyCron.Models.ApiKeyType.Ping, Label = "Ping Key", Desc = "Used for updating check status" },
+                                new { Type = HealthyCron.Models.ApiKeyType.FullAccess, Label = "Access Key", Desc = "Full access to project data" },
+                                new { Type = HealthyCron.Models.ApiKeyType.ReadAccess, Label = "Read-only Key", Desc = "View access to project data" }
+                            };
+                        }
+                        @foreach (var kt in keyTypes)
+                        {
+                            var activeKey = keys.OrderByDescending(k => k.CreatedAt).FirstOrDefault(k => k.KeyType == kt.Type && !k.RevokedAt.HasValue);
+                            <tr>
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-white">@kt.Label</div>
+                                    <div class="text-[10px] text-text-secondary">@kt.Desc</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if (activeKey != null)
+                                    {
+                                        <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] rounded uppercase font-bold">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="px-2 py-0.5 bg-white/5 text-text-secondary text-[10px] rounded uppercase font-bold">Not Generated</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if (activeKey != null)
+                                    {
+                                        <div class="flex items-center gap-2">
+                                            <code class="text-xs bg-black/30 px-2 py-1 rounded border border-white/5 text-text-secondary">@activeKey.KeyPrefix...</code>
+                                            <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Prefix">
+                                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-text-secondary">---</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 text-xs text-text-secondary">
+                                    @(activeKey?.CreatedAt.ToString("MMM dd, yyyy") ?? "---")
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    @if (activeKey != null)
+                                    {
+                                        <button onclick="confirmRevoke('@activeKey.Id')" class="text-rose-500 hover:text-rose-400 p-2 hover:bg-rose-500/10 rounded-lg transition-all" title="Revoke Key">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button onclick="confirmGenerate(@((int)kt.Type), '@kt.Label')" class="text-blue hover:opacity-80 p-2 hover:bg-blue/10 rounded-lg transition-all" title="Generate Key">
+                                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="px-6 py-4 bg-navy/50 border-t border-white/5 flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4 text-text-secondary"></i>
+            <p class="text-xs text-text-secondary">
+                Learn how to use API keys in our <a href="/docs/api" class="text-blue hover:underline">documentation</a>.
+            </p>
+        </div>
+    </section>
+
+    <!-- Danger Zone -->
+    <section class="border border-rose-500/20 rounded-2xl overflow-hidden bg-rose-500/5">
+        <div class="px-6 py-4 border-b border-rose-500/10 bg-rose-500/10 flex items-center gap-2 text-rose-500">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <h2 class="font-bold">Danger Zone</h2>
+        </div>
+        <div class="p-6 space-y-6">
+            <!-- Transfer -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-bold text-white mb-1">Transfer Project</h3>
+                    <p class="text-sm text-text-secondary">Transfer this project to another user's email address.</p>
+                </div>
+                <button onclick="openTransferModal()" class="px-6 py-2.5 bg-navy-light hover:bg-white/5 text-white rounded-xl font-bold border border-white/10 transition-all text-sm">
+                    Transfer
+                </button>
+            </div>
+            
+            <div class="h-px bg-rose-500/10"></div>
+
+            <!-- Delete -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-bold text-rose-500 mb-1">Delete Project</h3>
+                    <p class="text-sm text-text-secondary">Permanently delete this project and all its monitors, pings, and data.</p>
+                </div>
+                <form id="deleteProjectForm" action="/project/@project.Slug/delete" method="POST">
+                                    <button type="button" onclick="confirmDeleteProject()" class="px-6 py-2.5 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 rounded-xl font-bold border border-rose-500/20 transition-all text-sm">
+                                        Delete Project
+                                    </button>
+                                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Key Result Modal -->
+<div id="keyResultModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeKeyResultModal()"></div>
+        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i data-lucide="key" class="text-blue"></i>
+                    API Key Generated
+                </h3>
+                <button onclick="closeKeyResultModal()" class="text-text-secondary hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl flex items-start gap-3">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 shrink-0"></i>
+                        <div>
+                            <h4 class="text-emerald-500 font-bold text-sm" id="keyResultTitle">Key Generated Successfully</h4>
+                            <p class="text-xs text-emerald-500/70">Copy this key now. For security reasons, we cannot show it to you again.</p>
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <input type="text" id="fullKeyDisplay" readonly
+                            class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 pr-12 text-white font-mono text-sm outline-none">
+                        <button onclick="copyGeneratedKey()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg text-text-secondary hover:text-white transition-all">
+                            <i data-lucide="copy" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <button onclick="window.location.reload()" class="w-full bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl font-bold transition-all border border-white/10">
+                        I've copied it, close.
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Global Toast Notification -->
+<div id="toast" class="fixed bottom-8 right-8 z-[100] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-navy-light border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-3 min-w-[300px]">
+        <div id="toastIcon" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"></div>
+        <div class="overflow-hidden">
+            <div id="toastTitle" class="font-bold text-white text-sm"></div>
+            <div id="toastMessage" class="text-xs text-text-secondary truncate"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeConfirmModal()"></div>
+        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-md w-full border border-border-color relative z-10">
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-6">
+                    <div id="confirmIconBg" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
+                        <i id="confirmIcon" data-lucide="help-circle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 id="confirmTitle" class="text-xl font-black text-white">Confirm Action</h3>
+                        <p id="confirmDescription" class="text-sm text-text-secondary mt-1">Are you sure you want to proceed?</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeConfirmModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl font-bold transition-all border border-white/10">
+                        Cancel
+                    </button>
+                    <button id="confirmActionBtn" class="flex-1 py-3 rounded-xl font-bold transition-all shadow-lg">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let activeKeyType = null;
+    let activeKeyLabel = '';
+    let activeKeyId = null;
+
+    function showToast(title, message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const icon = document.getElementById('toastIcon');
+        const titleEl = document.getElementById('toastTitle');
+        const messageEl = document.getElementById('toastMessage');
+
+        titleEl.innerText = title;
+        messageEl.innerText = message;
+
+        if (type === 'success') {
+            icon.className = 'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-emerald-500/10 text-emerald-500';
+            icon.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5"></i>';
+        } else {
+            icon.className = 'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-rose-500/10 text-rose-500';
+            icon.innerHTML = '<i data-lucide="alert-circle" class="w-5 h-5"></i>';
+        }
+
+        lucide.createIcons();
+        
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+
+        setTimeout(() => {
+            toast.classList.add('translate-y-20', 'opacity-0');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+        }, 5000);
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+    }
+
+    function confirmGenerate(type, label) {
+        activeKeyType = type;
+        activeKeyLabel = label;
+        
+        document.getElementById('confirmTitle').innerText = 'Generate ' + label;
+        document.getElementById('confirmDescription').innerText = 'Are you sure? Any existing active ' + label + ' will be revoked immediately.';
+        document.getElementById('confirmIcon').setAttribute('data-lucide', 'key');
+        document.getElementById('confirmIconBg').className = 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-blue/10 text-blue';
+        
+        const btn = document.getElementById('confirmActionBtn');
+        btn.className = 'flex-1 bg-blue hover:bg-blue/80 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue/20';
+        btn.onclick = performGenerate;
+        
+        document.getElementById('confirmModal').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    function confirmRevoke(keyId) {
+        activeKeyId = keyId;
+        
+        document.getElementById('confirmTitle').innerText = 'Revoke API Key';
+        document.getElementById('confirmDescription').innerText = 'This will permanently disable this key. Any applications using it will lose access immediately.';
+        document.getElementById('confirmIcon').setAttribute('data-lucide', 'trash-2');
+        document.getElementById('confirmIconBg').className = 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-rose-500/10 text-rose-500';
+        
+        const btn = document.getElementById('confirmActionBtn');
+        btn.className = 'flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-rose-500/20';
+        btn.onclick = performRevoke;
+        
+        document.getElementById('confirmModal').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    function confirmDeleteProject() {
+        document.getElementById('confirmTitle').innerText = 'Delete Project';
+        document.getElementById('confirmDescription').innerText = 'Are you absolutely sure? This will hide the project and all its monitors. This action is permanent.';
+        document.getElementById('confirmIcon').setAttribute('data-lucide', 'alert-triangle');
+        document.getElementById('confirmIconBg').className = 'w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-rose-500/10 text-rose-500';
+        
+        const btn = document.getElementById('confirmActionBtn');
+        btn.className = 'flex-1 bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-rose-500/20';
+        btn.onclick = () => document.getElementById('deleteProjectForm').submit();
+        
+        document.getElementById('confirmModal').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    async function performGenerate() {
+        closeConfirmModal();
+        const formData = new FormData();
+        formData.append('type', activeKeyType);
+
+        try {
+            const response = await fetch('/projects/@project.Id/access-keys', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                openKeyResultModal(result.key, activeKeyLabel);
+            } else {
+                showToast('Error', 'Failed to generate key', 'error');
+            }
+        } catch (error) {
+            showToast('Error', 'An unexpected error occurred', 'error');
+        }
+    }
+
+    async function performRevoke() {
+        closeConfirmModal();
+        try {
+            const response = await fetch(`/projects/@project.Id/access-keys/${activeKeyId}/revoke`, {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                showToast('Key Revoked', 'The API key has been disabled');
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast('Error', 'Failed to revoke key', 'error');
+            }
+        } catch (error) {
+            showToast('Error', 'An unexpected error occurred', 'error');
+        }
+    }
+
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Copied', 'Copied to clipboard');
+        });
+    }
+
+    function openKeyResultModal(key, label) {
+        document.getElementById('keyResultModal').classList.remove('hidden');
+        document.getElementById('fullKeyDisplay').value = key;
+        document.getElementById('keyResultTitle').innerText = label + ' Generated Successfully';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function closeKeyResultModal() {
+        document.getElementById('keyResultModal').classList.add('hidden');
+    }
+
+    function copyGeneratedKey() {
+        const key = document.getElementById('fullKeyDisplay').value;
+        copyText(key);
+    }
+
+    function openTransferModal() {
+        showToast('Info', 'Transfer functionality coming soon!');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>

@@ -18,10 +18,12 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IAuthRepository, HealthyCron.Data.Repository.AuthRepository>();
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectRepository, HealthyCron.Data.Repository.ProjectRepository>();
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IMonitorRepository, HealthyCron.Data.Repository.MonitorRepository>();
+builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectAccessKeyRepository, HealthyCron.Data.Repository.AccessKeyRepository>();
 
 // Register Logic Services
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAuthService, HealthyCron.Logic.Service.AuthService>();
 builder.Services.AddScoped<HealthyCron.Logic.Service.ProjectService>();
+builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAccessKeyService, HealthyCron.Logic.Service.AccessKeyService>();
 
 // Register Email Service
 builder.Services.AddScoped<HealthyCron.Utilities.Interface.IEmailService, HealthyCron.Utilities.Service.EmailService>();
@@ -87,6 +89,7 @@ app.UseRouting();
 
 // Custom Session Middleware
 app.UseMiddleware<HealthyCron.Utilities.SessionMiddleware>();
+app.UseMiddleware<HealthyCron.Utilities.ApiKeyMiddleware>();
 
 app.UseAuthorization();
 

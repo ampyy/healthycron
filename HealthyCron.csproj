@@ -11,6 +11,7 @@
     <PackageReference Include="AWSSDK.SQS" Version="4.0.2.13" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="NCrontab" Version="3.4.0" />
     <PackageReference Include="Npgsql" Version="10.0.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.10.1" />
   </ItemGroup>
