@@ -1,29 +1,63 @@
-using System.Net;
-using System.Net.Mail;
+using System.Text;
 using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Interface;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Resend;
 
 namespace HealthyCron.Utilities.Service
 {
-    public class SmtpEmailService : IEmailService
+    public class ResendEmailService : IEmailService
     {
-        private readonly string _smtpHost;
-        private readonly int _smtpPort;
-        private readonly string _fromEmail;
-        private readonly string _fromPassword;
+        private readonly ILogger<ResendEmailService> _logger;
+        private readonly string _apiKey;
 
-        public SmtpEmailService(EmailSettings emailSettings)
+        public ResendEmailService(
+            IConfiguration configuration,
+            ILogger<ResendEmailService> logger)
         {
-            _smtpHost = emailSettings.SmtpHost;
-            _smtpPort = emailSettings.SmtpPort;
-            _fromEmail = emailSettings.FromEmail;
-            _fromPassword = emailSettings.FromPassword;
+            _logger = logger;
+
+            // Get API key from environment variable
+            _apiKey = configuration["RESEND_API_KEY"] ??
+                      configuration["Resend:ApiKey"] ??
+                      throw new InvalidOperationException("RESEND_API_KEY is not configured");
         }
 
         public async Task SendMagicLinkEmailAsync(string toEmail, string magicLink)
         {
-            var subject = "Your HealthyCron Magic Login Link";
-            var body = $@"
+            try
+            {
+                IResend resend = ResendClient.Create(_apiKey);
+
+                var subject = "Log in to HealthyCron";
+                var htmlBody = GetCleanMagicLinkHtml(magicLink);
+
+                var message = new EmailMessage
+                {
+                    From = "HealthyCron <onboarding@resend.dev>", // TODO: Change to your verified domain (e.g. noreply@healthycron.com)
+                    To = toEmail,
+                    Subject = subject,
+                    HtmlBody = htmlBody
+                };
+
+                var response = await resend.EmailSendAsync(message);
+
+                // The SDK might not throw on error response content, but usually throws on HTTP failure.
+                // Assuming success if no exception for now. 
+
+                _logger.LogInformation($"Magic link email sent successfully to {toEmail} via Resend.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Exception occurred while sending email to {toEmail} via Resend");
+                throw;
+            }
+        }
+
+        private string GetCleanMagicLinkHtml(string magicLink)
+        {
+            return $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,24 +153,6 @@ namespace HealthyCron.Utilities.Service
     </div>
 </body>
 </html>";
-
-            using var smtpClient = new SmtpClient(_smtpHost, _smtpPort)
-            {
-                EnableSsl = true,
-                Credentials = new NetworkCredential(_fromEmail, _fromPassword)
-            };
-
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(_fromEmail, "HealthyCron"),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
-
-            mailMessage.To.Add(toEmail);
-
-            await smtpClient.SendMailAsync(mailMessage);
         }
     }
 }

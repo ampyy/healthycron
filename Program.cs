@@ -56,7 +56,17 @@ builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IPingService, HealthyCro
 builder.Services.AddHostedService<HealthyCron.Background.MonitorCheckWorker>();
 
 // Register Email Service
-builder.Services.AddScoped<HealthyCron.Utilities.Interface.IEmailService, HealthyCron.Utilities.Service.EmailService>();
+// Register Email Service based on Environment
+if (builder.Environment.IsDevelopment())
+{
+    // Use SMTP service for local development (MailHog, local SMTP, etc.)
+    builder.Services.AddScoped<HealthyCron.Utilities.Interface.IEmailService, HealthyCron.Utilities.Service.SmtpEmailService>();
+}
+else
+{
+    // Use Resend API for production
+    builder.Services.AddScoped<HealthyCron.Utilities.Interface.IEmailService, HealthyCron.Utilities.Service.ResendEmailService>();
+}
 
 // ============================================================================
 // REDIS CONFIGURATION
