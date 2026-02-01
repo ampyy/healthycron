@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Interface;
 
 namespace HealthyCron.Utilities.Service
@@ -11,12 +12,12 @@ namespace HealthyCron.Utilities.Service
         private readonly string _fromEmail;
         private readonly string _fromPassword;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(EmailSettings emailSettings)
         {
-            _smtpHost = configuration["Email:SmtpHost"] ?? "smtp.gmail.com";
-            _smtpPort = int.Parse(configuration["Email:SmtpPort"] ?? "587");
-            _fromEmail = configuration["Email:FromEmail"] ?? "thesheetsbackend@gmail.com";
-            _fromPassword = configuration["Email:FromPassword"] ?? throw new InvalidOperationException("Email password not configured");
+            _smtpHost = emailSettings.SmtpHost;
+            _smtpPort = emailSettings.SmtpPort;
+            _fromEmail = emailSettings.FromEmail;
+            _fromPassword = emailSettings.FromPassword;
         }
 
         public async Task SendMagicLinkEmailAsync(string toEmail, string magicLink)

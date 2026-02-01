@@ -112,10 +112,7 @@
         <!-- Logo -->
         <div class="h-16 flex items-center px-6 border-b border-border-color shrink-0 overflow-hidden">
             <a href="/dashboard" class="flex items-center gap-3 min-w-[200px]">
-                <div
-                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue to-purple flex items-center justify-center shrink-0">
-                    <i data-lucide="activity" class="w-5 h-5 text-white"></i>
-                </div>
+                    <img src="/images/logo.png" alt="HealthyCron" class="w-8 h-8 rounded-lg object-contain shrink-0">
                 <span
                     class="text-xl font-bold text-white tracking-tight sidebar-text transition-opacity duration-300">HealthyCron</span>
             </a>
@@ -139,8 +136,11 @@
             <a href="/dashboard/projects"
                 class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Action"]?.ToString() == "Projects" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" ? "active" : "")">
                 <i data-lucide="folder" class="w-5 h-5 shrink-0"></i>
-                <span class="sidebar-text font-medium truncate">My Projects</span>
+                <span class="sidebar-text font-medium truncate">Project</span>
             </a>
+
+            <!-- Project specific links removed for cleaner sidebar -->
+
             <div class="px-6 py-4 sidebar-text">
                 <div class="h-px bg-white/5 w-full"></div>
             </div>

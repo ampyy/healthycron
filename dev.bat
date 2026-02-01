@@ -1,0 +1,13 @@
+@echo off
+echo 🚀 Starting HealthyCron Development Environment...
+
+if not exist node_modules (
+    echo 📦 node_modules not found, installing dependencies...
+    call npm install
+)
+
+start cmd /k "npm run watch:css"
+echo 🎨 Tailwind CSS watcher started in new window...
+
+echo 🔥 Starting .NET watcher...
+dotnet watch run

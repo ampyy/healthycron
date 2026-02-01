@@ -1,5 +1,6 @@
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Interface;
 using System.Text.Json;
 
@@ -10,11 +11,10 @@ namespace HealthyCron.Utilities.Service
         private readonly IAmazonSQS _sqsClient;
         private readonly string _queueUrl;
 
-        public QueueService(IAmazonSQS sqsClient, IConfiguration configuration)
+        public QueueService(IAmazonSQS sqsClient, QueueSettings queueSettings)
         {
             _sqsClient = sqsClient;
-            _queueUrl = configuration["QueueSettings:HeartbeatQueueUrl"]
-                ?? throw new InvalidOperationException("QueueSettings:HeartbeatQueueUrl is missing in configuration.");
+            _queueUrl = queueSettings.HeartbeatQueueUrl;
         }
 
         public async Task SendMessageAsync(object message)

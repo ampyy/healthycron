@@ -14,12 +14,14 @@ namespace HealthyCron.Controllers
         private readonly IMonitorRepository _monitorRepository;
         private readonly IProjectRepository _projectRepository;
         private readonly Logic.Service.ProjectService _projectService;
+        private readonly Logic.Interfaces.IAccessKeyService _accessKeyService;
 
-        public MonitorController(IMonitorRepository monitorRepository, IProjectRepository projectRepository, Logic.Service.ProjectService projectService)
+        public MonitorController(IMonitorRepository monitorRepository, IProjectRepository projectRepository, Logic.Service.ProjectService projectService, Logic.Interfaces.IAccessKeyService accessKeyService)
         {
             _monitorRepository = monitorRepository;
             _projectRepository = projectRepository;
             _projectService = projectService;
+            _accessKeyService = accessKeyService;
         }
 
         [HttpPost("create")]
@@ -100,6 +102,13 @@ namespace HealthyCron.Controllers
             if (!string.Equals(monitor.Slug, model.Slug, StringComparison.OrdinalIgnoreCase))
             {
                 var newSlug = !string.IsNullOrWhiteSpace(model.Slug) ? model.Slug : _projectService.GenerateSlug(model.Name);
+                
+                // Validation: Only lowercase letters, numbers, and hyphens
+                if (!System.Text.RegularExpressions.Regex.IsMatch(newSlug, "^[a-z0-9-]+$"))
+                {
+                    return BadRequest("Slug must contain only lowercase letters, numbers, and hyphens");
+                }
+
                 if (await _monitorRepository.SlugExistsAsync(project.Id, newSlug))
                 {
                     return BadRequest("Slug already exists in this project");
@@ -185,6 +194,10 @@ namespace HealthyCron.Controllers
             var pings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 100);
             ViewBag.RecentPings = pings;
 
+            var keys = await _accessKeyService.GetKeysByProjectIdAsync(project.Id);
+            var pingKey = keys.FirstOrDefault(k => k.KeyType == ApiKeyType.Ping && k.RevokedAt == null);
+            ViewBag.PingKey = pingKey?.KeyPrefix ?? "PING_KEY"; // We only have prefix after first show
+
             // Graph Data: Last 24 hours grouped by hour
             var now = DateTime.UtcNow;
             var hourlyData = new int[24];
@@ -211,7 +224,7 @@ namespace HealthyCron.Controllers
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
             if (project == null || project.UserId != user.Id) return NotFound();
 
-            var newStatus = monitor.LastStatus == MonitorStatus.Paused ? MonitorStatus.Up : MonitorStatus.Paused;
+            var newStatus = monitor.LastStatus == MonitorStatus.Paused ? MonitorStatus.Success : MonitorStatus.Paused;
             await _monitorRepository.UpdateStatusAsync(id, newStatus);
 
             return Ok(new { success = true, status = newStatus.ToString() });

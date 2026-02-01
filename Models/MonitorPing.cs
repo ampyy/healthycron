@@ -14,5 +14,9 @@ namespace HealthyCron.Models
         public string? HttpMethod { get; set; }
         public string? RequestHeaders { get; set; } // JSON string
         public int? ResponseTimeMs { get; set; }
+        public int? DurationMs { get; set; }
+
+        // Joined Data
+        public string? MonitorName { get; set; }
     }
 }

@@ -66,10 +66,12 @@ CREATE TABLE IF NOT EXISTS monitors (
     calendar_timezone VARCHAR(100),
     grace_seconds INTEGER DEFAULT 0,
     last_ping_at TIMESTAMP WITH TIME ZONE,
-    last_status SMALLINT, -- 0: Up, 1: Late, 2: Down, 3: Paused
+    last_status SMALLINT, -- 0: Success, 1: Running, 2: Failed, 3: Missed, 4: Paused
     next_expected_at TIMESTAMP WITH TIME ZONE,
+    last_start_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
     UNIQUE(project_id, slug)
 );
 
@@ -84,7 +86,8 @@ CREATE TABLE IF NOT EXISTS monitor_pings (
     user_agent TEXT,
     http_method VARCHAR(10),
     request_headers JSONB,
-    response_time_ms INTEGER
+    response_time_ms INTEGER,
+    duration_ms INTEGER
 );
 
 -- Indexes for performance

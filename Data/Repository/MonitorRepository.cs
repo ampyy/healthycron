@@ -13,19 +13,23 @@ namespace HealthyCron.Data.Repository
 
         public async Task<CronMonitor?> GetMonitorByIdAsync(Guid id)
         {
-            const string sql = "SELECT * FROM monitors WHERE id = @Id";
+            const string sql = "SELECT * FROM monitors WHERE id = @Id AND is_deleted = FALSE";
             return await QueryFirstOrDefaultAsync<CronMonitor>(sql, new { Id = id });
         }
 
-        public async Task<CronMonitor?> GetMonitorBySlugAsync(string slug)
+        public async Task<CronMonitor?> GetMonitorBySlugAsync(string slug, Guid? projectId = null)
         {
-            const string sql = "SELECT * FROM monitors WHERE slug = @Slug";
-            return await QueryFirstOrDefaultAsync<CronMonitor>(sql, new { Slug = slug });
+            string sql = "SELECT * FROM monitors WHERE slug = @Slug AND is_deleted = FALSE";
+            if (projectId.HasValue)
+            {
+                sql += " AND project_id = @ProjectId";
+            }
+            return await QueryFirstOrDefaultAsync<CronMonitor>(sql, new { Slug = slug, ProjectId = projectId });
         }
 
         public async Task<IEnumerable<CronMonitor>> GetMonitorsByProjectIdAsync(Guid projectId)
         {
-            const string sql = "SELECT * FROM monitors WHERE project_id = @ProjectId ORDER BY created_at DESC";
+            const string sql = "SELECT * FROM monitors WHERE project_id = @ProjectId AND is_deleted = FALSE ORDER BY created_at DESC";
             return await QueryAsync<CronMonitor>(sql, new { ProjectId = projectId });
         }
 
@@ -50,7 +54,7 @@ namespace HealthyCron.Data.Repository
 
         public async Task<bool> SlugExistsAsync(Guid projectId, string slug)
         {
-            const string sql = "SELECT COUNT(1) FROM monitors WHERE project_id = @ProjectId AND slug = @Slug";
+            const string sql = "SELECT COUNT(1) FROM monitors WHERE project_id = @ProjectId AND slug = @Slug AND is_deleted = FALSE";
             return await ExecuteScalarAsync<int>(sql, new { ProjectId = projectId, Slug = slug }) > 0;
         }
 
@@ -67,9 +71,55 @@ namespace HealthyCron.Data.Repository
             return await QueryAsync<MonitorPing>(sql, new { MonitorId = monitorId, Limit = limit });
         }
 
-        public async Task<bool> RecordPingAsync(MonitorPing pingData)
+        public async Task<IEnumerable<MonitorPing>> GetPingsByProjectIdAsync(Guid projectId, int limit = 100)
         {
-            var monitor = await GetMonitorByIdAsync(pingData.MonitorId);
+            const string sql = @"
+                SELECT 
+                    p.id, p.monitor_id, p.received_at, p.status, p.message,
+                    p.ip_address, p.user_agent, p.http_method, p.request_headers, p.response_time_ms,
+                    m.name as MonitorName
+                FROM monitor_pings p
+                JOIN monitors m ON p.monitor_id = m.id
+                WHERE m.project_id = @ProjectId
+                ORDER BY p.received_at DESC
+                LIMIT @Limit";
+            return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, Limit = limit });
+        }
+
+        public async Task<IEnumerable<MonitorPing>> GetPingsWithFiltersAsync(Guid projectId, Guid? monitorId, int? status, string? search, int limit = 100)
+        {
+            var sql = @"
+                SELECT 
+                    p.id, p.monitor_id, p.received_at, p.status, p.message,
+                    p.ip_address, p.user_agent, p.http_method, p.request_headers, p.response_time_ms,
+                    m.name as MonitorName
+                FROM monitor_pings p
+                JOIN monitors m ON p.monitor_id = m.id
+                WHERE m.project_id = @ProjectId";
+
+            if (monitorId.HasValue)
+            {
+                sql += " AND p.monitor_id = @MonitorId";
+            }
+
+            if (status.HasValue)
+            {
+                sql += " AND p.status = @Status";
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                sql += " AND (m.name ILIKE @Search OR p.message ILIKE @Search)";
+            }
+
+            sql += " ORDER BY p.received_at DESC LIMIT @Limit";
+
+            return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, MonitorId = monitorId, Status = status, Search = $"%{search}%", Limit = limit });
+        }
+
+        public async Task<bool> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus, DateTime? lastStartAt)
+        {
+            var monitor = await GetMonitorByIdAsync(ping.MonitorId);
             if (monitor == null) return false;
 
             var nextExpectedAt = CalculateNextExpectedAt(monitor);
@@ -80,35 +130,38 @@ namespace HealthyCron.Data.Repository
                 SET last_ping_at = @LastPingAt, 
                     last_status = @LastStatus, 
                     next_expected_at = @NextExpectedAt,
+                    last_start_at = @LastStartAt,
                     updated_at = @UpdatedAt
                 WHERE id = @Id;
 
                 INSERT INTO monitor_pings (
                     monitor_id, received_at, status, message,
-                    ip_address, user_agent, http_method, request_headers, response_time_ms
+                    ip_address, user_agent, http_method, request_headers, response_time_ms, duration_ms
                 )
                 VALUES (
                     @MonitorId, @ReceivedAt, @Status, @Message,
-                    CAST(@IpAddress AS inet), @UserAgent, @HttpMethod, CAST(@RequestHeaders AS jsonb), @ResponseTimeMs
+                    CAST(@IpAddress AS inet), @UserAgent, @HttpMethod, CAST(@RequestHeaders AS jsonb), @ResponseTimeMs, @DurationMs
                 );";
 
             var rowsAffected = await ExecuteAsync(sql, new
             {
-                Id = pingData.MonitorId,
+                Id = ping.MonitorId,
                 LastPingAt = now,
-                LastStatus = (int)MonitorStatus.Up,
+                LastStatus = (int)newStatus,
                 NextExpectedAt = nextExpectedAt,
+                LastStartAt = lastStartAt,
                 UpdatedAt = now,
                 // Ping Data
-                MonitorId = pingData.MonitorId,
-                ReceivedAt = now,
-                Status = (int)pingData.Status,
-                Message = pingData.Message,
-                IpAddress = pingData.IpAddress, // Dapper handles IPAddress/string for inet if string is valid IP
-                UserAgent = pingData.UserAgent,
-                HttpMethod = pingData.HttpMethod,
-                RequestHeaders = pingData.RequestHeaders,
-                ResponseTimeMs = pingData.ResponseTimeMs
+                MonitorId = ping.MonitorId,
+                ReceivedAt = ping.ReceivedAt,
+                Status = (int)ping.Status,
+                Message = ping.Message,
+                IpAddress = ping.IpAddress,
+                UserAgent = ping.UserAgent,
+                HttpMethod = ping.HttpMethod,
+                RequestHeaders = ping.RequestHeaders,
+                ResponseTimeMs = ping.ResponseTimeMs,
+                DurationMs = ping.DurationMs
             });
 
             return rowsAffected > 0;
@@ -128,15 +181,21 @@ namespace HealthyCron.Data.Repository
                 try
                 {
                     // NCrontab parses 5-part cron expressions (minute hour day month day-of-week)
-                    // It can also handle 6-part including seconds if configured, but standard unix cron is 5
                     var schedule = CrontabSchedule.Parse(monitor.CronExpression, new CrontabSchedule.ParseOptions { IncludingSeconds = false });
                     return schedule.GetNextOccurrence(utcNow);
                 }
                 catch
                 {
-                    // Invalid cron expression, fallback or log
                     return null;
                 }
+            }
+
+            if (monitor.ScheduleType == ScheduleType.Calendar && !string.IsNullOrWhiteSpace(monitor.CalendarExpression))
+            {
+                // Basic Systemd OnCalendar parsing implementation or placeholder
+                // For now, let's treat it as a cron-like if it looks like one, 
+                // but real OnCalendar is complex. Let's at least store it correctly.
+                return utcNow.AddDays(1); // Default placeholder for now
             }
 
             return null;
@@ -147,10 +206,13 @@ namespace HealthyCron.Data.Repository
             const string sql = @"
                 UPDATE monitors 
                 SET name = @Name, 
+                    slug = @Slug,
                     schedule_type = @ScheduleType, 
                     period_seconds = @PeriodSeconds, 
                     cron_expression = @CronExpression, 
                     cron_timezone = @CronTimezone, 
+                    calendar_expression = @CalendarExpression,
+                    calendar_timezone = @CalendarTimezone,
                     grace_seconds = @GraceSeconds,
                     updated_at = @UpdatedAt
                 WHERE id = @Id";
@@ -160,7 +222,7 @@ namespace HealthyCron.Data.Repository
         }
         public async Task<bool> DeleteMonitorAsync(Guid id)
         {
-            const string sql = "DELETE FROM monitors WHERE id = @Id";
+            const string sql = "UPDATE monitors SET is_deleted = TRUE, updated_at = CURRENT_TIMESTAMP WHERE id = @Id";
             var rows = await ExecuteAsync(sql, new { Id = id });
             return rows > 0;
         }
@@ -170,6 +232,23 @@ namespace HealthyCron.Data.Repository
             const string sql = "UPDATE monitors SET last_status = @Status, updated_at = CURRENT_TIMESTAMP WHERE id = @Id";
             var rows = await ExecuteAsync(sql, new { Id = id, Status = (int)status });
             return rows > 0;
+        }
+
+        public async Task<IEnumerable<CronMonitor>> GetOverdueMonitorsAsync()
+        {
+            const string sql = @"
+                SELECT * FROM monitors 
+                WHERE is_deleted = FALSE 
+                AND last_status != @MissedStatus
+                AND last_status != @PausedStatus
+                AND next_expected_at IS NOT NULL
+                AND (next_expected_at + (grace_seconds || ' seconds')::interval) < CURRENT_TIMESTAMP";
+
+            return await QueryAsync<CronMonitor>(sql, new 
+            { 
+                MissedStatus = (int)MonitorStatus.Missed,
+                PausedStatus = (int)MonitorStatus.Paused
+            });
         }
     }
 }

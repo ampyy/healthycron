@@ -1,15 +1,40 @@
+using HealthyCron.Models.Configuration;
+using HealthyCron.Utilities.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:5032");
+
+// ============================================================================
+// CONFIGURATION SETUP - Strongly-typed and validated at startup
+// ============================================================================
+
+// Load and validate all configuration sections
+// These will throw exceptions at startup if required values are missing
+var databaseSettings = builder.Services.AddValidatedConfiguration<DatabaseSettings>(
+    builder.Configuration, DatabaseSettings.SectionName);
+
+var emailSettings = builder.Services.AddValidatedConfiguration<EmailSettings>(
+    builder.Configuration, EmailSettings.SectionName);
+
+var redisSettings = builder.Services.AddValidatedConfiguration<RedisSettings>(
+    builder.Configuration, RedisSettings.SectionName);
+
+var awsSettings = builder.Services.AddValidatedConfiguration<AwsSettings>(
+    builder.Configuration, AwsSettings.SectionName);
+
+var queueSettings = builder.Services.AddValidatedConfiguration<QueueSettings>(
+    builder.Configuration, QueueSettings.SectionName);
+
+// ============================================================================
+// SERVICE REGISTRATION
+// ============================================================================
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Database Connection Factory Setup
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                      ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IDbConnectionFactory>(
-    new HealthyCron.Utilities.Service.DbConnectionFactory(connectionString));
+    new HealthyCron.Utilities.Service.DbConnectionFactory(databaseSettings.DefaultConnection));
 
 // Configure Dapper to support snake_case column names
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -24,17 +49,22 @@ builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectAccessKeyReposito
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAuthService, HealthyCron.Logic.Service.AuthService>();
 builder.Services.AddScoped<HealthyCron.Logic.Service.ProjectService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAccessKeyService, HealthyCron.Logic.Service.AccessKeyService>();
+builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAlertService, HealthyCron.Logic.Service.AlertService>();
+builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IPingService, HealthyCron.Logic.Service.PingService>();
+
+// Register Background Services
+builder.Services.AddHostedService<HealthyCron.Background.MonitorCheckWorker>();
 
 // Register Email Service
 builder.Services.AddScoped<HealthyCron.Utilities.Interface.IEmailService, HealthyCron.Utilities.Service.EmailService>();
 
-// Redis Connection Setup for Upstash
-var redisConnectionString = builder.Configuration["REDIS_CONNECTION"]
-                           ?? throw new InvalidOperationException("Redis connection string 'REDIS_CONNECTION' not found.");
+// ============================================================================
+// REDIS CONFIGURATION
+// ============================================================================
 
 // Parse the rediss:// URL to extract host, port, and password
 // Format: rediss://default:PASSWORD@HOST:PORT
-var uri = new Uri(redisConnectionString.Split(',')[0]); // Remove any additional parameters
+var uri = new Uri(redisSettings.ConnectionString.Split(',')[0]); // Remove any additional parameters
 var password = uri.UserInfo.Split(':')[1]; // Extract password from default:PASSWORD
 var host = uri.Host;
 var port = uri.Port;
@@ -61,8 +91,17 @@ builder.Services.AddSingleton<StackExchange.Redis.IConnectionMultiplexer>(redisM
 // Singleton: One instance shared across the entire application lifetime
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.ICacheService, HealthyCron.Utilities.Service.CacheService>();
 
-// AWS SQS Configuration
-var awsOptions = builder.Configuration.GetAWSOptions();
+// ============================================================================
+// AWS CONFIGURATION
+// ============================================================================
+
+// Configure AWS credentials and region
+var awsOptions = new Amazon.Extensions.NETCore.Setup.AWSOptions
+{
+    Credentials = new Amazon.Runtime.BasicAWSCredentials(awsSettings.AccessKey, awsSettings.SecretKey),
+    Region = Amazon.RegionEndpoint.GetBySystemName(awsSettings.Region)
+};
+
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<Amazon.SQS.IAmazonSQS>();
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IQueueService, HealthyCron.Utilities.Service.QueueService>();

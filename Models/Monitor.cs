@@ -20,9 +20,11 @@ namespace HealthyCron.Models
         public DateTime? LastPingAt { get; set; }
         public MonitorStatus? LastStatus { get; set; }
         public DateTime? NextExpectedAt { get; set; }
+        public DateTime? LastStartAt { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
 }

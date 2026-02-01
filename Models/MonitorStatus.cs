@@ -2,9 +2,10 @@ namespace HealthyCron.Models
 {
     public enum MonitorStatus : short
     {
-        Up = 0,
-        Late = 1, // Future use
-        Down = 2,
-        Paused = 3
+        Success = 0,
+        Running = 1,
+        Failed = 2,
+        Missed = 3,
+        Paused = 4
     }
 }
