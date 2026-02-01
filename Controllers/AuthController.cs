@@ -42,7 +42,10 @@ namespace HealthyCron.Controllers
         public async Task<IActionResult> RequestMagicLink([FromBody] MagicLinkRequest request)
         {
             var rawToken = await _authService.RequestMagicLinkAsync(request.Email);
-            var magicLink = $"http://localhost:5032/auth/magic?token={rawToken}";
+            // Construct the magic link using the current request's scheme and host
+            // This ensures it works on localhost and production (healthycron.com)
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var magicLink = $"{baseUrl}/auth/magic?token={rawToken}";
 
             // Send email with magic link
             await _emailService.SendMagicLinkEmailAsync(request.Email, magicLink);
