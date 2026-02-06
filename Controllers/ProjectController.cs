@@ -1,6 +1,7 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 using HealthyCron.Logic.Service;
 using HealthyCron.Logic.Interfaces;
@@ -16,13 +17,15 @@ namespace HealthyCron.Controllers
         private readonly IMonitorRepository _monitorRepository;
         private readonly ProjectService _projectService;
         private readonly IAccessKeyService _accessKeyService;
+        private readonly AxiomLogger _axiomLogger;
 
-        public ProjectController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, ProjectService projectService, IAccessKeyService accessKeyService)
+        public ProjectController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, ProjectService projectService, IAccessKeyService accessKeyService, AxiomLogger axiomLogger)
         {
             _projectRepository = projectRepository;
             _monitorRepository = monitorRepository;
             _projectService = projectService;
             _accessKeyService = accessKeyService;
+            _axiomLogger = axiomLogger;
         }
 
         [HttpGet("/{slug}/monitors")]
@@ -95,25 +98,44 @@ namespace HealthyCron.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateProject([FromForm] string name)
         {
-            var user = HttpContext.Items["User"] as User;
-            var slug = _projectService.GenerateSlug(name);
-
-            if (await _projectRepository.SlugExistsAsync(slug))
+            try
             {
-                slug = $"{slug}-{DateTime.UtcNow.Ticks}";
+                var user = HttpContext.Items["User"] as User;
+                var slug = _projectService.GenerateSlug(name);
+
+                if (await _projectRepository.SlugExistsAsync(slug))
+                {
+                    slug = $"{slug}-{DateTime.UtcNow.Ticks}";
+                }
+
+                var project = new Project
+                {
+                    UserId = user!.Id,
+                    Name = name,
+                    Slug = slug,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _projectRepository.CreateProjectAsync(project);
+
+                await _axiomLogger.LogInfo("Project created", new Dictionary<string, object>
+                {
+                    ["project_id"] = project.Id,
+                    ["project_name"] = name,
+                    ["user_id"] = user.Id
+                });
+
+                return RedirectToAction("Projects", "Dashboard");
             }
-
-            var project = new Project
+            catch (Exception ex)
             {
-                UserId = user!.Id,
-                Name = name,
-                Slug = slug,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            await _projectRepository.CreateProjectAsync(project);
-
-            return RedirectToAction("Projects", "Dashboard");
+                await _axiomLogger.LogError("Failed to create project", new Dictionary<string, object>
+                {
+                    ["error"] = ex.Message,
+                    ["project_name"] = name
+                });
+                return StatusCode(500, "Failed to create project");
+            }
         }
     }
 }

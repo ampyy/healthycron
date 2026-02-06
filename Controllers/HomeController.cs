@@ -1,16 +1,17 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Service;
 
 namespace HealthyCron.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly AxiomLogger _axiomLogger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(AxiomLogger axiomLogger)
     {
-        _logger = logger;
+        _axiomLogger = axiomLogger;
     }
 
     public IActionResult Index()

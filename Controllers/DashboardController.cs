@@ -1,6 +1,7 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyCron.Controllers
@@ -10,10 +11,12 @@ namespace HealthyCron.Controllers
     public class DashboardController : Controller
     {
         private readonly IProjectRepository _projectRepository;
+        private readonly AxiomLogger _axiomLogger;
 
-        public DashboardController(IProjectRepository projectRepository)
+        public DashboardController(IProjectRepository projectRepository, AxiomLogger axiomLogger)
         {
             _projectRepository = projectRepository;
+            _axiomLogger = axiomLogger;
         }
 
         [HttpGet("")]

@@ -1,6 +1,7 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyCron.Controllers
@@ -11,11 +12,13 @@ namespace HealthyCron.Controllers
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IMonitorRepository _monitorRepository;
+        private readonly AxiomLogger _axiomLogger;
 
-        public LogController(IProjectRepository projectRepository, IMonitorRepository monitorRepository)
+        public LogController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, AxiomLogger axiomLogger)
         {
             _projectRepository = projectRepository;
             _monitorRepository = monitorRepository;
+            _axiomLogger = axiomLogger;
         }
 
         [HttpGet("")]
@@ -28,7 +31,7 @@ namespace HealthyCron.Controllers
             if (project == null || project.UserId != user.Id) return NotFound();
 
             var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
-            
+
             ViewBag.Project = project;
             ViewBag.Monitors = monitors;
             ViewBag.UserEmail = user.Email;
@@ -37,7 +40,7 @@ namespace HealthyCron.Controllers
             ViewBag.Limit = limit;
 
             var logs = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, null, status, search, limit);
-            
+
             return View(logs);
         }
 
@@ -64,7 +67,7 @@ namespace HealthyCron.Controllers
             ViewBag.Limit = limit;
 
             var logs = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, monitorId, status, search, limit);
-            
+
             return View("Index", logs);
         }
 
@@ -77,7 +80,7 @@ namespace HealthyCron.Controllers
             // Assuming we have a way to get monitor by slug across all projects or we need project context.
             // Based on existing code, monitor slugs are unique within a project.
             // Let's find the monitor first.
-            var monitor = await _monitorRepository.GetMonitorBySlugAsync(slug); 
+            var monitor = await _monitorRepository.GetMonitorBySlugAsync(slug);
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);

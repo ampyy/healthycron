@@ -1,6 +1,7 @@
 using HealthyCron.Filters;
 using HealthyCron.Logic.Interfaces;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -12,10 +13,12 @@ namespace HealthyCron.Controllers
     public class AccessKeyController : Controller
     {
         private readonly IAccessKeyService _accessKeyService;
+        private readonly AxiomLogger _axiomLogger;
 
-        public AccessKeyController(IAccessKeyService accessKeyService)
+        public AccessKeyController(IAccessKeyService accessKeyService, AxiomLogger axiomLogger)
         {
             _accessKeyService = accessKeyService;
+            _axiomLogger = axiomLogger;
         }
 
         [HttpGet]
@@ -28,14 +31,32 @@ namespace HealthyCron.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Guid projectId, [FromForm] ApiKeyType type)
         {
-            var (fullKey, keyModel) = await _accessKeyService.CreateKeyAsync(projectId, type);
-
-            return Json(new
+            try
             {
-                key = fullKey,
-                model = keyModel,
-                message = "Make sure to copy your API key now. You won't be able to see it again!"
-            });
+                var (fullKey, keyModel) = await _accessKeyService.CreateKeyAsync(projectId, type);
+
+                await _axiomLogger.LogInfo("API key created", new Dictionary<string, object>
+                {
+                    ["project_id"] = projectId,
+                    ["key_type"] = type.ToString()
+                });
+
+                return Json(new
+                {
+                    key = fullKey,
+                    model = keyModel,
+                    message = "Make sure to copy your API key now. You won't be able to see it again!"
+                });
+            }
+            catch (Exception ex)
+            {
+                await _axiomLogger.LogError("Failed to create API key", new Dictionary<string, object>
+                {
+                    ["project_id"] = projectId,
+                    ["error"] = ex.Message
+                });
+                return StatusCode(500, new { error = "Failed to create API key" });
+            }
         }
 
         [HttpPost("{keyId:guid}/revoke")]
