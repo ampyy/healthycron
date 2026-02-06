@@ -2,7 +2,7 @@ using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.WebHost.UseUrls("http://localhost:5032");
+builder.WebHost.UseUrls("http://localhost:5032");
 
 // ============================================================================
 // CONFIGURATION SETUP - Strongly-typed and validated at startup
@@ -25,12 +25,20 @@ var awsSettings = builder.Services.AddValidatedConfiguration<AwsSettings>(
 var queueSettings = builder.Services.AddValidatedConfiguration<QueueSettings>(
     builder.Configuration, QueueSettings.SectionName);
 
+var slackSettings = builder.Services.AddValidatedConfiguration<SlackSettings>(
+    builder.Configuration, SlackSettings.SectionName);
+
+var encryptionSettings = builder.Services.AddValidatedConfiguration<EncryptionSettings>(
+    builder.Configuration, EncryptionSettings.SectionName);
+
+
 // ============================================================================
 // SERVICE REGISTRATION
 // ============================================================================
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 // Database Connection Factory Setup
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IDbConnectionFactory>(
@@ -44,6 +52,7 @@ builder.Services.AddScoped<HealthyCron.Data.Interfaces.IAuthRepository, HealthyC
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectRepository, HealthyCron.Data.Repository.ProjectRepository>();
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IMonitorRepository, HealthyCron.Data.Repository.MonitorRepository>();
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectAccessKeyRepository, HealthyCron.Data.Repository.AccessKeyRepository>();
+builder.Services.AddScoped<HealthyCron.Data.Interfaces.IIntegrationRepository, HealthyCron.Data.Repository.IntegrationRepository>();
 
 // Register Logic Services
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAuthService, HealthyCron.Logic.Service.AuthService>();
@@ -51,6 +60,14 @@ builder.Services.AddScoped<HealthyCron.Logic.Service.ProjectService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAccessKeyService, HealthyCron.Logic.Service.AccessKeyService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAlertService, HealthyCron.Logic.Service.AlertService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IPingService, HealthyCron.Logic.Service.PingService>();
+builder.Services.AddScoped<HealthyCron.Logic.Interfaces.ISlackOAuthService, HealthyCron.Logic.Service.SlackOAuthService>();
+
+// Register Utility Services
+builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IEncryptionService, HealthyCron.Utilities.Service.EncryptionService>();
+builder.Services.AddSingleton<HealthyCron.Utilities.Service.AxiomLogger>();
+
+// Register HttpClient for SlackOAuthService
+builder.Services.AddHttpClient<HealthyCron.Logic.Interfaces.ISlackOAuthService, HealthyCron.Logic.Service.SlackOAuthService>();
 
 // Register Background Services
 builder.Services.AddHostedService<HealthyCron.Background.MonitorCheckWorker>();
@@ -152,5 +169,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<HealthyCron.Hubs.MonitorHub>("/monitorHub");
 
 app.Run();

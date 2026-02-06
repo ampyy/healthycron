@@ -1,6 +1,7 @@
 using HealthyCron.Logic.Interfaces;
 using HealthyCron.Models;
 using HealthyCron.Utilities.Interface;
+using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthyCron.Controllers
@@ -10,12 +11,14 @@ namespace HealthyCron.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IEmailService _emailService;
+        private readonly AxiomLogger _axiomLogger;
         private const string SessionCookieName = "hc_session";
 
-        public AuthController(IAuthService authService, IEmailService emailService)
+        public AuthController(IAuthService authService, IEmailService emailService, AxiomLogger axiomLogger)
         {
             _authService = authService;
             _emailService = emailService;
+            _axiomLogger = axiomLogger;
         }
 
         [HttpGet("/signup")]
@@ -41,16 +44,30 @@ namespace HealthyCron.Controllers
         [HttpPost("request-magic-link")]
         public async Task<IActionResult> RequestMagicLink([FromBody] MagicLinkRequest request)
         {
-            var rawToken = await _authService.RequestMagicLinkAsync(request.Email);
-            // Construct the magic link using the current request's scheme and host
-            // This ensures it works on localhost and production (healthycron.com)
-            var baseUrl = $"{Request.Scheme}://{Request.Host}";
-            var magicLink = $"{baseUrl}/auth/magic?token={rawToken}";
+            try
+            {
+                var rawToken = await _authService.RequestMagicLinkAsync(request.Email);
+                var baseUrl = $"{Request.Scheme}://{Request.Host}";
+                var magicLink = $"{baseUrl}/auth/magic?token={rawToken}";
 
-            // Send email with magic link
-            await _emailService.SendMagicLinkEmailAsync(request.Email, magicLink);
+                await _emailService.SendMagicLinkEmailAsync(request.Email, magicLink);
 
-            return Ok(new { message = "Magic link sent to your email", link = magicLink });
+                await _axiomLogger.LogInfo("Magic link requested", new Dictionary<string, object>
+                {
+                    ["email"] = request.Email
+                });
+
+                return Ok(new { message = "Magic link sent to your email", link = magicLink });
+            }
+            catch (Exception ex)
+            {
+                await _axiomLogger.LogError("Failed to request magic link", new Dictionary<string, object>
+                {
+                    ["email"] = request.Email,
+                    ["error"] = ex.Message
+                });
+                return StatusCode(500, new { error = "Failed to send magic link" });
+            }
         }
 
 
@@ -98,22 +115,57 @@ namespace HealthyCron.Controllers
         [HttpPost("login-password")]
         public async Task<IActionResult> LoginPassword([FromBody] PasswordAuthRequest request)
         {
-            var sessionToken = await _authService.LoginPasswordAsync(request.Email, request.Password);
-            if (sessionToken == null) return Unauthorized("Invalid email or password.");
+            try
+            {
+                var sessionToken = await _authService.LoginPasswordAsync(request.Email, request.Password);
+                if (sessionToken == null)
+                {
+                    await _axiomLogger.LogWarn("Failed login attempt", new Dictionary<string, object>
+                    {
+                        ["email"] = request.Email
+                    });
+                    return Unauthorized("Invalid email or password.");
+                }
 
-            SetSessionCookie(sessionToken);
-            return Ok(new { message = "Logged in successfully" });
+                SetSessionCookie(sessionToken);
+                await _axiomLogger.LogInfo("User logged in", new Dictionary<string, object>
+                {
+                    ["email"] = request.Email
+                });
+                return Ok(new { message = "Logged in successfully" });
+            }
+            catch (Exception ex)
+            {
+                await _axiomLogger.LogError("Error during password login", new Dictionary<string, object>
+                {
+                    ["email"] = request.Email,
+                    ["error"] = ex.Message
+                });
+                return StatusCode(500, new { error = "Login failed" });
+            }
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            if (Request.Cookies.TryGetValue(SessionCookieName, out var sessionToken))
+            try
             {
-                await _authService.LogoutAsync(sessionToken);
-                Response.Cookies.Delete(SessionCookieName);
+                if (Request.Cookies.TryGetValue(SessionCookieName, out var sessionToken))
+                {
+                    await _authService.LogoutAsync(sessionToken);
+                    Response.Cookies.Delete(SessionCookieName);
+                    await _axiomLogger.LogInfo("User logged out", new Dictionary<string, object>());
+                }
+                return Ok(new { message = "Logged out successfully" });
             }
-            return Ok(new { message = "Logged out successfully" });
+            catch (Exception ex)
+            {
+                await _axiomLogger.LogError("Error during logout", new Dictionary<string, object>
+                {
+                    ["error"] = ex.Message
+                });
+                return StatusCode(500, new { error = "Logout failed" });
+            }
         }
 
         private void SetSessionCookie(string token)

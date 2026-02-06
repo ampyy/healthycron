@@ -480,10 +480,162 @@
 </div>
 
 <style>
-    .schedule-btn.active-sch { background: #1C2128; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.schedule-btn.active-sch { background: #1C2128; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 </style>
 
+<!-- SignalR Client -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
 <script>
+    // SignalR Connection
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/monitorHub")
+        .withAutomaticReconnect()
+        .build();
+
+    const h1 = document.querySelector('h1');
+
+    async function startSignalR() {
+        try {
+            await connection.start();
+            console.log("SignalR Connected.");
+            await connection.invoke("JoinMonitor", "@Model.Id");
+        } catch (err) {
+            console.error("SignalR Connection Error: ", err);
+            setTimeout(startSignalR, 5000);
+        }
+    }
+
+    connection.on("PingReceived", (data) => {
+        console.log("Ping Received:", data);
+        updateStatusBadge(data.newMonitorStatus);
+        updateChart();
+        addLogRow(data);
+    });
+
+    connection.on("StatusChanged", (data) => {
+        console.log("Status Changed:", data);
+        updateStatusBadge(data.newStatus);
+    });
+
+    startSignalR();
+
+    function updateStatusBadge(status) {
+        if (!h1) return;
+        const badgeContainer = h1.nextElementSibling;
+        if (!badgeContainer) return;
+
+        let badgeHtml = '';
+        if (status === 'Paused') {
+            badgeHtml = `<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-purple/10 text-purple">
+                            <i data-lucide="pause-circle" class="w-3 h-3"></i>
+                            Paused
+                        </span>`;
+        } else if (status === 'Success' || status === 'Healthy' || status === 'Running') {
+            badgeHtml = `<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Healthy
+                        </span>`;
+        } else {
+            badgeHtml = `<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500">
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                            Down
+                        </span>`;
+        }
+
+        const parent = badgeContainer.parentElement;
+        parent.removeChild(badgeContainer);
+
+        const temp = document.createElement('div');
+        temp.innerHTML = badgeHtml;
+        parent.insertBefore(temp.firstElementChild, h1.nextSibling);
+        lucide.createIcons();
+    }
+
+    function updateChart() {
+        const chartContainer = document.querySelector('.h-32');
+        if (!chartContainer) return;
+
+        const bars = chartContainer.querySelectorAll('.flex-1');
+        if (bars.length === 0) return;
+
+        const lastBar = bars[bars.length - 1];
+        const innerBarWrapper = lastBar.querySelector('.bg-blue\\/10');
+        const countText = lastBar.querySelector('.text-blue');
+
+        if (innerBarWrapper) {
+            let currentPings = parseInt(countText.innerText) || 0;
+            currentPings++;
+            countText.innerText = currentPings + ' pings';
+
+            const height = Math.max(5, Math.min(100, (currentPings * 20) + 5));
+            innerBarWrapper.style.height = height + '%';
+
+            if (!innerBarWrapper.querySelector('.bg-blue')) {
+                innerBarWrapper.innerHTML = '<div class="bg-blue rounded-t-sm w-full h-full opacity-60"></div>';
+            }
+        }
+    }
+
+    function addLogRow(data) {
+        const tbody = document.querySelector('table tbody');
+        if (!tbody) return;
+
+        const noActivityRow = tbody.querySelector('td[colspan="5"]');
+        if (noActivityRow && noActivityRow.innerText.includes("No activity")) {
+            tbody.removeChild(noActivityRow.parentElement);
+        }
+
+        const currentStatus = data.status === 'Success' ? 'Success' : (data.status === 'Start' ? 'Starting' : 'Failed');
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/[0.04] transition-all cursor-pointer group opacity-0 translate-y-2';
+        tr.onclick = function() { showPingDetails(this); };
+
+        tr.dataset.id = data.id;
+        tr.dataset.time = data.timeStr;
+        tr.dataset.status = currentStatus;
+        tr.dataset.message = data.message || '';
+        tr.dataset.ip = data.ipAddress || '';
+        tr.dataset.ua = data.userAgent || '';
+        tr.dataset.method = data.method || '';
+        tr.dataset.headers = data.headers || '{}';
+
+        tr.innerHTML = `
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-white font-bold">${data.dateDisplay}</span>
+                    <span class="text-[10px] text-text-secondary font-mono">${data.timeDisplay}</span>
+                </div>
+            </td>
+            <td class="px-6 py-4">
+                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${currentStatus == 'Success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : (currentStatus == 'Starting' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20')}">
+                    ${currentStatus}
+                </span>
+            </td>
+            <td class="px-6 py-4">
+                <span class="text-[10px] text-text-secondary font-mono truncate max-w-[200px] block" title="${data.userAgent || ''}">
+                    ${(data.userAgent && data.userAgent.length > 30) ? data.userAgent.substring(0, 30) + '...' : (data.userAgent || 'N/A')}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+                <button class="p-2 rounded-lg bg-white/5 text-text-secondary group-hover:text-white transition-all"><i data-lucide="eye" class="w-4 h-4"></i></button>
+            </td>
+        `;
+
+        tbody.insertBefore(tr, tbody.firstChild);
+        tr.offsetHeight;
+        tr.classList.remove('opacity-0', 'translate-y-2');
+        tr.classList.add('duration-500');
+
+        lucide.createIcons();
+
+        if (tbody.children.length > 25) {
+            tbody.removeChild(tbody.lastChild);
+        }
+    }
+
+
     function copyUrl(id) {
         const text = document.getElementById(id).innerText;
         navigator.clipboard.writeText(text).then(() => {

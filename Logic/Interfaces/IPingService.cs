@@ -16,6 +16,5 @@ namespace HealthyCron.Logic.Interfaces
         public string? UserAgent { get; set; }
         public string Method { get; set; } = "GET";
         public string? HeadersJson { get; set; }
-        public int ResponseTimeMs { get; set; }
     }
 }

@@ -5,6 +5,9 @@ using Monitor = HealthyCron.Models.Monitor;
 using System;
 using System.Threading.Tasks;
 using System.Text.Json;
+using Microsoft.AspNetCore.SignalR;
+using HealthyCron.Hubs;
+using System.Collections.Generic;
 
 namespace HealthyCron.Logic.Service
 {
@@ -13,12 +16,24 @@ namespace HealthyCron.Logic.Service
         private readonly IMonitorRepository _monitorRepository;
         private readonly IAccessKeyService _accessKeyService;
         private readonly IAlertService _alertService;
+        private readonly IIntegrationRepository _integrationRepository;
+        private readonly ILogger<PingService> _logger;
+        private readonly IHubContext<MonitorHub> _hubContext;
 
-        public PingService(IMonitorRepository monitorRepository, IAccessKeyService accessKeyService, IAlertService alertService)
+        public PingService(
+            IMonitorRepository monitorRepository,
+            IAccessKeyService accessKeyService,
+            IAlertService alertService,
+            IIntegrationRepository integrationRepository,
+            ILogger<PingService> logger,
+            IHubContext<MonitorHub> hubContext)
         {
             _monitorRepository = monitorRepository;
             _accessKeyService = accessKeyService;
             _alertService = alertService;
+            _integrationRepository = integrationRepository;
+            _logger = logger;
+            _hubContext = hubContext;
         }
 
         public async Task ProcessPingAsync(Guid monitorId, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
@@ -61,12 +76,15 @@ namespace HealthyCron.Logic.Service
                 UserAgent = metadata.UserAgent,
                 HttpMethod = metadata.Method,
                 RequestHeaders = metadata.HeadersJson,
-                ResponseTimeMs = metadata.ResponseTimeMs,
                 DurationMs = durationMs,
                 ReceivedAt = now
             };
 
-            // Update Monitor State based on Ping Type
+            // CRITICAL: Alert Decision Logic
+            // Store previous state before updating
+            var previousStatus = monitor.LastStatus;
+
+            // Determine new status based on ping type
             var newStatus = pingType switch
             {
                 PingType.Start => MonitorStatus.Running,
@@ -75,13 +93,88 @@ namespace HealthyCron.Logic.Service
                 _ => MonitorStatus.Success
             };
 
-            // We update everything in one go via the repository
+            // Record the ping and update monitor state
             await _monitorRepository.RecordPingAsync(ping, newStatus, pingType == PingType.Start ? now : (pingType == PingType.Success ? null : monitor.LastStartAt));
 
-            // Trigger alert if failed
-            if (pingType == PingType.Fail)
+            // Broadcast real-time update via SignalR
+            var payload = new
             {
-                await _alertService.TriggerAlertAsync(monitor, "Job Failed", message);
+                id = ping.Id,
+                receivedAt = ping.ReceivedAt,
+                timeStr = ping.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss"),
+                dateDisplay = ping.ReceivedAt.ToString("MMM dd"),
+                timeDisplay = ping.ReceivedAt.ToString("HH:mm:ss"),
+                status = pingType.ToString(),
+                message = ping.Message,
+                ipAddress = ping.IpAddress,
+                userAgent = ping.UserAgent,
+                method = ping.HttpMethod,
+                headers = ping.RequestHeaders,
+                newMonitorStatus = newStatus.ToString(),
+                monitorId = monitor.Id,
+                monitorName = monitor.Name
+            };
+
+            await _hubContext.Clients.Group(monitor.Id.ToString()).SendAsync("PingReceived", payload);
+            await _hubContext.Clients.Group(monitor.ProjectId.ToString()).SendAsync("PingReceived", payload);
+
+            // Detect state transitions and create notification jobs
+            Enums.AlertType? alertType = null;
+
+            // UP → DOWN: Trigger DOWN alert
+            if ((previousStatus == MonitorStatus.Success || previousStatus == MonitorStatus.Running || previousStatus == null)
+                && newStatus == MonitorStatus.Failed)
+            {
+                alertType = Enums.AlertType.Down;
+                _logger.LogWarning("Monitor {MonitorId} ({MonitorName}) transitioned from {PreviousStatus} to DOWN",
+                    monitor.Id, monitor.Name, previousStatus?.ToString() ?? "null");
+            }
+            // DOWN → UP: Trigger RECOVERY alert
+            else if (previousStatus == MonitorStatus.Failed && newStatus == MonitorStatus.Success)
+            {
+                alertType = Enums.AlertType.Recovery;
+                _logger.LogInformation("Monitor {MonitorId} ({MonitorName}) RECOVERED from DOWN to UP",
+                    monitor.Id, monitor.Name);
+            }
+
+            // If there's an alert, create notification jobs for all monitor integrations
+            if (alertType.HasValue)
+            {
+                var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
+
+                foreach (var integration in integrations)
+                {
+                    try
+                    {
+                        // Get the ping ID (we need to retrieve it since RecordPingAsync doesn't return it)
+                        // For now, we'll use a workaround - the ping ID will be the most recent one
+                        // In production, RecordPingAsync should return the ping ID
+                        var recentPings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 1);
+                        var pingId = recentPings.FirstOrDefault()?.Id ?? 0;
+
+                        if (pingId > 0)
+                        {
+                            await _integrationRepository.CreateNotificationJobAsync(
+                                new Guid(pingId.ToString().PadLeft(32, '0')), // Temporary workaround
+                                integration.Id,
+                                alertType.Value
+                            );
+
+                            _logger.LogInformation("Created notification job for monitor {MonitorId}, integration {IntegrationId}, alert type {AlertType}",
+                                monitor.Id, integration.Id, alertType.Value);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to create notification job for monitor {MonitorId}, integration {IntegrationId}",
+                            monitor.Id, integration.Id);
+                    }
+                }
+
+                // Also trigger the legacy alert service
+                await _alertService.TriggerAlertAsync(monitor,
+                    alertType.Value == Enums.AlertType.Down ? "Monitor Down" : "Monitor Recovered",
+                    message);
             }
         }
 

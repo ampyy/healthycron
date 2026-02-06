@@ -1,6 +1,7 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using CronMonitor = HealthyCron.Models.Monitor;
@@ -15,75 +16,105 @@ namespace HealthyCron.Controllers
         private readonly IProjectRepository _projectRepository;
         private readonly Logic.Service.ProjectService _projectService;
         private readonly Logic.Interfaces.IAccessKeyService _accessKeyService;
+        private readonly IIntegrationRepository _integrationRepository;
+        private readonly AxiomLogger _axiomLogger;
 
-        public MonitorController(IMonitorRepository monitorRepository, IProjectRepository projectRepository, Logic.Service.ProjectService projectService, Logic.Interfaces.IAccessKeyService accessKeyService)
+        public MonitorController(
+            IMonitorRepository monitorRepository,
+            IProjectRepository projectRepository,
+            Logic.Service.ProjectService projectService,
+            Logic.Interfaces.IAccessKeyService accessKeyService,
+            IIntegrationRepository integrationRepository,
+            AxiomLogger axiomLogger)
         {
             _monitorRepository = monitorRepository;
             _projectRepository = projectRepository;
             _projectService = projectService;
             _accessKeyService = accessKeyService;
+            _integrationRepository = integrationRepository;
+            _axiomLogger = axiomLogger;
         }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] MonitorCreationModel model)
         {
-            var user = HttpContext.Items["User"] as User;
-            if (user == null) return Unauthorized();
-
-            var project = await _projectRepository.GetProjectBySlugAsync(model.ProjectSlug);
-            if (project == null || project.UserId != user.Id)
+            try
             {
-                return NotFound("Project not found or access denied");
-            }
+                var user = HttpContext.Items["User"] as User;
+                if (user == null) return Unauthorized();
 
-            var monitorSlug = !string.IsNullOrWhiteSpace(model.Slug)
-                ? model.Slug
-                : _projectService.GenerateSlug(model.Name);
-
-            if (await _monitorRepository.SlugExistsAsync(project.Id, monitorSlug))
-            {
-                // If the user provided a slug that already exists, generate a new one based on the name
-                if (!string.IsNullOrWhiteSpace(model.Slug))
+                var project = await _projectRepository.GetProjectBySlugAsync(model.ProjectSlug);
+                if (project == null || project.UserId != user.Id)
                 {
-                    monitorSlug = _projectService.GenerateSlug(model.Name);
+                    return NotFound("Project not found or access denied");
                 }
 
-                // If even the name-based slug exists, append a timestamp
+                var monitorSlug = !string.IsNullOrWhiteSpace(model.Slug)
+                    ? model.Slug
+                    : _projectService.GenerateSlug(model.Name);
+
                 if (await _monitorRepository.SlugExistsAsync(project.Id, monitorSlug))
                 {
-                    monitorSlug = $"{monitorSlug}-{DateTime.UtcNow.Ticks}";
+                    // If the user provided a slug that already exists, generate a new one based on the name
+                    if (!string.IsNullOrWhiteSpace(model.Slug))
+                    {
+                        monitorSlug = _projectService.GenerateSlug(model.Name);
+                    }
+
+                    // If even the name-based slug exists, append a timestamp
+                    if (await _monitorRepository.SlugExistsAsync(project.Id, monitorSlug))
+                    {
+                        monitorSlug = $"{monitorSlug}-{DateTime.UtcNow.Ticks}";
+                    }
                 }
+
+                var monitor = new CronMonitor
+                {
+                    ProjectId = project.Id,
+                    Name = model.Name,
+                    Slug = monitorSlug,
+                    ScheduleType = model.ScheduleType,
+                    GraceSeconds = model.GraceSeconds * GetSecondsMultiplier(model.GraceUnit),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                switch (model.ScheduleType)
+                {
+                    case ScheduleType.Interval:
+                        monitor.PeriodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
+                        break;
+                    case ScheduleType.Cron:
+                        monitor.CronExpression = model.CronExpression;
+                        monitor.CronTimezone = model.CronTimezone;
+                        break;
+                    case ScheduleType.Calendar:
+                        monitor.CalendarExpression = model.CalendarExpression;
+                        monitor.CalendarTimezone = model.CalendarTimezone;
+                        break;
+                }
+
+                await _monitorRepository.CreateMonitorAsync(monitor);
+
+                await _axiomLogger.LogInfo("Monitor created", new Dictionary<string, object>
+                {
+                    ["monitor_id"] = monitor.Id,
+                    ["monitor_name"] = monitor.Name,
+                    ["project_id"] = project.Id,
+                    ["user_id"] = user.Id
+                });
+
+                return Ok(new { success = true, redirectUrl = $"/monitor/{monitor.Slug}" });
             }
-
-            var monitor = new CronMonitor
+            catch (Exception ex)
             {
-                ProjectId = project.Id,
-                Name = model.Name,
-                Slug = monitorSlug,
-                ScheduleType = model.ScheduleType,
-                GraceSeconds = model.GraceSeconds * GetSecondsMultiplier(model.GraceUnit),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-
-            switch (model.ScheduleType)
-            {
-                case ScheduleType.Interval:
-                    monitor.PeriodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
-                    break;
-                case ScheduleType.Cron:
-                    monitor.CronExpression = model.CronExpression;
-                    monitor.CronTimezone = model.CronTimezone;
-                    break;
-                case ScheduleType.Calendar:
-                    monitor.CalendarExpression = model.CalendarExpression;
-                    monitor.CalendarTimezone = model.CalendarTimezone;
-                    break;
+                await _axiomLogger.LogError("Failed to create monitor", new Dictionary<string, object>
+                {
+                    ["error"] = ex.Message,
+                    ["project_slug"] = model.ProjectSlug
+                });
+                return StatusCode(500, new { error = "Failed to create monitor" });
             }
-
-            await _monitorRepository.CreateMonitorAsync(monitor);
-
-            return Ok(new { success = true, redirectUrl = $"/monitor/{monitor.Slug}" });
         }
 
         [HttpPost("update-details")]
@@ -102,7 +133,7 @@ namespace HealthyCron.Controllers
             if (!string.Equals(monitor.Slug, model.Slug, StringComparison.OrdinalIgnoreCase))
             {
                 var newSlug = !string.IsNullOrWhiteSpace(model.Slug) ? model.Slug : _projectService.GenerateSlug(model.Name);
-                
+
                 // Validation: Only lowercase letters, numbers, and hyphens
                 if (!System.Text.RegularExpressions.Regex.IsMatch(newSlug, "^[a-z0-9-]+$"))
                 {
@@ -233,18 +264,36 @@ namespace HealthyCron.Controllers
         [HttpPost("{id:guid}/delete")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var user = HttpContext.Items["User"] as User;
-            if (user == null) return Unauthorized();
+            try
+            {
+                var user = HttpContext.Items["User"] as User;
+                if (user == null) return Unauthorized();
 
-            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
-            if (monitor == null) return NotFound();
+                var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+                if (monitor == null) return NotFound();
 
-            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+                var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+                if (project == null || project.UserId != user.Id) return NotFound();
 
-            await _monitorRepository.DeleteMonitorAsync(id);
+                await _monitorRepository.DeleteMonitorAsync(id);
 
-            return Ok(new { success = true, redirectUrl = $"/{project.Slug}/monitors" });
+                await _axiomLogger.LogInfo("Monitor deleted", new Dictionary<string, object>
+                {
+                    ["monitor_id"] = id,
+                    ["user_id"] = user.Id
+                });
+
+                return Ok(new { success = true, redirectUrl = $"/{project.Slug}/monitors" });
+            }
+            catch (Exception ex)
+            {
+                await _axiomLogger.LogError("Failed to delete monitor", new Dictionary<string, object>
+                {
+                    ["monitor_id"] = id,
+                    ["error"] = ex.Message
+                });
+                return StatusCode(500, new { error = "Failed to delete monitor" });
+            }
         }
 
         [HttpGet("api/{projectId:guid}/status")]
@@ -266,6 +315,62 @@ namespace HealthyCron.Controllers
                 m.LastPingAt,
                 m.NextExpectedAt
             }));
+        }
+
+        // Integration Management Endpoints
+        [HttpGet("{id:guid}/integrations")]
+        public async Task<IActionResult> GetIntegrations(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(id);
+            return Json(integrations);
+        }
+
+        [HttpPost("{id:guid}/integrations")]
+        public async Task<IActionResult> AddIntegration(Guid id, [FromBody] AddIntegrationModel model)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            // Verify integration belongs to the same project
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(model.IntegrationId);
+            if (integration == null || integration.ProjectId != project.Id)
+            {
+                return BadRequest("Integration not found or does not belong to this project");
+            }
+
+            await _integrationRepository.AddMonitorIntegrationAsync(id, model.IntegrationId);
+            return Ok(new { success = true });
+        }
+
+        [HttpDelete("{id:guid}/integrations/{integrationId:guid}")]
+        public async Task<IActionResult> RemoveIntegration(Guid id, Guid integrationId)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            await _integrationRepository.RemoveMonitorIntegrationAsync(id, integrationId);
+            return Ok(new { success = true });
         }
     }
 }

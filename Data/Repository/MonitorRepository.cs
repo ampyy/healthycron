@@ -63,7 +63,7 @@ namespace HealthyCron.Data.Repository
             const string sql = @"
                 SELECT 
                     id, monitor_id, received_at, status, message,
-                    ip_address, user_agent, http_method, request_headers, response_time_ms
+                    ip_address, user_agent, http_method, request_headers, duration_ms
                 FROM monitor_pings 
                 WHERE monitor_id = @MonitorId 
                 ORDER BY received_at DESC 
@@ -91,7 +91,7 @@ namespace HealthyCron.Data.Repository
             var sql = @"
                 SELECT 
                     p.id, p.monitor_id, p.received_at, p.status, p.message,
-                    p.ip_address, p.user_agent, p.http_method, p.request_headers, p.response_time_ms,
+                    p.ip_address, p.user_agent, p.http_method, p.request_headers, p.duration_ms,
                     m.name as MonitorName
                 FROM monitor_pings p
                 JOIN monitors m ON p.monitor_id = m.id
@@ -136,11 +136,11 @@ namespace HealthyCron.Data.Repository
 
                 INSERT INTO monitor_pings (
                     monitor_id, received_at, status, message,
-                    ip_address, user_agent, http_method, request_headers, response_time_ms, duration_ms
+                    ip_address, user_agent, http_method, request_headers, duration_ms
                 )
                 VALUES (
                     @MonitorId, @ReceivedAt, @Status, @Message,
-                    CAST(@IpAddress AS inet), @UserAgent, @HttpMethod, CAST(@RequestHeaders AS jsonb), @ResponseTimeMs, @DurationMs
+                    CAST(@IpAddress AS inet), @UserAgent, @HttpMethod, CAST(@RequestHeaders AS jsonb), @DurationMs
                 );";
 
             var rowsAffected = await ExecuteAsync(sql, new
@@ -160,7 +160,6 @@ namespace HealthyCron.Data.Repository
                 UserAgent = ping.UserAgent,
                 HttpMethod = ping.HttpMethod,
                 RequestHeaders = ping.RequestHeaders,
-                ResponseTimeMs = ping.ResponseTimeMs,
                 DurationMs = ping.DurationMs
             });
 
@@ -244,8 +243,8 @@ namespace HealthyCron.Data.Repository
                 AND next_expected_at IS NOT NULL
                 AND (next_expected_at + (grace_seconds || ' seconds')::interval) < CURRENT_TIMESTAMP";
 
-            return await QueryAsync<CronMonitor>(sql, new 
-            { 
+            return await QueryAsync<CronMonitor>(sql, new
+            {
                 MissedStatus = (int)MonitorStatus.Missed,
                 PausedStatus = (int)MonitorStatus.Paused
             });

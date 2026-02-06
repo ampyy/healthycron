@@ -1,0 +1,170 @@
+@{
+    var project = ViewBag.Project as HealthyCron.Models.Project;
+    var user = ViewBag.User as HealthyCron.Models.User;
+    var integrations = ViewBag.Integrations as List<object>;
+    ViewData["Title"] = $"{(project != null ? project.Name : "Project")} - Integrations";
+    Layout = "_DashboardLayout";
+}
+
+<div class="max-w-4xl mx-auto pb-20">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Integrations</span>
+    </div>
+
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <i data-lucide="zap" class="text-blue"></i>
+            Integrations
+        </h1>
+    </div>
+
+    <!-- Slack Integration Section -->
+    <section class="glass-card rounded-2xl overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="font-bold text-white">Slack</h2>
+                    <p class="text-xs text-text-secondary">Get notified in Slack when monitors go down or recover</p>
+                </div>
+            </div>
+            <a href="/project/@project.Slug/integrations/slack/authorize" 
+               class="bg-blue hover:bg-blue/80 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue/20 flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add to Slack
+            </a>
+        </div>
+
+        @if (integrations != null && integrations.Any())
+        {
+            var slackIntegrations = integrations.Where(i =>
+            {
+                var integration = ((dynamic)i).Integration as HealthyCron.Models.Integration;
+                return integration.Type == HealthyCron.Enums.IntegrationType.Slack;
+            }).ToList();
+
+            if (slackIntegrations.Any())
+            {
+                        <div class="p-0">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5">
+                                            <th class="px-6 py-4">Workspace</th>
+                                            <th class="px-6 py-4">Channel</th>
+                                            <th class="px-6 py-4">Status</th>
+                                            <th class="px-6 py-4">Created</th>
+                                            <th class="px-6 py-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-white/5">
+                                @foreach (var item in slackIntegrations)
+                                {
+                                    var integration = ((dynamic)item).Integration as HealthyCron.Models.Integration;
+                                    var slackDetails = ((dynamic)item).SlackDetails as HealthyCron.Models.SlackIntegration;
+
+                                                <tr>
+                                                    <td class="px-6 py-4">
+                                                        <div class="font-bold text-white">@slackDetails?.WorkspaceName</div>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-white">#@slackDetails?.ChannelName</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                            @if (integration.IsActive)
+                                            {
+                                                                <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] rounded uppercase font-bold">Active</span>
+                                            }
+                                            else
+                                            {
+                                                                <span class="px-2 py-0.5 bg-white/5 text-text-secondary text-[10px] rounded uppercase font-bold">Disabled</span>
+                                            }
+                                                    </td>
+                                                    <td class="px-6 py-4 text-xs text-text-secondary">
+                                            @integration.CreatedAt.ToString("MMM dd, yyyy")
+                                                    </td>
+                                                    <td class="px-6 py-4 text-right">
+                                            @if (integration.IsActive)
+                                            {
+                                                                <form action="/integrations/@integration.Id/disable" method="POST" style="display:inline;">
+                                                                    <button type="submit" class="text-rose-500 hover:text-rose-400 p-2 hover:bg-rose-500/10 rounded-lg transition-all" title="Disable">
+                                                                        <i data-lucide="power" class="w-4 h-4"></i>
+                                                                    </button>
+                                                                </form>
+                                            }
+                                                    </td>
+                                                </tr>
+                                }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            }
+            else
+            {
+                        <div class="p-12 text-center">
+                            <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="inbox" class="w-8 h-8 text-text-secondary"></i>
+                            </div>
+                            <p class="text-text-secondary">No Slack integrations configured yet</p>
+                            <p class="text-xs text-text-secondary mt-1">Click "Add to Slack" to get started</p>
+                        </div>
+            }
+        }
+        else
+        {
+                <div class="p-12 text-center">
+                    <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="inbox" class="w-8 h-8 text-text-secondary"></i>
+                    </div>
+                    <p class="text-text-secondary">No integrations configured yet</p>
+                    <p class="text-xs text-text-secondary mt-1">Click "Add to Slack" to get started</p>
+                </div>
+        }
+
+        <div class="px-6 py-4 bg-navy/50 border-t border-white/5 flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-text-secondary"></i>
+            <p class="text-xs text-text-secondary">
+                Slack integrations send notifications to your workspace when monitors change status.
+            </p>
+        </div>
+    </section>
+
+    <!-- Coming Soon Section -->
+    <section class="glass-card rounded-2xl overflow-hidden opacity-50">
+        <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                    <i data-lucide="mail" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-white">Email</h2>
+                    <p class="text-xs text-text-secondary">Coming soon</p>
+                </div>
+            </div>
+            <button disabled class="bg-white/5 text-text-secondary px-6 py-2.5 rounded-xl font-bold cursor-not-allowed">
+                Coming Soon
+            </button>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>
