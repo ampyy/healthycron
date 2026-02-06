@@ -26,9 +26,14 @@ namespace HealthyCron.Data.Repository
 
         public async Task<Guid> CreateKeyAsync(ProjectAccessKey key)
         {
+            if (key.Id == Guid.Empty)
+            {
+                key.Id = Guid.NewGuid();
+            }
+
             const string sql = @"
-                INSERT INTO project_api_keys (project_id, key_type, key_hash, key_prefix, created_at) 
-                VALUES (@ProjectId, @KeyType, @KeyHash, @KeyPrefix, @CreatedAt) 
+                INSERT INTO project_api_keys (id, project_id, key_type, key_hash, key_prefix, created_at) 
+                VALUES (@Id, @ProjectId, @KeyType, @KeyHash, @KeyPrefix, @CreatedAt) 
                 RETURNING id";
             return await ExecuteScalarAsync<Guid>(sql, key);
         }

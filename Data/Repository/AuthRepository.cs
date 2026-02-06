@@ -24,11 +24,12 @@ namespace HealthyCron.Data.Repository
 
         public async Task<Guid> CreateUserAsync(string email, string? passwordHash = null)
         {
+            var id = Guid.NewGuid();
             const string sql = @"
-                INSERT INTO users (email, password_hash) 
-                VALUES (@Email, @PasswordHash) 
+                INSERT INTO users (id, email, password_hash) 
+                VALUES (@Id, @Email, @PasswordHash) 
                 RETURNING id";
-            return await ExecuteScalarAsync<Guid>(sql, new { Email = email, PasswordHash = passwordHash });
+            return await ExecuteScalarAsync<Guid>(sql, new { Id = id, Email = email, PasswordHash = passwordHash });
         }
 
         public async Task UpdateUserPasswordAsync(Guid userId, string passwordHash)
@@ -40,9 +41,9 @@ namespace HealthyCron.Data.Repository
         public async Task CreateMagicTokenAsync(Guid userId, string tokenHash, DateTime expiresAt)
         {
             const string sql = @"
-                INSERT INTO auth_magic_tokens (user_id, token_hash, expires_at) 
-                VALUES (@UserId, @TokenHash, @ExpiresAt)";
-            await ExecuteAsync(sql, new { UserId = userId, TokenHash = tokenHash, ExpiresAt = expiresAt });
+                INSERT INTO auth_magic_tokens (id, user_id, token_hash, expires_at) 
+                VALUES (@Id, @UserId, @TokenHash, @ExpiresAt)";
+            await ExecuteAsync(sql, new { Id = Guid.NewGuid(), UserId = userId, TokenHash = tokenHash, ExpiresAt = expiresAt });
         }
 
         public async Task<MagicToken?> GetMagicTokenByHashAsync(string tokenHash)
@@ -60,9 +61,9 @@ namespace HealthyCron.Data.Repository
         public async Task CreateSessionAsync(Guid userId, string sessionTokenHash, DateTime expiresAt)
         {
             const string sql = @"
-                INSERT INTO user_sessions (user_id, session_token, expires_at) 
-                VALUES (@UserId, @SessionTokenHash, @ExpiresAt)";
-            await ExecuteAsync(sql, new { UserId = userId, SessionTokenHash = sessionTokenHash, ExpiresAt = expiresAt });
+                INSERT INTO user_sessions (id, user_id, session_token, expires_at) 
+                VALUES (@Id, @UserId, @SessionTokenHash, @ExpiresAt)";
+            await ExecuteAsync(sql, new { Id = Guid.NewGuid(), UserId = userId, SessionTokenHash = sessionTokenHash, ExpiresAt = expiresAt });
         }
 
         public async Task<UserSession?> GetSessionByHashAsync(string sessionTokenHash)

@@ -2,7 +2,7 @@ using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://localhost:5032");
+// builder.WebHost.UseUrls("http://localhost:5032");
 
 // ============================================================================
 // CONFIGURATION SETUP - Strongly-typed and validated at startup
@@ -30,14 +30,6 @@ var slackSettings = builder.Services.AddValidatedConfiguration<SlackSettings>(
 
 var encryptionSettings = builder.Services.AddValidatedConfiguration<EncryptionSettings>(
     builder.Configuration, EncryptionSettings.SectionName);
-
-// Debug Axiom Configuration
-Console.WriteLine("=== Axiom Configuration ===");
-Console.WriteLine($"DevToken: {builder.Configuration["Axiom:DevToken"]}");
-Console.WriteLine($"DevDataset: {builder.Configuration["Axiom:DevDataset"]}");
-Console.WriteLine($"AxiomDomain: {builder.Configuration["Axiom:AxiomDomain"]}");
-Console.WriteLine($"EnableDevLogging: {builder.Configuration["Axiom:EnableDevLogging"]}");
-Console.WriteLine("===========================");
 
 // ============================================================================
 // SERVICE REGISTRATION
@@ -67,7 +59,6 @@ builder.Services.AddScoped<HealthyCron.Logic.Service.ProjectService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAccessKeyService, HealthyCron.Logic.Service.AccessKeyService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAlertService, HealthyCron.Logic.Service.AlertService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IPingService, HealthyCron.Logic.Service.PingService>();
-builder.Services.AddScoped<HealthyCron.Logic.Interfaces.ISlackOAuthService, HealthyCron.Logic.Service.SlackOAuthService>();
 
 // Register Utility Services
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IEncryptionService, HealthyCron.Utilities.Service.EncryptionService>();

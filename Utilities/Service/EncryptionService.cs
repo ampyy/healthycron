@@ -10,13 +10,18 @@ namespace HealthyCron.Utilities.Service
     {
         private readonly byte[] _key;
 
-        public EncryptionService(IOptions<EncryptionSettings> settings)
+        public EncryptionService(EncryptionSettings settings)
         {
-            _key = Convert.FromBase64String(settings.Value.Key);
+            if (string.IsNullOrEmpty(settings.Key))
+            {
+                throw new ArgumentException("Encryption key is missing in configuration (Encryption:Key)");
+            }
+
+            _key = Convert.FromBase64String(settings.Key);
 
             if (_key.Length != 32)
             {
-                throw new ArgumentException("Encryption key must be 32 bytes (256 bits)");
+                throw new ArgumentException($"Encryption key must be 32 bytes (256 bits). Current length: {_key.Length} bytes. Ensure you provide a valid 32-byte Base64 string.");
             }
         }
 

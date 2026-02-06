@@ -55,13 +55,11 @@ namespace HealthyCron.Controllers
 
                 if (await _monitorRepository.SlugExistsAsync(project.Id, monitorSlug))
                 {
-                    // If the user provided a slug that already exists, generate a new one based on the name
                     if (!string.IsNullOrWhiteSpace(model.Slug))
                     {
                         monitorSlug = _projectService.GenerateSlug(model.Name);
                     }
 
-                    // If even the name-based slug exists, append a timestamp
                     if (await _monitorRepository.SlugExistsAsync(project.Id, monitorSlug))
                     {
                         monitorSlug = $"{monitorSlug}-{DateTime.UtcNow.Ticks}";
@@ -129,12 +127,10 @@ namespace HealthyCron.Controllers
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
             if (project == null || project.UserId != user.Id) return NotFound("Access denied");
 
-            // Slug uniqueness check if changed
             if (!string.Equals(monitor.Slug, model.Slug, StringComparison.OrdinalIgnoreCase))
             {
                 var newSlug = !string.IsNullOrWhiteSpace(model.Slug) ? model.Slug : _projectService.GenerateSlug(model.Name);
 
-                // Validation: Only lowercase letters, numbers, and hyphens
                 if (!System.Text.RegularExpressions.Regex.IsMatch(newSlug, "^[a-z0-9-]+$"))
                 {
                     return BadRequest("Slug must contain only lowercase letters, numbers, and hyphens");
@@ -207,17 +203,10 @@ namespace HealthyCron.Controllers
             if (user == null) return Redirect("/login");
 
             var monitor = await _monitorRepository.GetMonitorBySlugAsync(slug);
-            if (monitor == null)
-            {
-                return NotFound();
-            }
+            if (monitor == null) return NotFound();
 
-            // Verify ownership via project
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id)
-            {
-                return NotFound();
-            }
+            if (project == null || project.UserId != user.Id) return NotFound();
 
             ViewBag.Project = project;
             ViewBag.UserEmail = user.Email;
@@ -227,9 +216,8 @@ namespace HealthyCron.Controllers
 
             var keys = await _accessKeyService.GetKeysByProjectIdAsync(project.Id);
             var pingKey = keys.FirstOrDefault(k => k.KeyType == ApiKeyType.Ping && k.RevokedAt == null);
-            ViewBag.PingKey = pingKey?.KeyPrefix ?? "PING_KEY"; // We only have prefix after first show
+            ViewBag.PingKey = pingKey?.KeyPrefix ?? "PING_KEY";
 
-            // Graph Data: Last 24 hours grouped by hour
             var now = DateTime.UtcNow;
             var hourlyData = new int[24];
             for (int i = 0; i < 24; i++)
@@ -317,7 +305,6 @@ namespace HealthyCron.Controllers
             }));
         }
 
-        // Integration Management Endpoints
         [HttpGet("{id:guid}/integrations")]
         public async Task<IActionResult> GetIntegrations(Guid id)
         {
@@ -346,7 +333,6 @@ namespace HealthyCron.Controllers
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
             if (project == null || project.UserId != user.Id) return NotFound();
 
-            // Verify integration belongs to the same project
             var integration = await _integrationRepository.GetIntegrationByIdAsync(model.IntegrationId);
             if (integration == null || integration.ProjectId != project.Id)
             {

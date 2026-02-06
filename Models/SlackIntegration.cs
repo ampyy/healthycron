@@ -9,6 +9,7 @@ namespace HealthyCron.Models
         public string EncryptedBotToken { get; set; } = string.Empty;
         public string WorkspaceName { get; set; } = string.Empty;
         public string? AppId { get; set; }
+        public string? WebhookUrl { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

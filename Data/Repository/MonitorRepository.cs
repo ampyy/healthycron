@@ -35,15 +35,20 @@ namespace HealthyCron.Data.Repository
 
         public async Task<Guid> CreateMonitorAsync(CronMonitor monitor)
         {
+            if (monitor.Id == Guid.Empty)
+            {
+                monitor.Id = Guid.NewGuid();
+            }
+
             const string sql = @"
                 INSERT INTO monitors (
-                    project_id, name, slug, schedule_type, 
+                    id, project_id, name, slug, schedule_type, 
                     period_seconds, cron_expression, cron_timezone, 
                     calendar_expression, calendar_timezone, grace_seconds,
                     next_expected_at
                 ) 
                 VALUES (
-                    @ProjectId, @Name, @Slug, @ScheduleType, 
+                    @Id, @ProjectId, @Name, @Slug, @ScheduleType, 
                     @PeriodSeconds, @CronExpression, @CronTimezone, 
                     @CalendarExpression, @CalendarTimezone, @GraceSeconds,
                     @NextExpectedAt

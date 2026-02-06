@@ -46,13 +46,13 @@ namespace HealthyCron.Controllers
             var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
 
             // Get Slack details for each Slack integration
-            var integrationsWithDetails = new List<object>();
+            var integrationsWithDetails = new List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>();
             foreach (var integration in integrations)
             {
                 if (integration.Type == IntegrationType.Slack)
                 {
                     var slackDetails = await _integrationRepository.GetSlackIntegrationByIntegrationIdAsync(integration.Id);
-                    integrationsWithDetails.Add(new
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
                     {
                         Integration = integration,
                         SlackDetails = slackDetails
@@ -60,10 +60,10 @@ namespace HealthyCron.Controllers
                 }
                 else
                 {
-                    integrationsWithDetails.Add(new
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
                     {
                         Integration = integration,
-                        SlackDetails = (SlackIntegration?)null
+                        SlackDetails = null
                     });
                 }
             }
@@ -149,6 +149,7 @@ namespace HealthyCron.Controllers
                 EncryptedBotToken = encryptedToken,
                 WorkspaceName = oauthResponse.Team?.Name ?? "",
                 AppId = oauthResponse.AppId,
+                WebhookUrl = oauthResponse.IncomingWebhook?.Url,
                 CreatedAt = DateTime.UtcNow
             };
 

@@ -1,7 +1,7 @@
 @{
     var project = ViewBag.Project as HealthyCron.Models.Project;
     var user = ViewBag.User as HealthyCron.Models.User;
-    var integrations = ViewBag.Integrations as List<object>;
+    var integrations = ViewBag.Integrations as List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>;
     ViewData["Title"] = $"{(project != null ? project.Name : "Project")} - Integrations";
     Layout = "_DashboardLayout";
 }
@@ -51,8 +51,7 @@
         {
             var slackIntegrations = integrations.Where(i =>
             {
-                var integration = ((dynamic)i).Integration as HealthyCron.Models.Integration;
-                return integration.Type == HealthyCron.Enums.IntegrationType.Slack;
+                return i.Integration.Type == HealthyCron.Enums.IntegrationType.Slack;
             }).ToList();
 
             if (slackIntegrations.Any())
@@ -72,8 +71,8 @@
                                     <tbody class="divide-y divide-white/5">
                                 @foreach (var item in slackIntegrations)
                                 {
-                                    var integration = ((dynamic)item).Integration as HealthyCron.Models.Integration;
-                                    var slackDetails = ((dynamic)item).SlackDetails as HealthyCron.Models.SlackIntegration;
+                                    var integration = item.Integration;
+                                    var slackDetails = item.SlackDetails;
 
                                                 <tr>
                                                     <td class="px-6 py-4">
