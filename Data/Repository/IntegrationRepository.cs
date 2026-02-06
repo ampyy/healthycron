@@ -111,7 +111,7 @@ namespace HealthyCron.Data.Repository
             return rows > 0;
         }
 
-        public async Task<Guid> CreateNotificationJobAsync(Guid monitorPingId, Guid integrationId, AlertType alertType)
+        public async Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType)
         {
             const string sql = @"
                 INSERT INTO notification_jobs (monitor_ping_id, integration_id, alert_type, status)

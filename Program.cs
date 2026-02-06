@@ -31,6 +31,13 @@ var slackSettings = builder.Services.AddValidatedConfiguration<SlackSettings>(
 var encryptionSettings = builder.Services.AddValidatedConfiguration<EncryptionSettings>(
     builder.Configuration, EncryptionSettings.SectionName);
 
+// Debug Axiom Configuration
+Console.WriteLine("=== Axiom Configuration ===");
+Console.WriteLine($"DevToken: {builder.Configuration["Axiom:DevToken"]}");
+Console.WriteLine($"DevDataset: {builder.Configuration["Axiom:DevDataset"]}");
+Console.WriteLine($"AxiomDomain: {builder.Configuration["Axiom:AxiomDomain"]}");
+Console.WriteLine($"EnableDevLogging: {builder.Configuration["Axiom:EnableDevLogging"]}");
+Console.WriteLine("===========================");
 
 // ============================================================================
 // SERVICE REGISTRATION

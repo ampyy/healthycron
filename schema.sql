@@ -68,7 +68,6 @@ CREATE TABLE IF NOT EXISTS monitors (
     last_ping_at TIMESTAMP WITH TIME ZONE,
     last_status SMALLINT, -- 0: Success, 1: Running, 2: Failed, 3: Missed, 4: Paused
     next_expected_at TIMESTAMP WITH TIME ZONE,
-    last_start_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     is_deleted BOOLEAN DEFAULT FALSE,
@@ -77,7 +76,7 @@ CREATE TABLE IF NOT EXISTS monitors (
 
 -- Monitor Pings Table
 CREATE TABLE IF NOT EXISTS monitor_pings (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id SERIAL PRIMARY KEY,
     monitor_id UUID NOT NULL REFERENCES monitors(id) ON DELETE CASCADE,
     received_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     status SMALLINT NOT NULL, -- 0: Success, 1: Late, 2: Down
@@ -123,7 +122,7 @@ CREATE TABLE IF NOT EXISTS monitor_integrations (
 -- Notification Jobs Table
 CREATE TABLE IF NOT EXISTS notification_jobs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    monitor_ping_id UUID NOT NULL,
+    monitor_ping_id INTEGER NOT NULL,
     integration_id UUID NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
     alert_type SMALLINT NOT NULL, -- 1=Down, 2=Recovery
     status SMALLINT NOT NULL DEFAULT 0, -- 0=Pending, 1=Processing, 2=Sent, 3=Failed

@@ -21,6 +21,6 @@ namespace HealthyCron.Data.Interfaces
         Task<bool> RemoveMonitorIntegrationAsync(Guid monitorId, Guid integrationId);
 
         // Notification Jobs
-        Task<Guid> CreateNotificationJobAsync(Guid monitorPingId, Guid integrationId, AlertType alertType);
+        Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType);
     }
 }

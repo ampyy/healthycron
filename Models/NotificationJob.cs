@@ -5,7 +5,7 @@ namespace HealthyCron.Models
     public class NotificationJob
     {
         public Guid Id { get; set; }
-        public Guid MonitorPingId { get; set; }
+        public int MonitorPingId { get; set; }
         public Guid IntegrationId { get; set; }
         public AlertType AlertType { get; set; }
         public NotificationJobStatus Status { get; set; }

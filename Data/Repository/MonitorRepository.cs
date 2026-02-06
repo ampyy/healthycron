@@ -76,7 +76,7 @@ namespace HealthyCron.Data.Repository
             const string sql = @"
                 SELECT 
                     p.id, p.monitor_id, p.received_at, p.status, p.message,
-                    p.ip_address, p.user_agent, p.http_method, p.request_headers, p.response_time_ms,
+                    p.ip_address, p.user_agent, p.http_method, p.request_headers, p.duration_ms,
                     m.name as MonitorName
                 FROM monitor_pings p
                 JOIN monitors m ON p.monitor_id = m.id
@@ -117,7 +117,7 @@ namespace HealthyCron.Data.Repository
             return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, MonitorId = monitorId, Status = status, Search = $"%{search}%", Limit = limit });
         }
 
-        public async Task<bool> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus, DateTime? lastStartAt)
+        public async Task<bool> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus)
         {
             var monitor = await GetMonitorByIdAsync(ping.MonitorId);
             if (monitor == null) return false;
@@ -130,7 +130,6 @@ namespace HealthyCron.Data.Repository
                 SET last_ping_at = @LastPingAt, 
                     last_status = @LastStatus, 
                     next_expected_at = @NextExpectedAt,
-                    last_start_at = @LastStartAt,
                     updated_at = @UpdatedAt
                 WHERE id = @Id;
 
@@ -149,7 +148,6 @@ namespace HealthyCron.Data.Repository
                 LastPingAt = now,
                 LastStatus = (int)newStatus,
                 NextExpectedAt = nextExpectedAt,
-                LastStartAt = lastStartAt,
                 UpdatedAt = now,
                 // Ping Data
                 MonitorId = ping.MonitorId,

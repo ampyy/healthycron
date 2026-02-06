@@ -58,14 +58,7 @@ namespace HealthyCron.Logic.Service
         private async Task ExecutePingAsync(Monitor monitor, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
         {
             var (pingType, message) = ResolveStatusAndMessage(statusFromUrl, statusHeader, bodyJson);
-
-            int? durationMs = null;
             var now = DateTime.UtcNow;
-
-            if (pingType == PingType.Success && monitor.LastStartAt.HasValue)
-            {
-                durationMs = (int)(now - monitor.LastStartAt.Value).TotalMilliseconds;
-            }
 
             var ping = new MonitorPing
             {
@@ -76,7 +69,7 @@ namespace HealthyCron.Logic.Service
                 UserAgent = metadata.UserAgent,
                 HttpMethod = metadata.Method,
                 RequestHeaders = metadata.HeadersJson,
-                DurationMs = durationMs,
+                DurationMs = null, // Duration monitoring removed as it depends on last_start_at
                 ReceivedAt = now
             };
 
@@ -94,7 +87,7 @@ namespace HealthyCron.Logic.Service
             };
 
             // Record the ping and update monitor state
-            await _monitorRepository.RecordPingAsync(ping, newStatus, pingType == PingType.Start ? now : (pingType == PingType.Success ? null : monitor.LastStartAt));
+            await _monitorRepository.RecordPingAsync(ping, newStatus);
 
             // Broadcast real-time update via SignalR
             var payload = new
@@ -147,15 +140,13 @@ namespace HealthyCron.Logic.Service
                     try
                     {
                         // Get the ping ID (we need to retrieve it since RecordPingAsync doesn't return it)
-                        // For now, we'll use a workaround - the ping ID will be the most recent one
-                        // In production, RecordPingAsync should return the ping ID
                         var recentPings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 1);
                         var pingId = recentPings.FirstOrDefault()?.Id ?? 0;
 
                         if (pingId > 0)
                         {
                             await _integrationRepository.CreateNotificationJobAsync(
-                                new Guid(pingId.ToString().PadLeft(32, '0')), // Temporary workaround
+                                pingId,
                                 integration.Id,
                                 alertType.Value
                             );
