@@ -2,8 +2,8 @@ namespace HealthyCron.Models
 {
     public enum PingType : short
     {
-        Success = 0,
+        Fail = 0,
         Start = 1,
-        Fail = 2
+        Success = 2
     }
 }

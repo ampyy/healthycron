@@ -80,7 +80,12 @@ namespace HealthyCron.Controllers
                 switch (model.ScheduleType)
                 {
                     case ScheduleType.Interval:
-                        monitor.PeriodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
+                        var periodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
+                        if (periodSeconds < 60)
+                        {
+                            return BadRequest(new { success = false, message = "Minimum monitor interval is 60 seconds" });
+                        }
+                        monitor.PeriodSeconds = periodSeconds;
                         break;
                     case ScheduleType.Cron:
                         monitor.CronExpression = model.CronExpression;
@@ -169,7 +174,12 @@ namespace HealthyCron.Controllers
             switch (model.ScheduleType)
             {
                 case ScheduleType.Interval:
-                    monitor.PeriodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
+                    var periodSeconds = model.PeriodValue * GetSecondsMultiplier(model.PeriodUnit);
+                    if (periodSeconds < 60)
+                    {
+                        return BadRequest(new { success = false, message = "Minimum monitor interval is 60 seconds" });
+                    }
+                    monitor.PeriodSeconds = periodSeconds;
                     break;
                 case ScheduleType.Cron:
                     monitor.CronExpression = model.CronExpression;

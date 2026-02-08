@@ -17,8 +17,10 @@ namespace HealthyCron.Data.Interfaces
 
         // Monitor Integration Mapping
         Task<IEnumerable<Integration>> GetMonitorIntegrationsAsync(Guid monitorId);
+        Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId);
         Task<bool> AddMonitorIntegrationAsync(Guid monitorId, Guid integrationId);
         Task<bool> RemoveMonitorIntegrationAsync(Guid monitorId, Guid integrationId);
+        Task<bool> SyncMonitorIntegrationsAsync(Guid integrationId, List<Guid> monitorIds);
 
         // Notification Jobs
         Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType);

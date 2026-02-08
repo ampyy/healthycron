@@ -241,14 +241,14 @@ namespace HealthyCron.Data.Repository
             const string sql = @"
                 SELECT * FROM monitors 
                 WHERE is_deleted = FALSE 
-                AND last_status != @MissedStatus
+                AND last_status != @FailedStatus
                 AND last_status != @PausedStatus
                 AND next_expected_at IS NOT NULL
                 AND (next_expected_at + (grace_seconds || ' seconds')::interval) < CURRENT_TIMESTAMP";
 
             return await QueryAsync<CronMonitor>(sql, new
             {
-                MissedStatus = (int)MonitorStatus.Missed,
+                FailedStatus = (int)MonitorStatus.Failed,
                 PausedStatus = (int)MonitorStatus.Paused
             });
         }

@@ -8,6 +8,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using HealthyCron.Hubs;
 using System.Collections.Generic;
+using HealthyCron.Utilities.Interface;
 
 namespace HealthyCron.Logic.Service
 {
@@ -15,25 +16,25 @@ namespace HealthyCron.Logic.Service
     {
         private readonly IMonitorRepository _monitorRepository;
         private readonly IAccessKeyService _accessKeyService;
-        private readonly IAlertService _alertService;
         private readonly IIntegrationRepository _integrationRepository;
         private readonly ILogger<PingService> _logger;
         private readonly IHubContext<MonitorHub> _hubContext;
+        private readonly IQueueService _queueService;
 
         public PingService(
             IMonitorRepository monitorRepository,
             IAccessKeyService accessKeyService,
-            IAlertService alertService,
             IIntegrationRepository integrationRepository,
             ILogger<PingService> logger,
-            IHubContext<MonitorHub> hubContext)
+            IHubContext<MonitorHub> hubContext,
+            IQueueService queueService)
         {
             _monitorRepository = monitorRepository;
             _accessKeyService = accessKeyService;
-            _alertService = alertService;
             _integrationRepository = integrationRepository;
             _logger = logger;
             _hubContext = hubContext;
+            _queueService = queueService;
         }
 
         public async Task ProcessPingAsync(Guid monitorId, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
@@ -125,7 +126,7 @@ namespace HealthyCron.Logic.Service
             // DOWN → UP: Trigger RECOVERY alert
             else if (previousStatus == MonitorStatus.Failed && newStatus == MonitorStatus.Success)
             {
-                alertType = Enums.AlertType.Recovery;
+                alertType = Enums.AlertType.Up;
                 _logger.LogInformation("Monitor {MonitorId} ({MonitorName}) RECOVERED from DOWN to UP",
                     monitor.Id, monitor.Name);
             }
@@ -145,14 +146,25 @@ namespace HealthyCron.Logic.Service
 
                         if (pingId > 0)
                         {
-                            await _integrationRepository.CreateNotificationJobAsync(
+                            var jobId = await _integrationRepository.CreateNotificationJobAsync(
                                 pingId,
                                 integration.Id,
                                 alertType.Value
                             );
 
-                            _logger.LogInformation("Created notification job for monitor {MonitorId}, integration {IntegrationId}, alert type {AlertType}",
-                                monitor.Id, integration.Id, alertType.Value);
+                            _logger.LogInformation("Created notification job {JobId} for monitor {MonitorId}, integration {IntegrationId}, alert type {AlertType}",
+                                jobId, monitor.Id, integration.Id, alertType.Value);
+
+                            // Send Job ID to SQS queue for processing
+                            try
+                            {
+                                await _queueService.SendMessageAsync(new { jobId = jobId });
+                                _logger.LogInformation("Successfully sent Job ID {JobId} to SQS queue", jobId);
+                            }
+                            catch (Exception queueEx)
+                            {
+                                _logger.LogError(queueEx, "Failed to send Job ID {JobId} to SQS queue", jobId);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -161,11 +173,6 @@ namespace HealthyCron.Logic.Service
                             monitor.Id, integration.Id);
                     }
                 }
-
-                // Also trigger the legacy alert service
-                await _alertService.TriggerAlertAsync(monitor,
-                    alertType.Value == Enums.AlertType.Down ? "Monitor Down" : "Monitor Recovered",
-                    message);
             }
         }
 
