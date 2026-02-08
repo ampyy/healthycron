@@ -10,12 +10,12 @@ namespace HealthyCron.Controllers
     [Route("ping")]
     public class PingController : Controller
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IPingService _pingService;
         private readonly AxiomLogger _axiomLogger;
 
-        public PingController(IServiceProvider serviceProvider, AxiomLogger axiomLogger)
+        public PingController(IPingService pingService, AxiomLogger axiomLogger)
         {
-            _serviceProvider = serviceProvider;
+            _pingService = pingService;
             _axiomLogger = axiomLogger;
         }
 
@@ -39,25 +39,20 @@ namespace HealthyCron.Controllers
                     ["method"] = metadata.Method
                 });
 
-                // Background processing to not block the caller
-                _ = Task.Run(async () =>
+                // Process ping synchronously to ensure reliability
+                try
                 {
-                    try
+                    await _pingService.ProcessPingAsync(id, status ?? "success", headerStatus, body, metadata);
+                }
+                catch (Exception ex)
+                {
+                    await _axiomLogger.LogError("Failed to process ping by ID", new Dictionary<string, object>
                     {
-                        using var scope = _serviceProvider.CreateScope();
-                        var pingService = scope.ServiceProvider.GetRequiredService<IPingService>();
-                        await pingService.ProcessPingAsync(id, status ?? "success", headerStatus, body, metadata);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _axiomLogger.LogError("Failed to process ping by ID", new Dictionary<string, object>
-                        {
-                            ["monitor_id"] = id,
-                            ["error"] = ex.Message,
-                            ["stack_trace"] = ex.StackTrace ?? ""
-                        });
-                    }
-                });
+                        ["monitor_id"] = id,
+                        ["error"] = ex.Message,
+                        ["stack_trace"] = ex.StackTrace ?? ""
+                    });
+                }
 
                 return Ok(new { message = "Ping received", timestamp = DateTime.UtcNow });
             }
@@ -94,26 +89,21 @@ namespace HealthyCron.Controllers
                     ["method"] = metadata.Method
                 });
 
-                // Background processing
-                _ = Task.Run(async () =>
+                // Process ping synchronously
+                try
                 {
-                    try
+                    await _pingService.ProcessPingBySlugAsync(pingKey, slug, status ?? "success", headerStatus, body, metadata);
+                }
+                catch (Exception ex)
+                {
+                    await _axiomLogger.LogError("Failed to process ping by slug", new Dictionary<string, object>
                     {
-                        using var scope = _serviceProvider.CreateScope();
-                        var pingService = scope.ServiceProvider.GetRequiredService<IPingService>();
-                        await pingService.ProcessPingBySlugAsync(pingKey, slug, status ?? "success", headerStatus, body, metadata);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _axiomLogger.LogError("Failed to process ping by slug", new Dictionary<string, object>
-                        {
-                            ["ping_key"] = pingKey,
-                            ["slug"] = slug,
-                            ["error"] = ex.Message,
-                            ["stack_trace"] = ex.StackTrace ?? ""
-                        });
-                    }
-                });
+                        ["ping_key"] = pingKey,
+                        ["slug"] = slug,
+                        ["error"] = ex.Message,
+                        ["stack_trace"] = ex.StackTrace ?? ""
+                    });
+                }
 
                 return Ok(new { message = "Ping received", timestamp = DateTime.UtcNow });
             }

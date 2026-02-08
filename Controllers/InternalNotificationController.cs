@@ -2,6 +2,8 @@ using HealthyCron.Data.Interfaces;
 using HealthyCron.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
+using HealthyCron.Models.Configuration;
 
 namespace HealthyCron.Controllers
 {
@@ -12,20 +14,29 @@ namespace HealthyCron.Controllers
         private readonly IMonitorRepository _monitorRepository;
         private readonly IHubContext<MonitorHub> _hubContext;
         private readonly ILogger<InternalNotificationController> _logger;
+        private readonly InternalApiSettings _settings;
 
         public InternalNotificationController(
             IMonitorRepository monitorRepository,
             IHubContext<MonitorHub> hubContext,
-            ILogger<InternalNotificationController> logger)
+            ILogger<InternalNotificationController> logger,
+            IOptions<InternalApiSettings> settings)
         {
             _monitorRepository = monitorRepository;
             _hubContext = hubContext;
             _logger = logger;
+            _settings = settings.Value;
         }
 
         [HttpPost("notify-status")]
         public async Task<IActionResult> NotifyStatusChange([FromBody] NotifyStatusRequest request)
         {
+            // Validate Internal Token
+            if (!Request.Headers.TryGetValue("X-Internal-Token", out var token) || token != _settings.AuthToken)
+            {
+                return Unauthorized("Invalid or missing internal token.");
+            }
+
             if (request == null || request.MonitorId == Guid.Empty)
             {
                 return BadRequest("Invalid request.");

@@ -10,17 +10,19 @@ namespace HealthyCron.Data.Interfaces
         Task<Integration?> GetIntegrationByIdAsync(Guid id);
         Task<Guid> CreateIntegrationAsync(Integration integration);
         Task<bool> UpdateIntegrationStatusAsync(Guid id, bool isActive);
+        Task<bool> DeleteIntegrationAsync(Guid id);
 
         // Slack Integration
         Task CreateSlackIntegrationAsync(SlackIntegration slackIntegration);
         Task<SlackIntegration?> GetSlackIntegrationByIntegrationIdAsync(Guid integrationId);
 
         // Monitor Integration Mapping
-        Task<IEnumerable<Integration>> GetMonitorIntegrationsAsync(Guid monitorId);
+        Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId);
         Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId);
         Task<bool> AddMonitorIntegrationAsync(Guid monitorId, Guid integrationId);
         Task<bool> RemoveMonitorIntegrationAsync(Guid monitorId, Guid integrationId);
         Task<bool> SyncMonitorIntegrationsAsync(Guid integrationId, List<Guid> monitorIds);
+        Task<bool> UpdateMonitorIntegrationStatusAsync(Guid monitorId, Guid integrationId, bool isEnabled);
 
         // Notification Jobs
         Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType);

@@ -82,7 +82,8 @@
                                     <i data-lucide="play" class="w-4 h-4"></i>
                                     Test
                                 </button>
-                                <button disabled class="px-4 py-2 rounded-xl bg-white/5 text-text-secondary border border-white/10 opacity-50 cursor-not-allowed font-bold text-sm flex items-center gap-2">
+                                <button onclick="deleteIntegration('@integration.Id')" 
+                                        class="px-4 py-2 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all font-bold text-sm flex items-center gap-2">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     Delete
                                 </button>
@@ -274,6 +275,25 @@
         } finally {
             btn.disabled = false;
             btn.innerText = 'Save Changes';
+        }
+    }
+
+    async function deleteIntegration(id) {
+        if (!confirm('Are you sure you want to delete this integration?')) return;
+
+        try {
+            const response = await fetch(`/integrations/${id}/delete`, {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to delete integration.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while deleting.');
         }
     }
 

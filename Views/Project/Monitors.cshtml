@@ -90,8 +90,7 @@ else
         @foreach (var monitor in Model)
         {
             var statusColor = monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "emerald" :
-                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" :
-                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Running ? "blue" : "slate"));
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" : "slate");
 
             <div
                 class="glass-card rounded-2xl p-0 hover:border-blue-500/30 transition-all group hover:shadow-2xl hover:shadow-blue-500/5 relative">

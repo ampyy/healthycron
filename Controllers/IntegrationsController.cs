@@ -204,6 +204,28 @@ namespace HealthyCron.Controllers
             return RedirectToAction("Index", new { slug = project.Slug });
         }
 
+        [HttpPost("integrations/{id}/delete")]
+        public async Task<IActionResult> DeleteIntegration(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+
+            if (integration == null)
+            {
+                return NotFound();
+            }
+
+            var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
+            if (project == null || project.UserId != user!.Id)
+            {
+                return Forbid();
+            }
+
+            await _integrationRepository.DeleteIntegrationAsync(id);
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
         [HttpGet("integrations/{id}/monitors")]
         public async Task<IActionResult> GetIntegrationMonitors(Guid id)
         {

@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS monitors (
     calendar_timezone VARCHAR(100),
     grace_seconds INTEGER DEFAULT 0,
     last_ping_at TIMESTAMP WITH TIME ZONE,
-    last_status SMALLINT, -- 0: Success, 1: Running, 2: Failed, 3: Missed, 4: Paused
+    last_status SMALLINT, -- 0: Failed, 1: Success, 2: Paused
     next_expected_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS integrations (
     type SMALLINT NOT NULL,   -- 1=Slack, 2=Teams, 3=Email, 4=PagerDuty
     name TEXT NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT true,
+    is_deleted BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -116,6 +117,7 @@ CREATE TABLE IF NOT EXISTS slack_integrations (
 CREATE TABLE IF NOT EXISTS monitor_integrations (
     monitor_id UUID NOT NULL REFERENCES monitors(id) ON DELETE CASCADE,
     integration_id UUID NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
+    is_enabled BOOLEAN NOT NULL DEFAULT true,
     PRIMARY KEY (monitor_id, integration_id)
 );
 
