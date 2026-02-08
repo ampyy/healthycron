@@ -18,14 +18,22 @@ namespace HealthyCron.Controllers
         private readonly ProjectService _projectService;
         private readonly IAccessKeyService _accessKeyService;
         private readonly AxiomLogger _axiomLogger;
+        private readonly IIntegrationRepository _integrationRepository;
 
-        public ProjectController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, ProjectService projectService, IAccessKeyService accessKeyService, AxiomLogger axiomLogger)
+        public ProjectController(
+            IProjectRepository projectRepository, 
+            IMonitorRepository monitorRepository, 
+            ProjectService projectService, 
+            IAccessKeyService accessKeyService, 
+            AxiomLogger axiomLogger, 
+            IIntegrationRepository integrationRepository)
         {
             _projectRepository = projectRepository;
             _monitorRepository = monitorRepository;
             _projectService = projectService;
             _accessKeyService = accessKeyService;
             _axiomLogger = axiomLogger;
+            _integrationRepository = integrationRepository;
         }
 
         [HttpGet("/{slug}/monitors")]
@@ -42,8 +50,33 @@ namespace HealthyCron.Controllers
             }
 
             var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
+
+            // Enrich integrations with details
+            var integrationsWithDetails = new List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>();
+            foreach (var integration in integrations)
+            {
+                if (integration.Type == HealthyCron.Enums.IntegrationType.Slack)
+                {
+                    var slackDetails = await _integrationRepository.GetSlackIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        SlackDetails = slackDetails
+                    });
+                }
+                else
+                {
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        SlackDetails = null
+                    });
+                }
+            }
 
             ViewBag.Project = project;
+            ViewBag.Integrations = integrationsWithDetails;
             return View(monitors);
         }
 

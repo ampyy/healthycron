@@ -13,9 +13,9 @@ namespace HealthyCron.Logic.Service
         private readonly SlackSettings _settings;
         private readonly HttpClient _httpClient;
 
-        public SlackOAuthService(IOptions<SlackSettings> settings, HttpClient httpClient)
+        public SlackOAuthService(SlackSettings settings, HttpClient httpClient)
         {
-            _settings = settings.Value;
+            _settings = settings;
             _httpClient = httpClient;
         }
 

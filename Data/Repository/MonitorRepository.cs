@@ -35,15 +35,20 @@ namespace HealthyCron.Data.Repository
 
         public async Task<Guid> CreateMonitorAsync(CronMonitor monitor)
         {
+            if (monitor.Id == Guid.Empty)
+            {
+                monitor.Id = Guid.NewGuid();
+            }
+
             const string sql = @"
                 INSERT INTO monitors (
-                    project_id, name, slug, schedule_type, 
+                    id, project_id, name, slug, schedule_type, 
                     period_seconds, cron_expression, cron_timezone, 
                     calendar_expression, calendar_timezone, grace_seconds,
                     next_expected_at
                 ) 
                 VALUES (
-                    @ProjectId, @Name, @Slug, @ScheduleType, 
+                    @Id, @ProjectId, @Name, @Slug, @ScheduleType, 
                     @PeriodSeconds, @CronExpression, @CronTimezone, 
                     @CalendarExpression, @CalendarTimezone, @GraceSeconds,
                     @NextExpectedAt
@@ -236,14 +241,14 @@ namespace HealthyCron.Data.Repository
             const string sql = @"
                 SELECT * FROM monitors 
                 WHERE is_deleted = FALSE 
-                AND last_status != @MissedStatus
+                AND last_status != @FailedStatus
                 AND last_status != @PausedStatus
                 AND next_expected_at IS NOT NULL
                 AND (next_expected_at + (grace_seconds || ' seconds')::interval) < CURRENT_TIMESTAMP";
 
             return await QueryAsync<CronMonitor>(sql, new
             {
-                MissedStatus = (int)MonitorStatus.Missed,
+                FailedStatus = (int)MonitorStatus.Failed,
                 PausedStatus = (int)MonitorStatus.Paused
             });
         }

@@ -33,9 +33,14 @@ namespace HealthyCron.Data.Repository
 
         public async Task<Guid> CreateIntegrationAsync(Integration integration)
         {
+            if (integration.Id == Guid.Empty)
+            {
+                integration.Id = Guid.NewGuid();
+            }
+
             const string sql = @"
-                INSERT INTO integrations (project_id, type, name, is_active)
-                VALUES (@ProjectId, @Type, @Name, @IsActive)
+                INSERT INTO integrations (id, project_id, type, name, is_active)
+                VALUES (@Id, @ProjectId, @Type, @Name, @IsActive)
                 RETURNING id";
 
             return await ExecuteScalarAsync<Guid>(sql, integration);
@@ -57,11 +62,11 @@ namespace HealthyCron.Data.Repository
             const string sql = @"
                 INSERT INTO slack_integrations (
                     integration_id, workspace_id, channel_id, channel_name, 
-                    encrypted_bot_token, workspace_name, app_id
+                    encrypted_bot_token, workspace_name, app_id, webhook_url
                 )
                 VALUES (
                     @IntegrationId, @WorkspaceId, @ChannelId, @ChannelName, 
-                    @EncryptedBotToken, @WorkspaceName, @AppId
+                    @EncryptedBotToken, @WorkspaceName, @AppId, @WebhookUrl
                 )";
 
             await ExecuteAsync(sql, slackIntegration);
@@ -71,7 +76,7 @@ namespace HealthyCron.Data.Repository
         {
             const string sql = @"
                 SELECT integration_id, workspace_id, channel_id, channel_name, 
-                       encrypted_bot_token, workspace_name, app_id, created_at
+                       encrypted_bot_token, workspace_name, app_id, webhook_url, created_at
                 FROM slack_integrations 
                 WHERE integration_id = @IntegrationId";
 
@@ -111,15 +116,51 @@ namespace HealthyCron.Data.Repository
             return rows > 0;
         }
 
+        public async Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId)
+        {
+            const string sql = "SELECT monitor_id FROM monitor_integrations WHERE integration_id = @IntegrationId";
+            return await QueryAsync<Guid>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task<bool> SyncMonitorIntegrationsAsync(Guid integrationId, List<Guid> monitorIds)
+        {
+            const string deleteSql = "DELETE FROM monitor_integrations WHERE integration_id = @IntegrationId";
+            const string insertSql = "INSERT INTO monitor_integrations (monitor_id, integration_id) VALUES (@MonitorId, @IntegrationId)";
+
+            using var connection = _connectionFactory.CreateConnection();
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                await connection.ExecuteAsync(deleteSql, new { IntegrationId = integrationId }, transaction);
+
+                foreach (var monitorId in monitorIds)
+                {
+                    await connection.ExecuteAsync(insertSql, new { MonitorId = monitorId, IntegrationId = integrationId }, transaction);
+                }
+
+                transaction.Commit();
+                return true;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
         public async Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType)
         {
+            var id = Guid.NewGuid();
             const string sql = @"
-                INSERT INTO notification_jobs (monitor_ping_id, integration_id, alert_type, status)
-                VALUES (@MonitorPingId, @IntegrationId, @AlertType, 0)
+                INSERT INTO notification_jobs (id, monitor_ping_id, integration_id, alert_type, status)
+                VALUES (@Id, @MonitorPingId, @IntegrationId, @AlertType, 0)
                 RETURNING id";
 
             return await ExecuteScalarAsync<Guid>(sql, new
             {
+                Id = id,
                 MonitorPingId = monitorPingId,
                 IntegrationId = integrationId,
                 AlertType = (short)alertType

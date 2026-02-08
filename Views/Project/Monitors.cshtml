@@ -26,6 +26,11 @@
                 title="Project Settings">
                 <i data-lucide="settings" class="w-5 h-5 group-hover:rotate-45 transition-transform duration-500"></i>
             </a>
+            <a href="/project/@project.Slug/integrations"
+                class="p-2.5 px-4 rounded-xl bg-navy-light border border-border-color text-text-secondary hover:text-white hover:border-white/20 transition-all active:scale-95 flex items-center gap-2 group">
+                <i data-lucide="zap" class="w-5 h-5 group-hover:text-blue-500 transition-colors"></i>
+                <span class="font-bold text-sm">Integrations</span>
+            </a>
             <button onclick="openCreateModal()"
                 class="bg-blue hover:bg-blue/80 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue/20 active:scale-95">
                 <i data-lucide="plus" class="w-5 h-5"></i>
@@ -61,14 +66,6 @@
         <div class="text-2xl font-black text-white">@Model.Count(m => m.LastStatus ==
             HealthyCron.Models.MonitorStatus.Failed)</div>
     </div>
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-amber-500">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Late</span>
-            <i data-lucide="clock" class="w-4 h-4 text-amber-500"></i>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Count(m => m.LastStatus ==
-            HealthyCron.Models.MonitorStatus.Missed)</div>
-    </div>
 </div>
 
 @if (!Model.Any())
@@ -93,9 +90,8 @@ else
         @foreach (var monitor in Model)
         {
             var statusColor = monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "emerald" :
-            (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" :
-            (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Missed ? "amber" : 
-            (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Running ? "blue" : "slate")));
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" :
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Running ? "blue" : "slate"));
 
             <div
                 class="glass-card rounded-2xl p-0 hover:border-blue-500/30 transition-all group hover:shadow-2xl hover:shadow-blue-500/5 relative">
@@ -119,9 +115,8 @@ else
                                     @monitor.Name
                                 </a>
                                 <span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-black border tracking-wider
-                                    @(statusColor == "emerald" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : 
-                                      statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" : 
-                                      statusColor == "amber" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : 
+                                    @(statusColor == "emerald" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                                      statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
                                       "bg-slate-500/10 text-slate-400 border-slate-500/20")">
                                     @(monitor.LastStatus.HasValue ? monitor.LastStatus.ToString() : "Paused")
                                 </span>
@@ -448,7 +443,4 @@ else
         }
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-    });
 </script>

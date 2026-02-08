@@ -39,6 +39,9 @@ namespace HealthyCron.Utilities.Extensions
             }
 
             section.Bind(configObject);
+            
+            // Register for IOptions<T> support
+            services.Configure<T>(section);
 
             // DEBUG: Log the bound object properties using reflection
             Console.WriteLine($"Bound object properties:");
@@ -52,7 +55,7 @@ namespace HealthyCron.Utilities.Extensions
             // Validate the configuration
             ConfigurationValidator.ValidateAndThrow(configObject, sectionName);
 
-            // Register as singleton so it can be injected
+            // Register as singleton so it can be injected directly
             services.AddSingleton(configObject);
 
             return configObject;

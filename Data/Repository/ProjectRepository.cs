@@ -35,9 +35,14 @@ namespace HealthyCron.Data.Repository
 
         public async Task<Guid> CreateProjectAsync(Project project)
         {
+            if (project.Id == Guid.Empty)
+            {
+                project.Id = Guid.NewGuid();
+            }
+
             const string sql = @"
-                INSERT INTO projects (user_id, name, slug) 
-                VALUES (@UserId, @Name, @Slug) 
+                INSERT INTO projects (id, user_id, name, slug) 
+                VALUES (@Id, @UserId, @Name, @Slug) 
                 RETURNING id";
             return await ExecuteScalarAsync<Guid>(sql, project);
         }

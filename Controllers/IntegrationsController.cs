@@ -14,6 +14,7 @@ namespace HealthyCron.Controllers
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IIntegrationRepository _integrationRepository;
+        private readonly IMonitorRepository _monitorRepository;
         private readonly ISlackOAuthService _slackOAuthService;
         private readonly IEncryptionService _encryptionService;
         private readonly AxiomLogger _axiomLogger;
@@ -21,12 +22,14 @@ namespace HealthyCron.Controllers
         public IntegrationsController(
             IProjectRepository projectRepository,
             IIntegrationRepository integrationRepository,
+            IMonitorRepository monitorRepository,
             ISlackOAuthService slackOAuthService,
             IEncryptionService encryptionService,
             AxiomLogger axiomLogger)
         {
             _projectRepository = projectRepository;
             _integrationRepository = integrationRepository;
+            _monitorRepository = monitorRepository;
             _slackOAuthService = slackOAuthService;
             _encryptionService = encryptionService;
             _axiomLogger = axiomLogger;
@@ -46,13 +49,13 @@ namespace HealthyCron.Controllers
             var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
 
             // Get Slack details for each Slack integration
-            var integrationsWithDetails = new List<object>();
+            var integrationsWithDetails = new List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>();
             foreach (var integration in integrations)
             {
                 if (integration.Type == IntegrationType.Slack)
                 {
                     var slackDetails = await _integrationRepository.GetSlackIntegrationByIntegrationIdAsync(integration.Id);
-                    integrationsWithDetails.Add(new
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
                     {
                         Integration = integration,
                         SlackDetails = slackDetails
@@ -60,10 +63,10 @@ namespace HealthyCron.Controllers
                 }
                 else
                 {
-                    integrationsWithDetails.Add(new
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
                     {
                         Integration = integration,
-                        SlackDetails = (SlackIntegration?)null
+                        SlackDetails = null
                     });
                 }
             }
@@ -149,10 +152,18 @@ namespace HealthyCron.Controllers
                 EncryptedBotToken = encryptedToken,
                 WorkspaceName = oauthResponse.Team?.Name ?? "",
                 AppId = oauthResponse.AppId,
+                WebhookUrl = oauthResponse.IncomingWebhook?.Url,
                 CreatedAt = DateTime.UtcNow
             };
 
             await _integrationRepository.CreateSlackIntegrationAsync(slackIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(projectId);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
 
             await _axiomLogger.LogInfo("Slack integration created", new Dictionary<string, object>
             {
@@ -191,6 +202,57 @@ namespace HealthyCron.Controllers
             await _integrationRepository.UpdateIntegrationStatusAsync(id, false);
 
             return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("integrations/{id}/monitors")]
+        public async Task<IActionResult> GetIntegrationMonitors(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null)
+            {
+                return NotFound();
+            }
+
+            var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
+            if (project == null || project.UserId != user!.Id)
+            {
+                return Forbid();
+            }
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            var mappedMonitorIds = await _integrationRepository.GetMappedMonitorIdsAsync(id);
+
+            return Json(new
+            {
+                monitors = monitors.Select(m => new
+                {
+                    id = m.Id,
+                    name = m.Name,
+                    isSelected = mappedMonitorIds.Contains(m.Id)
+                })
+            });
+        }
+
+        [HttpPost("integrations/{id}/monitors")]
+        public async Task<IActionResult> UpdateIntegrationMonitors(Guid id, [FromBody] List<Guid> monitorIds)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null)
+            {
+                return NotFound();
+            }
+
+            var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
+            if (project == null || project.UserId != user!.Id)
+            {
+                return Forbid();
+            }
+
+            await _integrationRepository.SyncMonitorIntegrationsAsync(id, monitorIds);
+
+            return Ok();
         }
     }
 }
