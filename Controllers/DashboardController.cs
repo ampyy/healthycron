@@ -25,9 +25,11 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             ViewBag.UserEmail = user!.Email;
 
-            var projects = await _projectRepository.GetProjectsByUserIdAsync(user.Id);
-            // In a real app, we'd aggregate stats. For now, we'll pass the projects.
-            return View("Stats", projects);
+            var stats = await _projectRepository.GetDashboardStatsAsync(user.Id);
+            var chartData = await _projectRepository.GetRecentPingStatsAsync(user.Id);
+
+            ViewBag.ChartData = chartData;
+            return View("Stats", stats);
         }
 
         [HttpGet("projects")]

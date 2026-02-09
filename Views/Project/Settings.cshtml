@@ -1,6 +1,6 @@
 @{
-    var project = ViewBag.Project as HealthyCron.Models.Project;
-    var user = ViewBag.User as HealthyCron.Models.User;
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    var user = (ViewBag.User as HealthyCron.Models.User)!;
     var keys = (ViewBag.AccessKeys as IEnumerable<HealthyCron.Models.ProjectAccessKey>) ?? Enumerable.Empty<HealthyCron.Models.ProjectAccessKey>();
     ViewData["Title"] = $"{(project != null ? project.Name : "Project")} - Settings";
     Layout = "_DashboardLayout";

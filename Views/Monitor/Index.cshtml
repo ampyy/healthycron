@@ -186,68 +186,51 @@
     </section>
 
     <!-- Monitor Integrations Section -->
-    <section class="mb-8 overflow-hidden">
+    <section class="mb-10">
         <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
             <i data-lucide="bell" class="w-3.5 h-3.5 text-blue"></i>
             Active Notifications
         </h3>
-        <div class="glass-card rounded-2xl overflow-hidden border border-white/5">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="text-[9px] uppercase font-black text-text-secondary border-b border-white/5 bg-navy/30">
-                        <th class="px-6 py-3">Integration</th>
-                        <th class="px-6 py-3">Type</th>
-                        <th class="px-6 py-3 text-right">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5">
-                    @if (monitorIntegrations.Any())
-                    {
-                        foreach (var item in monitorIntegrations)
-                        {
-                            <tr class="hover:bg-white/[0.02] transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-lg bg-navy-light border border-white/5 flex items-center justify-center shrink-0">
-                                            @if (item.Integration.Type == HealthyCron.Enums.IntegrationType.Slack)
-                                            {
-                                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
-                                                </svg>
-                                            }
-                                            else
-                                            {
-                                                <i data-lucide="bell" class="w-4 h-4 text-blue"></i>
-                                            }
-                                        </div>
-                                        <span class="text-xs font-bold text-white">@item.Integration.Name</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-[10px] font-black uppercase tracking-widest text-text-secondary opacity-50">@item.Integration.Type</span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="toggleMonitorIntegration('@item.Integration.Id', this)" 
-                                            data-enabled="@(item.IsEnabledForMonitor ? "true" : "false")"
-                                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[9px] font-black uppercase tracking-widest @(item.IsEnabledForMonitor ? "bg-blue/10 border-blue/20 text-blue hover:bg-blue hover:text-white" : "bg-white/5 border-white/10 text-text-secondary hover:border-white")">
-                                        <i data-lucide="@(item.IsEnabledForMonitor ? "bell" : "bell-off")" class="w-3.5 h-3.5"></i>
-                                        <span>@(item.IsEnabledForMonitor ? "Enabled" : "Disabled")</span>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="3" class="px-6 py-8 text-center">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">No integrations assigned</p>
-                                <a href="/project/@project?.Slug/integrations" class="text-blue text-[10px] font-bold mt-1 inline-block hover:underline">Manage Project Integrations</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @if (monitorIntegrations.Any())
+            {
+                foreach (var item in monitorIntegrations)
+                {
+                    <div class="glass-card rounded-2xl p-4 border border-white/5 hover:border-blue-500/20 transition-all flex items-center justify-between group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-navy-light border border-white/5 flex items-center justify-center shrink-0">
+                                @if (item.Integration.Type == HealthyCron.Enums.IntegrationType.Slack)
+                                {
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                                    </svg>
+                                }
+                                else
+                                {
+                                    <i data-lucide="bell" class="w-5 h-5 text-blue"></i>
+                                }
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white">@item.Integration.Name</h4>
+                                <p class="text-[9px] text-text-secondary uppercase tracking-widest leading-none mt-1">@item.Integration.Type</p>
+                            </div>
+                        </div>
+                        <button onclick="toggleMonitorIntegration('@item.Integration.Id', this)" 
+                                data-enabled="@(item.IsEnabledForMonitor ? "true" : "false")"
+                                class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-black uppercase tracking-widest @(item.IsEnabledForMonitor ? "bg-blue/10 border-blue/20 text-blue hover:bg-blue hover:text-white" : "bg-white/5 border-white/10 text-text-secondary hover:border-white")">
+                            <i data-lucide="@(item.IsEnabledForMonitor ? "bell" : "bell-off")" class="w-3.5 h-3.5"></i>
+                            <span>@(item.IsEnabledForMonitor ? "Enabled" : "Disabled")</span>
+                        </button>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-span-full py-10 text-center glass-card rounded-2xl border-dashed border border-white/10">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">No integrations assigned</p>
+                    <a href="/project/@project?.Slug/integrations" class="text-blue text-[10px] font-bold mt-2 inline-block hover:underline">Manage Project Integrations</a>
+                </div>
+            }
         </div>
     </section>
 
@@ -261,9 +244,9 @@
                 <thead>
                     <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-navy/30">
                         <th class="px-6 py-4">#</th>
-                        <th class="px-6 py-4">Date</th>
-                        <th class="px-6 py-4">Time</th>
                         <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Timestamp</th>
+                        <th class="px-6 py-4">Source & User Agent</th>
                         <th class="px-6 py-4 text-right">Details</th>
                     </tr>
                 </thead>
@@ -276,7 +259,7 @@
                         var currentStatus = ping.Status == HealthyCron.Models.PingType.Success ? "Success" : (ping.Status == HealthyCron.Models.PingType.Start ? "Starting" : "Failed");
                         var nextStatus = nextPing != null ? (nextPing.Status == HealthyCron.Models.PingType.Success ? "Success" : (nextPing.Status == HealthyCron.Models.PingType.Start ? "Starting" : "Failed")) : null;
 
-                        <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group border-b border-white/[0.02]" onclick="showPingDetails(this)" 
+                        <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group" onclick="showPingDetails(this)" 
                             data-id="@ping.Id" data-time="@ping.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss")" 
                             data-status="@currentStatus" data-message="@ping.Message" 
                             data-ip="@ping.IpAddress" data-ua="@ping.UserAgent" 
@@ -285,33 +268,30 @@
                                 <span class="text-[10px] text-text-secondary font-black opacity-30">#@(pings.Count - i)</span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="text-xs text-white font-bold">@ping.ReceivedAt.ToString("MMM dd, yyyy")</span>
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="text-[11px] text-text-secondary font-mono">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
-                            </td>
-                            <td class="px-6 py-4">
                                 <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest @(currentStatus == "Success" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : (currentStatus == "Starting" ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"))">
                                     @currentStatus
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right">
-                                <i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary group-hover:text-blue transition-all ml-auto"></i>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col">
+                                    <span class="text-xs text-white font-bold">@ping.ReceivedAt.ToString("MMM dd, yyyy")</span>
+                                    <span class="text-[10px] text-text-secondary font-mono">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
+                                </div>
                             </td>
-                        </tr>
-                        <!-- Hidden Detail Row for visual cleaness -->
-                        <tr class="bg-black/10 text-[10px] border-b border-white/[0.02]">
-                            <td colspan="5" class="px-6 py-2">
-                                <div class="flex flex-col md:flex-row md:items-center gap-x-8 gap-y-2 py-1.5 opacity-60">
-                                    <div class="flex items-center gap-2 px-3 border-r border-white/10">
-                                        <span class="font-black uppercase tracking-widest text-[8px] text-text-secondary">Source</span>
-                                        <span class="text-white font-mono text-[9px]">HTTPS @ping.HttpMethod from @ping.IpAddress</span>
+                            <td class="px-6 py-4 max-w-sm">
+                                <div class="flex flex-col gap-1">
+                                    <div class="flex items-center gap-1.5 opacity-60">
+                                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">IP</span>
+                                        <span class="text-[10px] text-white font-mono truncate">@ping.HttpMethod @ping.IpAddress</span>
                                     </div>
-                                    <div class="flex items-center gap-2 overflow-hidden flex-1 px-3">
-                                        <span class="font-black uppercase tracking-widest text-[8px] text-text-secondary shrink-0">User Agent</span>
-                                        <span class="text-text-secondary font-mono text-[9px] truncate" title="@ping.UserAgent">@ping.UserAgent</span>
+                                    <div class="flex items-center gap-1.5 opacity-60 overflow-hidden">
+                                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">UA</span>
+                                        <span class="text-[10px] text-text-secondary font-mono truncate" title="@ping.UserAgent">@ping.UserAgent</span>
                                     </div>
                                 </div>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary group-hover:text-blue transition-all ml-auto"></i>
                             </td>
                         </tr>
 
@@ -323,7 +303,7 @@
                                         <div class="w-2 h-2 rounded-full @(currentStatus == "Success" ? "bg-emerald-500" : "bg-rose-500") animate-pulse"></div>
                                         <span class="text-[10px] font-black uppercase tracking-widest text-text-secondary">Status Change:</span>
                                         <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-                                            <span class="@(nextStatus == "Success" ? "text-emerald-500/50" : (nextStatus == "Starting" ? "text-blue-500/50" : "text-rose-500/50")) underline decoration-dotted">@nextStatus</span>
+                                            <span class="@(nextStatus == "Success" ? "text-emerald-500/50" : (nextStatus == "Starting" ? "text-blue-500/50" : "text-rose-500/50"))">@nextStatus</span>
                                             <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-text-secondary opacity-30"></i>
                                             <span class="@(currentStatus == "Success" ? "text-emerald-500" : (currentStatus == "Starting" ? "text-blue-500" : "text-rose-500"))">@currentStatus</span>
                                         </div>
@@ -368,73 +348,67 @@
             </div>
             <form id="updateScheduleForm">
                 <input type="hidden" name="Id" value="@Model.Id">
-                <div class="p-6 space-y-6">
-                    <!-- Schedule Selection & Config (Same as before) -->
-                    <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-3">Schedule Type</label>
-                        <div class="flex bg-navy p-1 rounded-xl border border-border-color">
-                            <button type="button" onclick="setScheduleType(0)" id="btn-sch-0" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "active-sch text-white" : "text-text-secondary")">Interval</button>
-                            <button type="button" onclick="setScheduleType(1)" id="btn-sch-1" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "active-sch text-white" : "text-text-secondary")">Cron</button>
-                            <button type="button" onclick="setScheduleType(2)" id="btn-sch-2" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Calendar ? "active-sch text-white" : "text-text-secondary")">Calendar</button>
-                            <input type="hidden" name="ScheduleType" id="schedule-type-input" value="@((int)Model.ScheduleType)">
-                        </div>
-                    </div>
-                    <div class="bg-navy/30 rounded-2xl p-6 border border-white/5">
-                        <div id="config-sch-0" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Interval ? "hidden" : "") space-y-4">
-                            <label class="block text-sm font-bold text-white mb-2">Run every...</label>
-                            <div class="flex items-center gap-3">
-                                <input type="number" name="PeriodValue" value="@(Model.PeriodSeconds >= 3600 ? Model.PeriodSeconds / 3600 : (Model.PeriodSeconds >= 60 ? Model.PeriodSeconds / 60 : Model.PeriodSeconds))" min="1" class="w-full bg-navy border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none text-center font-bold">
-                                <select name="PeriodUnit" class="bg-navy border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-bold">
-                                    <option value="seconds" selected="@(Model.PeriodSeconds < 60 ? "selected" : null)">seconds</option>
-                                    <option value="minutes" selected="@(Model.PeriodSeconds >= 60 && Model.PeriodSeconds < 3600 ? "selected" : null)">minutes</option>
-                                    <option value="hours" selected="@(Model.PeriodSeconds >= 3600 ? "selected" : null)">hours</option>
-                                </select>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Left Side: Types -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3 px-1">Schedule Type</label>
+                                <div class="grid grid-cols-3 bg-navy p-1 rounded-xl border border-white/5">
+                                    <button type="button" onclick="setScheduleType(0)" id="btn-sch-0" class="py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "active-sch text-white" : "text-text-secondary opacity-50")">Interval</button>
+                                    <button type="button" onclick="setScheduleType(1)" id="btn-sch-1" class="py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "active-sch text-white" : "text-text-secondary opacity-50")">Cron</button>
+                                    <button type="button" onclick="setScheduleType(2)" id="btn-sch-2" class="py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Calendar ? "active-sch text-white" : "text-text-secondary opacity-50")">Cal</button>
+                                    <input type="hidden" name="ScheduleType" id="schedule-type-input" value="@((int)Model.ScheduleType)">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3 px-1">Grace Period</label>
+                                <div class="flex gap-2">
+                                    <input type="number" name="GraceSeconds" value="@(Model.GraceSeconds >= 3600 ? Model.GraceSeconds / 3600 : (Model.GraceSeconds >= 60 ? Model.GraceSeconds / 60 : Model.GraceSeconds))" min="1" class="w-20 bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-rose-500/30 outline-none text-center font-bold">
+                                    <select name="GraceUnit" class="flex-1 bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-rose-500/30 outline-none font-bold text-xs uppercase tracking-widest">
+                                        <option value="seconds" selected="@(Model.GraceSeconds < 60 ? "selected" : null)">Seconds</option>
+                                        <option value="minutes" selected="@(Model.GraceSeconds >= 60 && Model.GraceSeconds < 3600 ? "selected" : null)">Minutes</option>
+                                        <option value="hours" selected="@(Model.GraceSeconds >= 3600 ? "selected" : null)">Hours</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div id="config-sch-1" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Cron ? "hidden" : "") space-y-4">
-                            <label class="block text-sm font-bold text-white mb-2 font-mono text-[10px] uppercase tracking-widest text-text-secondary">Cron Expression</label>
-                            <input type="text" name="CronExpression" value="@Model.CronExpression" placeholder="0 0 * * *" class="w-full bg-navy border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-mono tracking-widest text-sm">
-                            <div class="p-4 rounded-xl bg-blue/5 border border-blue/10">
-                                <p class="text-[10px] text-text-secondary font-black mb-1 uppercase tracking-widest">Unix Format</p>
-                                <p class="text-[11px] text-text-secondary leading-relaxed">
-                                    <code class="text-blue mx-1">Min Hour Day Month Weekday</code>
-                                </p>
+
+                        <!-- Right Side: Config -->
+                        <div class="bg-navy/30 rounded-2xl p-6 border border-white/5 flex flex-col justify-center min-h-[160px]">
+                            <div id="config-sch-0" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Interval ? "hidden" : "") space-y-4">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary">Interval Configuration</label>
+                                <div class="flex gap-2">
+                                    <input type="number" name="PeriodValue" value="@(Model.PeriodSeconds >= 3600 ? Model.PeriodSeconds / 3600 : (Model.PeriodSeconds >= 60 ? Model.PeriodSeconds / 60 : Model.PeriodSeconds))" min="1" class="w-20 bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/30 outline-none text-center font-bold">
+                                    <select name="PeriodUnit" class="flex-1 bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/30 outline-none font-bold text-xs uppercase tracking-widest">
+                                        <option value="seconds" selected="@(Model.PeriodSeconds < 60 ? "selected" : null)">Seconds</option>
+                                        <option value="minutes" selected="@(Model.PeriodSeconds >= 60 && Model.PeriodSeconds < 3600 ? "selected" : null)">Minutes</option>
+                                        <option value="hours" selected="@(Model.PeriodSeconds >= 3600 ? "selected" : null)">Hours</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div id="config-sch-2" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Calendar ? "hidden" : "") space-y-4">
-                            <label class="block text-sm font-bold text-white mb-2 font-mono text-[10px] uppercase tracking-widest text-text-secondary">Calendar Expression</label>
-                            <input type="text" name="CalendarExpression" value="@Model.CalendarExpression" placeholder="Mon *-*-* 00:00:00" class="w-full bg-navy border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-mono tracking-widest text-sm">
-                            <div class="p-4 rounded-xl bg-purple/5 border border-purple/10">
-                                <p class="text-[10px] text-text-secondary font-black mb-1 uppercase tracking-widest">Systemd Format</p>
-                                <p class="text-[11px] text-text-secondary leading-relaxed">
-                                    <code class="text-purple mx-1">Day Year-Month-Day Hour:Min:Sec</code>
-                                </p>
+
+                            <div id="config-sch-1" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Cron ? "hidden" : "") space-y-4">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary">Cron Expression</label>
+                                <input type="text" name="CronExpression" value="@Model.CronExpression" placeholder="0 0 * * *" class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/30 outline-none font-mono tracking-widest text-sm">
+                                <p class="text-[9px] text-text-secondary leading-tight mt-1 px-1">Standard Unix format: <code class="text-blue">Min Hour Day Mo Week</code></p>
                             </div>
-                        </div>
-                    </div>
-                    <!-- Grace -->
-                    <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-3">Grace Period</label>
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <div class="flex items-center gap-2">
-                                <input type="number" name="GraceSeconds" value="@(Model.GraceSeconds >= 3600 ? Model.GraceSeconds / 3600 : (Model.GraceSeconds >= 60 ? Model.GraceSeconds / 60 : Model.GraceSeconds))" min="1" class="w-full sm:w-24 bg-navy border border-border-color rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-rose-500/50 outline-none text-center font-bold">
-                                <select name="GraceUnit" class="bg-navy border border-border-color rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-rose-500/50 outline-none font-bold">
-                                    <option value="seconds" selected="@(Model.GraceSeconds < 60 ? "selected" : null)">seconds</option>
-                                    <option value="minutes" selected="@(Model.GraceSeconds >= 60 && Model.GraceSeconds < 3600 ? "selected" : null)">minutes</option>
-                                    <option value="hours" selected="@(Model.GraceSeconds >= 3600 ? "selected" : null)">hours</option>
-                                </select>
+
+                            <div id="config-sch-2" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Calendar ? "hidden" : "") space-y-4">
+                                <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary">Calendar Expression</label>
+                                <input type="text" name="CalendarExpression" value="@Model.CalendarExpression" placeholder="Mon *-*-* 00:00:00" class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple/30 outline-none font-mono tracking-widest text-sm">
+                                <p class="text-[9px] text-text-secondary leading-tight mt-1 px-1">Systemd: <code class="text-purple">Day Year-Mo-Day HH:MM:SS</code></p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-navy/50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 border-t border-border-color">
-                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-8 py-3 rounded-xl font-black transition-all shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 w-full sm:w-auto transform active:scale-95">
-                        <span class="flex items-center justify-center gap-2">
-                            <i data-lucide="save" class="w-4 h-4"></i>
-                            Apply Changes
-                        </span>
+
+                <div class="bg-navy/50 px-6 py-4 flex items-center justify-end gap-3 border-t border-white/5">
+                    <button type="button" onclick="closeScheduleModal()" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-white transition-all">Cancel</button>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-amber-600/20 active:scale-95">
+                        Apply Changes
                     </button>
-                    <button type="button" onclick="closeScheduleModal()" class="px-6 py-3 rounded-xl border border-border-color text-text-secondary hover:text-white transition-all w-full sm:w-auto mt-2 sm:mt-0 font-bold hover:bg-white/5">Cancel</button>
                 </div>
             </form>
         </div>
@@ -643,10 +617,9 @@
         }
 
         const currentStatus = data.status === 'Success' ? 'Success' : (data.status === 'Start' ? 'Starting' : 'Failed');
-        const index = tbody.children.length / 2 + 1; // Approx index
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-white/[0.04] transition-all cursor-pointer group border-b border-white/[0.02] opacity-0 translate-y-2';
+        tr.className = 'hover:bg-white/[0.04] transition-all cursor-pointer group opacity-0 translate-y-2';
         tr.onclick = function() { showPingDetails(this); };
 
         tr.dataset.id = data.id;
@@ -663,53 +636,41 @@
                 <span class="text-[10px] text-text-secondary font-black opacity-30">NEW</span>
             </td>
             <td class="px-6 py-4">
-                <span class="text-xs text-white font-bold">${data.dateDisplay}</span>
-            </td>
-            <td class="px-6 py-4">
-                <span class="text-[11px] text-text-secondary font-mono">${data.timeDisplay}</span>
-            </td>
-            <td class="px-6 py-4">
                 <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${currentStatus == 'Success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : (currentStatus == 'Starting' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20')}">
                     ${currentStatus}
                 </span>
+            </td>
+            <td class="px-6 py-4">
+                <div class="flex flex-col">
+                    <span class="text-xs text-white font-bold">${data.dateDisplay}</span>
+                    <span class="text-[10px] text-text-secondary font-mono">${data.timeDisplay}</span>
+                </div>
+            </td>
+            <td class="px-6 py-4 max-w-sm">
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-1.5 opacity-60">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">IP</span>
+                        <span class="text-[10px] text-white font-mono truncate">${data.method || 'GET'} ${data.ipAddress || 'N/A'}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 opacity-60 overflow-hidden">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">UA</span>
+                        <span class="text-[10px] text-text-secondary font-mono truncate" title="${data.userAgent || ''}">${data.userAgent || 'N/A'}</span>
+                    </div>
+                </div>
             </td>
             <td class="px-6 py-4 text-right">
                 <i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary group-hover:text-blue transition-all ml-auto"></i>
             </td>
         `;
 
-        const detailTr = document.createElement('tr');
-        detailTr.className = 'bg-black/10 text-[10px] border-b border-white/[0.02] opacity-0';
-        detailTr.innerHTML = `
-            <td colspan="5" class="px-6 py-2">
-                <div class="flex flex-col md:flex-row md:items-center gap-x-8 gap-y-2 py-1.5 opacity-60">
-                    <div class="flex items-center gap-2 px-3 border-r border-white/10">
-                        <span class="font-black uppercase tracking-widest text-[8px] text-text-secondary">Source</span>
-                        <span class="text-white font-mono text-[9px]">HTTPS ${data.method || 'GET'} from ${data.ipAddress || 'N/A'}</span>
-                    </div>
-                    <div class="flex items-center gap-2 overflow-hidden flex-1 px-3">
-                        <span class="font-black uppercase tracking-widest text-[8px] text-text-secondary shrink-0">User Agent</span>
-                        <span class="text-text-secondary font-mono text-[9px] truncate" title="${data.userAgent || ''}">${data.userAgent || 'N/A'}</span>
-                    </div>
-                </div>
-            </td>
-        `;
-
-        tbody.insertBefore(detailTr, tbody.firstChild);
         tbody.insertBefore(tr, tbody.firstChild);
-        
         tr.offsetHeight;
-        detailTr.offsetHeight;
-        
         tr.classList.remove('opacity-0', 'translate-y-2');
-        detailTr.classList.remove('opacity-0');
         tr.classList.add('duration-500');
-        detailTr.classList.add('duration-500');
 
         lucide.createIcons();
 
-        if (tbody.children.length > 40) { // 20 logs + 20 detail rows
-            tbody.removeChild(tbody.lastChild);
+        if (tbody.children.length > 20) {
             tbody.removeChild(tbody.lastChild);
         }
     }

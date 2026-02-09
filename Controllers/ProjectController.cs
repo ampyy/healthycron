@@ -49,35 +49,24 @@ namespace HealthyCron.Controllers
                 return NotFound();
             }
 
-            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
-            var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
-
-            // Enrich integrations with details
-            var integrationsWithDetails = new List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>();
-            foreach (var integration in integrations)
+            var monitorsList = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            var viewModel = new HealthyCron.Models.ViewModels.ProjectMonitorsViewModel
             {
-                if (integration.Type == HealthyCron.Enums.IntegrationType.Slack)
+                Project = project,
+                Monitors = new List<HealthyCron.Models.ViewModels.MonitorWithIntegrations>()
+            };
+
+            foreach (var monitor in monitorsList)
+            {
+                var monitorIntegrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
+                viewModel.Monitors.Add(new HealthyCron.Models.ViewModels.MonitorWithIntegrations
                 {
-                    var slackDetails = await _integrationRepository.GetSlackIntegrationByIntegrationIdAsync(integration.Id);
-                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
-                    {
-                        Integration = integration,
-                        SlackDetails = slackDetails
-                    });
-                }
-                else
-                {
-                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
-                    {
-                        Integration = integration,
-                        SlackDetails = null
-                    });
-                }
+                    Monitor = monitor,
+                    Integrations = monitorIntegrations.Where(i => i.IsEnabledForMonitor).ToList()
+                });
             }
 
-            ViewBag.Project = project;
-            ViewBag.Integrations = integrationsWithDetails;
-            return View(monitors);
+            return View(viewModel);
         }
 
         [HttpGet("{slug}/settings")]

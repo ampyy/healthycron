@@ -1,6 +1,6 @@
 @{
-    var project = ViewBag.Project as HealthyCron.Models.Project;
-    var user = ViewBag.User as HealthyCron.Models.User;
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    var user = (ViewBag.User as HealthyCron.Models.User)!;
     var integrations = ViewBag.Integrations as List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>;
     ViewData["Title"] = $"{(project != null ? project.Name : "Project")} - Integrations";
     Layout = "_DashboardLayout";
