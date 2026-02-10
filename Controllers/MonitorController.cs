@@ -1,6 +1,8 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
 using HealthyCron.Models;
+using HealthyCron.Models.DTOs;
+using HealthyCron.Enums;
 using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -238,6 +240,12 @@ namespace HealthyCron.Controllers
             }
             ViewBag.GraphData = hourlyData;
 
+            var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
+            ViewBag.MonitorIntegrations = integrations.ToList();
+
+            var monthlyStats = await _monitorRepository.GetMonthlyStatsAsync(monitor.Id);
+            ViewBag.MonthlyStats = monthlyStats.ToList();
+
             return View(monitor);
         }
 
@@ -366,6 +374,22 @@ namespace HealthyCron.Controllers
             if (project == null || project.UserId != user.Id) return NotFound();
 
             await _integrationRepository.RemoveMonitorIntegrationAsync(id, integrationId);
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("{id:guid}/integrations/{integrationId:guid}/toggle")]
+        public async Task<IActionResult> ToggleIntegration(Guid id, Guid integrationId, [FromBody] ToggleIntegrationRequest request)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            await _integrationRepository.UpdateMonitorIntegrationStatusAsync(id, integrationId, request.IsEnabled);
             return Ok(new { success = true });
         }
     }

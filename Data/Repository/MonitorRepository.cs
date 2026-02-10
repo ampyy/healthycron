@@ -91,9 +91,9 @@ namespace HealthyCron.Data.Repository
             return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, Limit = limit });
         }
 
-        public async Task<IEnumerable<MonitorPing>> GetPingsWithFiltersAsync(Guid projectId, Guid? monitorId, int? status, string? search, int limit = 100)
+        public async Task<IEnumerable<MonitorPing>> GetPingsWithFiltersAsync(Guid projectId, Guid? monitorId, int? status, string? search, int limit = 100, int offset = 0)
         {
-            var sql = @"
+            var sql = @$"
                 SELECT 
                     p.id, p.monitor_id, p.received_at, p.status, p.message,
                     p.ip_address, p.user_agent, p.http_method, p.request_headers, p.duration_ms,
@@ -117,9 +117,9 @@ namespace HealthyCron.Data.Repository
                 sql += " AND (m.name ILIKE @Search OR p.message ILIKE @Search)";
             }
 
-            sql += " ORDER BY p.received_at DESC LIMIT @Limit";
+            sql += " ORDER BY p.received_at DESC LIMIT @Limit OFFSET @Offset";
 
-            return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, MonitorId = monitorId, Status = status, Search = $"%{search}%", Limit = limit });
+            return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, MonitorId = monitorId, Status = status, Search = $"%{search}%", Limit = limit, Offset = offset });
         }
 
         public async Task<bool> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus)
@@ -251,6 +251,69 @@ namespace HealthyCron.Data.Repository
                 FailedStatus = (int)MonitorStatus.Failed,
                 PausedStatus = (int)MonitorStatus.Paused
             });
+        }
+
+        public async Task<IEnumerable<HealthyCron.Models.DTOs.MonthlyUptimeDto>> GetMonthlyStatsAsync(Guid monitorId)
+        {
+            const string sql = @"
+                WITH MonthlyStats AS (
+                    SELECT 
+                        DATE_TRUNC('month', received_at) as MonthStart,
+                        COUNT(*) as TotalCount,
+                        COUNT(CASE WHEN status = 0 THEN 1 END) as FailureCount
+                    FROM monitor_pings
+                    WHERE monitor_id = @MonitorId
+                    AND received_at >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
+                    GROUP BY DATE_TRUNC('month', received_at)
+                )
+                SELECT 
+                    TO_CHAR(MonthStart, 'Mon YYYY') as Month,
+                    EXTRACT(YEAR FROM MonthStart) as Year,
+                    TotalCount,
+                    FailureCount
+                FROM MonthlyStats
+                ORDER BY MonthStart DESC";
+
+            var stats = await QueryAsync<HealthyCron.Models.DTOs.MonthlyUptimeDto>(sql, new { MonitorId = monitorId });
+            
+            // Post-process to calculate percentages and duration
+            // We need the monitor's period to estimate downtime duration
+            var monitor = await GetMonitorByIdAsync(monitorId);
+            var periodSeconds = monitor?.PeriodSeconds ?? 60; // Default to 60s if not found or varying
+
+            foreach (var stat in stats)
+            {
+                if (stat.TotalCount > 0)
+                {
+                    stat.UptimePercentage = Math.Round(((double)(stat.TotalCount - stat.FailureCount) / stat.TotalCount) * 100, 2);
+                }
+                else
+                {
+                    stat.UptimePercentage = 100; // No data = no downtime recorded
+                }
+
+                if (stat.FailureCount > 0)
+                {
+                    var totalDowntimeSeconds = stat.FailureCount * periodSeconds;
+                    stat.DowntimeDuration = FormatDuration(totalDowntimeSeconds);
+                }
+                else
+                {
+                    stat.DowntimeDuration = "0m";
+                }
+            }
+
+            // Fill in missing months if needed (optional, but good for UX)
+            // For now return what we have
+            return stats;
+        }
+
+        private string FormatDuration(int? seconds)
+        {
+            if (!seconds.HasValue) return "0m";
+            if (seconds >= 86400) return $"{seconds / 86400}d {(seconds % 86400) / 3600}h";
+            if (seconds >= 3600) return $"{seconds / 3600}h {(seconds % 3600) / 60}m";
+            return $"{seconds / 60}m";
         }
     }
 }

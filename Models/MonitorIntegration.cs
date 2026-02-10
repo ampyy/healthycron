@@ -4,5 +4,6 @@ namespace HealthyCron.Models
     {
         public Guid MonitorId { get; set; }
         public Guid IntegrationId { get; set; }
+        public bool IsEnabled { get; set; } = true;
     }
 }

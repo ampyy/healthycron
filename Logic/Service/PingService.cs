@@ -81,7 +81,7 @@ namespace HealthyCron.Logic.Service
             // Determine new status based on ping type
             var newStatus = pingType switch
             {
-                PingType.Start => MonitorStatus.Running,
+                PingType.Start => MonitorStatus.Success,
                 PingType.Success => MonitorStatus.Success,
                 PingType.Fail => MonitorStatus.Failed,
                 _ => MonitorStatus.Success
@@ -116,7 +116,7 @@ namespace HealthyCron.Logic.Service
             Enums.AlertType? alertType = null;
 
             // UP → DOWN: Trigger DOWN alert
-            if ((previousStatus == MonitorStatus.Success || previousStatus == MonitorStatus.Running || previousStatus == null)
+            if ((previousStatus == MonitorStatus.Success || previousStatus == null)
                 && newStatus == MonitorStatus.Failed)
             {
                 alertType = Enums.AlertType.Down;
@@ -136,8 +136,11 @@ namespace HealthyCron.Logic.Service
             {
                 var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
 
-                foreach (var integration in integrations)
+                foreach (var item in integrations)
                 {
+                    if (!item.IsEnabledForMonitor) continue;
+
+                    var integration = item.Integration;
                     try
                     {
                         // Get the ping ID (we need to retrieve it since RecordPingAsync doesn't return it)

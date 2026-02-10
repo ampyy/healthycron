@@ -1,11 +1,10 @@
-@model IEnumerable<HealthyCron.Models.Monitor>
+@model HealthyCron.Models.ViewModels.ProjectMonitorsViewModel
 @{
-    var project = ViewBag.Project as HealthyCron.Models.Project;
+    var project = Model.Project!;
     ViewData["Title"] = $"{(project != null ? project.Name : "Project")} - Monitors";
     Layout = "_DashboardLayout";
 }
 
-<!-- Project Header -->
 <!-- Project Header -->
 <div class="mb-8">
     <div class="glass-card rounded-2xl p-6 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -42,33 +41,21 @@
 
 <!-- Stats Overview -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-blue">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Total Monitors</span>
-            <i data-lucide="activity" class="w-4 h-4 text-blue"></i>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Count()</div>
+    <div class="glass-card rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] uppercase tracking-widest font-black text-text-secondary opacity-50 mb-1">Total</p>
+        <div class="text-xl font-black text-white">@Model.Monitors.Count</div>
     </div>
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Healthy</span>
-            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Count(m => m.LastStatus ==
-            HealthyCron.Models.MonitorStatus.Success)
-        </div>
+    <div class="glass-card rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] uppercase tracking-widest font-black text-emerald-500/80 mb-1">Healthy</p>
+        <div class="text-xl font-black text-white">@Model.Monitors.Count(m => m.Monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success)</div>
     </div>
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-rose-500">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Down</span>
-            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Count(m => m.LastStatus ==
-            HealthyCron.Models.MonitorStatus.Failed)</div>
+    <div class="glass-card rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] uppercase tracking-widest font-black text-rose-500/80 mb-1">Down</p>
+        <div class="text-xl font-black text-white">@Model.Monitors.Count(m => m.Monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed)</div>
     </div>
 </div>
 
-@if (!Model.Any())
+@if (!Model.Monitors.Any())
 {
     <!-- Empty State -->
     <div class="glass-card rounded-3xl overflow-hidden text-center py-24 border-dashed border-2 border-white/5">
@@ -87,25 +74,25 @@
 else
 {
     <div class="grid grid-cols-1 gap-4">
-        @foreach (var monitor in Model)
+        @foreach (var item in Model.Monitors)
         {
+            var monitor = item.Monitor;
+            var integrations = item.Integrations;
             var statusColor = monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "emerald" :
-                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" :
-                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Running ? "blue" : "slate"));
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" : 
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "amber" : "slate"));
 
-            <div
-                class="glass-card rounded-2xl p-0 hover:border-blue-500/30 transition-all group hover:shadow-2xl hover:shadow-blue-500/5 relative">
+            <div class="glass-card rounded-2xl p-0 hover:border-blue-500/30 transition-all group relative">
                 <!-- Status Glow -->
-                <div
-                    class="absolute -left-1 top-6 bottom-6 w-2 rounded-full bg-@statusColor-500 shadow-[0_0_15px_rgba(244,63,94,0.4)]">
+                <div class="absolute -left-1 top-6 bottom-6 w-1 rounded-full bg-@statusColor-500 shadow-[0_0_15px_rgba(var(--status-rgb),0.4)]"
+                     style="--status-rgb: @(statusColor == "emerald" ? "16,185,129" : (statusColor == "rose" ? "244,63,94" : (statusColor == "amber" ? "245,158,11" : "100,116,139")))">
                 </div>
 
                 <div class="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div class="flex items-start gap-5 flex-1 min-w-0">
-                        <!-- Type Icon / Integration Placeholder -->
-                        <div
-                            class="w-14 h-14 rounded-2xl bg-navy-light border border-white/5 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:scale-110 transition-transform">
-                            <i data-lucide="zap" class="w-7 h-7 text-blue-500"></i>
+                        <!-- Type Icon -->
+                        <div class="w-14 h-14 rounded-2xl bg-navy-light border border-white/5 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:scale-105 transition-transform">
+                            <i data-lucide="@(monitor.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "calendar" : (monitor.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "timer" : "activity"))" class="w-7 h-7 text-blue-500"></i>
                         </div>
 
                         <div class="min-w-0 flex-1">
@@ -117,29 +104,29 @@ else
                                 <span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-black border tracking-wider
                                     @(statusColor == "emerald" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
                                       statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                                      statusColor == "amber" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
                                       "bg-slate-500/10 text-slate-400 border-slate-500/20")">
-                                    @(monitor.LastStatus.HasValue ? monitor.LastStatus.ToString() : "Paused")
+                                    @(monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "Healthy" : (monitor.LastStatus.HasValue ? (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Paused" : monitor.LastStatus.ToString()) : "Paused"))
                                 </span>
 
-                                <!-- Integrations (Placeholder) -->
+                                <!-- Integrations -->
                                 <div class="flex items-center gap-1.5 ml-auto sm:ml-0">
-                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                        title="Slack Integration">
-                                        <i data-lucide="slack" class="w-3.5 h-3.5"></i>
-                                    </div>
-                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                        title="Email Notifications">
-                                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
-                                    </div>
-                                    <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                        title="Webhook">
-                                        <i data-lucide="webhook" class="w-3.5 h-3.5"></i>
-                                    </div>
-                                    <!-- Overflow Indicator (Demo) -->
-                                    <div class="w-6 h-6 rounded-md bg-white/5 border border-white/5 flex items-center justify-center text-[9px] font-bold text-text-secondary cursor-help"
-                                        title="+2 more integrations">
-                                        +2
-                                    </div>
+                                    @if (!integrations.Any()) {
+                                        <span class="text-[9px] font-black text-text-secondary/30 uppercase tracking-widest">No Integrations</span>
+                                    } else {
+                                        @foreach(var integration in integrations.Take(3)) {
+                                            <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center text-text-secondary"
+                                                 title="@integration.Integration.Name">
+                                                <i data-lucide="@(integration.Integration.Type == HealthyCron.Enums.IntegrationType.Slack ? "slack" : (integration.Integration.Type == HealthyCron.Enums.IntegrationType.Email ? "mail" : "zap"))" class="w-3.5 h-3.5"></i>
+                                            </div>
+                                        }
+                                        @if (integrations.Count > 3) {
+                                            <div class="w-6 h-6 rounded-md bg-white/5 border border-white/5 flex items-center justify-center text-[9px] font-bold text-text-secondary cursor-help"
+                                                title="+@(integrations.Count - 3) more integrations">
+                                                +@(integrations.Count - 3)
+                                            </div>
+                                        }
+                                    }
                                 </div>
                             </div>
 
@@ -168,20 +155,18 @@ else
                                         }
                                     </span>
                                     <span class="opacity-20">|</span>
-                                    <span class="text-xs">Grace: @(monitor.GraceSeconds / 60)m</span>
+                                    <span class="text-xs">Grace: @((monitor.GraceSeconds ?? 0) / 60)m</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Right Side: Stats & Actions -->
-                    <div
-                        class="flex items-center justify-between lg:justify-end gap-8 border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
+                    <div class="flex items-center justify-between lg:justify-end gap-8 border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
                         <div class="flex flex-col items-start lg:items-end">
                             <p class="text-[10px] uppercase tracking-widest text-text-secondary mb-1">Last Beat</p>
                             <div class="flex items-center gap-2">
-                                <span class="text-sm font-bold text-white">@(monitor.LastPingAt?.ToString("MMM dd, HH:mm") ??
-                            "N/A")</span>
+                                <span class="text-sm font-bold text-white">@(monitor.LastPingAt?.ToString("MMM dd, HH:mm") ?? "N/A")</span>
                                 @if (monitor.LastPingAt.HasValue)
                                 {
                                     <div class="w-1.5 h-1.5 rounded-full bg-@statusColor-500 animate-pulse"></div>
@@ -191,7 +176,7 @@ else
 
                         <div class="flex items-center gap-2">
                             <a href="/monitor/@monitor.Slug"
-                                class="p-3 bg-navy-light border border-white/5 rounded-xl hover:bg-blue hover:text-white transition-all transform hover:scale-105 shadow-lg active:scale-95">
+                                class="p-3 bg-navy-light border border-white/5 rounded-xl hover:bg-blue hover:text-white transition-all transform hover:scale-105 shadow-xl active:scale-95">
                                 <i data-lucide="arrow-right" class="w-5 h-5"></i>
                             </a>
                         </div>

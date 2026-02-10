@@ -13,9 +13,9 @@ namespace HealthyCron.Data.Repository
         public async Task<IEnumerable<Integration>> GetIntegrationsByProjectIdAsync(Guid projectId)
         {
             const string sql = @"
-                SELECT id, project_id, type, name, is_active, created_at 
+                SELECT id, project_id, type, name, is_active, is_deleted, created_at 
                 FROM integrations 
-                WHERE project_id = @ProjectId 
+                WHERE project_id = @ProjectId AND is_deleted = false
                 ORDER BY created_at DESC";
 
             return await QueryAsync<Integration>(sql, new { ProjectId = projectId });
@@ -24,9 +24,9 @@ namespace HealthyCron.Data.Repository
         public async Task<Integration?> GetIntegrationByIdAsync(Guid id)
         {
             const string sql = @"
-                SELECT id, project_id, type, name, is_active, created_at 
+                SELECT id, project_id, type, name, is_active, is_deleted, created_at 
                 FROM integrations 
-                WHERE id = @Id";
+                WHERE id = @Id AND is_deleted = false";
 
             return await QueryFirstOrDefaultAsync<Integration>(sql, new { Id = id });
         }
@@ -57,6 +57,17 @@ namespace HealthyCron.Data.Repository
             return rows > 0;
         }
 
+        public async Task<bool> DeleteIntegrationAsync(Guid id)
+        {
+            const string sql = @"
+                UPDATE integrations 
+                SET is_deleted = true, is_active = false
+                WHERE id = @Id";
+
+            var rows = await ExecuteAsync(sql, new { Id = id });
+            return rows > 0;
+        }
+
         public async Task CreateSlackIntegrationAsync(SlackIntegration slackIntegration)
         {
             const string sql = @"
@@ -83,16 +94,29 @@ namespace HealthyCron.Data.Repository
             return await QueryFirstOrDefaultAsync<SlackIntegration>(sql, new { IntegrationId = integrationId });
         }
 
-        public async Task<IEnumerable<Integration>> GetMonitorIntegrationsAsync(Guid monitorId)
+        public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)
         {
             const string sql = @"
-                SELECT i.id, i.project_id, i.type, i.name, i.is_active, i.created_at
+                SELECT i.id, i.project_id, i.type, i.name, i.is_active, i.created_at, mi.is_enabled
                 FROM integrations i
                 INNER JOIN monitor_integrations mi ON i.id = mi.integration_id
-                WHERE mi.monitor_id = @MonitorId AND i.is_active = true
+                WHERE mi.monitor_id = @MonitorId AND i.is_deleted = false
                 ORDER BY i.created_at DESC";
 
-            return await QueryAsync<Integration>(sql, new { MonitorId = monitorId });
+            using var connection = _connectionFactory.CreateConnection();
+            var results = await connection.QueryAsync<dynamic>(sql, new { MonitorId = monitorId });
+            
+            return results.Select(r => new HealthyCron.Models.ViewModels.IntegrationListItemViewModel {
+                Integration = new Integration {
+                    Id = r.id,
+                    ProjectId = r.project_id,
+                    Type = (IntegrationType)r.type,
+                    Name = r.name,
+                    IsActive = r.is_active,
+                    CreatedAt = r.created_at
+                },
+                IsEnabledForMonitor = r.is_enabled
+            });
         }
 
         public async Task<bool> AddMonitorIntegrationAsync(Guid monitorId, Guid integrationId)
@@ -148,6 +172,17 @@ namespace HealthyCron.Data.Repository
                 transaction.Rollback();
                 throw;
             }
+        }
+
+        public async Task<bool> UpdateMonitorIntegrationStatusAsync(Guid monitorId, Guid integrationId, bool isEnabled)
+        {
+            const string sql = @"
+                UPDATE monitor_integrations 
+                SET is_enabled = @IsEnabled 
+                WHERE monitor_id = @MonitorId AND integration_id = @IntegrationId";
+
+            var rows = await ExecuteAsync(sql, new { MonitorId = monitorId, IntegrationId = integrationId, IsEnabled = isEnabled });
+            return rows > 0;
         }
 
         public async Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType)

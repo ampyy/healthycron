@@ -11,5 +11,7 @@ namespace HealthyCron.Data.Interfaces
         Task<bool> UpdateProjectAsync(Project project);
         Task<bool> DeleteProjectAsync(Guid id);
         Task<bool> SlugExistsAsync(string slug);
+        Task<HealthyCron.Models.ViewModels.DashboardStats> GetDashboardStatsAsync(Guid userId);
+        Task<IEnumerable<HealthyCron.Models.ViewModels.ProjectPingStats>> GetRecentPingStatsAsync(Guid userId, int hours = 24);
     }
 }

@@ -4,7 +4,6 @@ namespace HealthyCron.Models
     {
         Failed = 0,
         Success = 1,
-        Paused = 2,
-        Running = 3
+        Paused = 2
     }
 }

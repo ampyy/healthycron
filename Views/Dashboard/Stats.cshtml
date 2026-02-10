@@ -1,72 +1,75 @@
-@model IEnumerable<HealthyCron.Models.Project>
+@model HealthyCron.Models.ViewModels.DashboardStats
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "_DashboardLayout";
 
-    var totalProjects = Model.Count();
-    var totalMonitors = Model.Sum(p => p.MonitorCount);
-    var totalBeats = Model.Sum(p => p.InteractionsCount);
-
-    // Quota Logic (Demo)
-    var projectQuota = 5;
-    var monitorQuota = 20;
+    var chartData = ViewBag.ChartData as IEnumerable<HealthyCron.Models.ViewModels.ProjectPingStats> ?? new List<HealthyCron.Models.ViewModels.ProjectPingStats>();
 }
 
 <div class="space-y-8">
     <!-- Page Header -->
-    <div>
-        <h1 class="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
-        <p class="text-text-secondary">Summary of your monitoring ecosystem and quotas.</p>
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
+            <p class="text-text-secondary">Global metrics across all your projects.</p>
+        </div>
+        <div class="flex gap-2">
+            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                System Live
+            </span>
+        </div>
     </div>
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-card rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <i data-lucide="folder" class="w-16 h-16 text-blue"></i>
-            </div>
-            <p class="text-sm font-semibold text-text-secondary uppercase tracking-widest mb-1">Total Projects</p>
-            <h2 class="text-4xl font-black text-white">@totalProjects</h2>
-            <div
-                class="mt-4 flex items-center gap-2 text-xs text-green-500 font-bold bg-green-500/5 px-2 py-1 rounded-full w-fit">
-                <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
-                Active
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
+            <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Projects</p>
+            <h2 class="text-3xl font-black text-white">@Model.TotalProjects</h2>
+            <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i data-lucide="folder" class="w-8 h-8 text-blue"></i>
             </div>
         </div>
 
-        <div class="glass-card rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <i data-lucide="activity" class="w-16 h-16 text-purple"></i>
-            </div>
-            <p class="text-sm font-semibold text-text-secondary uppercase tracking-widest mb-1">Total Monitors</p>
-            <h2 class="text-4xl font-black text-white">@totalMonitors</h2>
-            <div
-                class="mt-4 flex items-center gap-2 text-xs text-purple-500 font-bold bg-purple-500/5 px-2 py-1 rounded-full w-fit">
-                <i data-lucide="check-circle" class="w-3 h-3"></i>
-                Monitoring
+        <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
+            <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Monitors</p>
+            <h2 class="text-3xl font-black text-white">@Model.TotalMonitors</h2>
+            <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i data-lucide="activity" class="w-8 h-8 text-purple"></i>
             </div>
         </div>
 
-        <div class="glass-card rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
-            <div class="absolute right-0 top-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <i data-lucide="zap" class="w-16 h-16 text-amber"></i>
+        <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
+            <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Total Beats</p>
+            <h2 class="text-3xl font-black text-white">@Model.TotalBeats.ToString("N0")</h2>
+            <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i data-lucide="zap" class="w-8 h-8 text-amber"></i>
             </div>
-            <p class="text-sm font-semibold text-text-secondary uppercase tracking-widest mb-1">Total Beats</p>
-            <h2 class="text-4xl font-black text-white">@totalBeats.ToString("N0")</h2>
-            <div
-                class="mt-4 flex items-center gap-2 text-xs text-amber-500 font-bold bg-amber-500/5 px-2 py-1 rounded-full w-fit">
-                <i data-lucide="zap" class="w-3 h-3"></i>
-                Interactions
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
+            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Healthy</p>
+            <h2 class="text-3xl font-black text-white">@Model.HealthyMonitors</h2>
+            <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i data-lucide="check-circle" class="w-8 h-8 text-emerald-500"></i>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
+            <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Missed/Failed</p>
+            <h2 class="text-3xl font-black text-white">@(Model.MissedMonitors + Model.FailedMonitors)</h2>
+            <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i data-lucide="alert-circle" class="w-8 h-8 text-rose-500"></i>
             </div>
         </div>
     </div>
 
     <!-- Middle Section: Quotas & Analytics -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Usage Quotas -->
-        <div class="glass-card rounded-2xl p-8 border border-white/5">
-            <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <i data-lucide="pie-chart" class="text-blue"></i>
+        <div class="glass-card rounded-2xl p-8 border border-white/5 lg:col-span-1">
+            <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <i data-lucide="pie-chart" class="text-blue w-5 h-5"></i>
                 Usage Quotas
             </h3>
 
@@ -74,65 +77,132 @@
                 <!-- Projects Quota -->
                 <div>
                     <div class="flex justify-between items-end mb-2">
-                        <span class="text-sm font-semibold text-white">Projects</span>
-                        <span class="text-xs text-text-secondary font-mono">@totalProjects / @projectQuota</span>
+                        <span class="text-xs font-bold text-white uppercase tracking-tight">Projects</span>
+                        <span class="text-[10px] text-text-secondary font-mono">@Model.TotalProjects / @Model.ProjectQuota</span>
                     </div>
-                    <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                         <div class="h-full bg-blue transition-all duration-1000"
-                            style="width: @(Math.Min(100, (totalProjects * 100) / projectQuota))%"></div>
+                            style="width: @(Math.Min(100, (Model.TotalProjects * 100) / Model.ProjectQuota))%"></div>
                     </div>
                 </div>
 
                 <!-- Monitors Quota -->
                 <div>
                     <div class="flex justify-between items-end mb-2">
-                        <span class="text-sm font-semibold text-white">Monitors</span>
-                        <span class="text-xs text-text-secondary font-mono">@totalMonitors / @monitorQuota</span>
+                        <span class="text-xs font-bold text-white uppercase tracking-tight">Monitors</span>
+                        <span class="text-[10px] text-text-secondary font-mono">@Model.TotalMonitors / @Model.MonitorQuota</span>
                     </div>
-                    <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                         <div class="h-full bg-purple transition-all duration-1000"
-                            style="width: @(Math.Min(100, (totalMonitors * 100) / monitorQuota))%"></div>
+                            style="width: @(Math.Min(100, (Model.TotalMonitors * 100) / Model.MonitorQuota))%"></div>
                     </div>
                 </div>
 
                 <div class="pt-4">
-                    <div class="p-4 bg-navy-light rounded-xl border border-white/5 flex items-center justify-between">
+                    <div class="p-4 bg-navy/50 rounded-xl border border-white/5 flex items-center justify-between group cursor-pointer hover:border-blue/30 transition-all">
                         <div>
                             <p class="text-sm font-bold text-white">Starter Plan</p>
-                            <p class="text-xs text-text-secondary">Upgrade for more capacity</p>
+                            <p class="text-[10px] text-text-secondary uppercase font-black">Free Tier</p>
                         </div>
-                        <button
-                            class="px-4 py-2 bg-white text-navy text-xs font-black rounded-lg hover:bg-blue hover:text-white transition-all uppercase tracking-tighter">Upgrade</button>
+                        <button class="px-3 py-1.5 bg-white text-navy text-[10px] font-black rounded-lg group-hover:bg-blue group-hover:text-white transition-all uppercase tracking-tighter">Upgrade</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Activity Graph Placeholder -->
-        <div class="glass-card rounded-2xl p-8 border border-white/5 relative overflow-hidden">
-            <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <i data-lucide="trending-up" class="text-green-500"></i>
-                Recent Activity
-            </h3>
+        <!-- Activity Graph -->
+        <div class="glass-card rounded-2xl p-8 border border-white/5 lg:col-span-2 relative overflow-hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="trending-up" class="text-emerald-500 w-5 h-5"></i>
+                    Ping Volume (Last 24h)
+                </h3>
+                <div class="flex gap-3">
+                    @foreach(var project in chartData) {
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-1.5 h-1.5 rounded-full" style="background-color: @project.Color"></div>
+                            <span class="text-[9px] font-black text-text-secondary uppercase tracking-widest">@project.ProjectName</span>
+                        </div>
+                    }
+                </div>
+            </div>
 
-            <div class="h-48 flex items-end gap-1 px-2">
-                @for (int i = 0; i < 28; i++)
+            <div class="h-48 flex items-end gap-1.5 px-2">
+                @for (int i = 0; i < 24; i++)
                 {
-                    var height = new Random().Next(20, 100);
-                    <div class="flex-1 bg-blue/20 rounded-t hover:bg-blue transition-all group relative cursor-pointer"
-                        style="height: @height%">
-                        <div
-                            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-navy text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none whitespace-nowrap">
-                            @(new Random().Next(100, 500)) pings
+                    var hourData = chartData.Select(p => p.Data.Count > i ? p.Data[i] : new HealthyCron.Models.ViewModels.PingCountByHour { Count = 0 }).ToList();
+                    var totalInHour = hourData.Sum(d => d.Count);
+                    var maxTotal = chartData.Any() && chartData.Max(p => p.Data.Any() ? p.Data.Max(d => d.Count) : 0) > 0 
+                        ? chartData.Max(p => p.Data.Max(d => d.Count)) * 4 // Scale factor
+                        : 100;
+
+                    <div class="flex-1 flex flex-col-reverse group relative cursor-pointer h-full justify-start">
+                        @for (int j = 0; j < chartData.Count(); j++)
+                        {
+                            var p = chartData.ElementAt(j);
+                            var count = p.Data.Count > i ? p.Data[i].Count : 0;
+                            var height = maxTotal > 0 ? (count * 100.0 / maxTotal) : 0;
+                            
+                            if (count > 0) {
+                                <div class="w-full rounded-sm transition-all group-hover:brightness-125" 
+                                     style="height: @(height)%; background-color: @p.Color; margin-bottom: 1px;"
+                                     title="@p.ProjectName: @count pings">
+                                </div>
+                            }
+                        }
+                        @if (totalInHour == 0) {
+                             <div class="w-full h-1 bg-white/5 rounded-full self-end mb-0 group-hover:bg-white/10 transition-all"></div>
+                        }
+
+                        <!-- Tooltip -->
+                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-navy-light text-white text-[10px] font-bold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none whitespace-nowrap shadow-2xl">
+                            <p class="text-text-secondary mb-1 border-b border-white/5 pb-1">@DateTime.UtcNow.AddHours(-23 + i).ToString("MMM dd, HH:00")</p>
+                            @foreach(var p in chartData) {
+                                var c = p.Data.Count > i ? p.Data[i].Count : 0;
+                                <div class="flex justify-between gap-4 mt-0.5">
+                                    <span style="color: @p.Color">@p.ProjectName</span>
+                                    <span class="font-mono">@c</span>
+                                </div>
+                            }
+                            <div class="mt-1 pt-1 border-t border-white/5 flex justify-between">
+                                <span>Total</span>
+                                <span class="text-blue">@totalInHour</span>
+                            </div>
                         </div>
                     </div>
                 }
             </div>
 
-            <div
-                class="flex justify-between mt-4 text-[10px] text-text-secondary font-mono uppercase tracking-widest px-2">
-                <span>4 weeks ago</span>
+            <div class="flex justify-between mt-6 text-[9px] text-text-secondary font-black uppercase tracking-widest px-2 border-t border-white/5 pt-4">
+                <span>24 hours ago</span>
+                <span>12h ago</span>
                 <span>Today</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Alerts Placeholder -->
+    <div class="glass-card rounded-2xl p-8 border border-white/5">
+         <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="bell" class="text-rose-500 w-5 h-5"></i>
+                Recent System Events
+            </h3>
+            <button class="text-[10px] font-black text-text-secondary uppercase tracking-widest hover:text-white transition-colors">Clear All</button>
+        </div>
+        
+        <div class="space-y-2">
+            <div class="p-4 bg-white/[0.02] rounded-xl border border-white/5 flex items-center justify-between group hover:bg-white/[0.04] transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                        <i data-lucide="check-circle" class="text-emerald-500 w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-white">System fully functional</p>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest">Everything is looking good</p>
+                    </div>
+                </div>
+                <span class="text-[10px] font-mono text-text-secondary opacity-50">Just now</span>
             </div>
         </div>
     </div>
