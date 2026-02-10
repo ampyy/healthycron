@@ -88,5 +88,25 @@ namespace HealthyCron.Controllers
 
             return await MonitorLog(monitor.Id, status, search, limit);
         }
+
+        [HttpGet("partials/logs")]
+        public async Task<IActionResult> GetLogsPartial(Guid? monitorId, int? status, string? search, int limit = 25, int offset = 0)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            if (!RouteData.Values.TryGetValue("projectSlug", out var slugObj) || slugObj == null)
+            {
+                 return BadRequest("Project Context Missing");
+            }
+            string projectSlug = slugObj.ToString()!;
+
+            var project = await _projectRepository.GetProjectBySlugAsync(projectSlug);
+            if (project == null || project.UserId != user.Id) return NotFound();
+
+            var pings = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, monitorId, status, search, limit, offset);
+            
+            return PartialView("_LogRows", pings);
+        }
     }
 }

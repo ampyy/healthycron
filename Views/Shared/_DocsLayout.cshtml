@@ -1,0 +1,59 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-20 mt-16">
+    <div class="flex flex-col lg:flex-row gap-12">
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-64 shrink-0">
+            <nav class="space-y-8 sticky top-24">
+                <div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-4 px-2 opacity-50">Getting Started</h3>
+                    <div class="space-y-1">
+                        <a href="/docs" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            Introduction
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-4 px-2 opacity-50">Core Concepts</h3>
+                    <div class="space-y-1">
+                        <a href="/docs/pinging-api" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "PingingApi" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
+                            <i data-lucide="zap" class="w-4 h-4"></i>
+                            Pinging API
+                        </a>
+                        <a href="/docs/configuring-checks" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "ConfiguringChecks" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            Configuring Checks
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-4 px-2 opacity-50">Integration</h3>
+                    <div class="space-y-1">
+                        <a href="/docs/notifications" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "Notifications" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
+                            <i data-lucide="bell" class="w-4 h-4"></i>
+                            Notifications
+                        </a>
+                        <a href="/docs/projects" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "Projects" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                            Projects & Teams
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <article class="flex-1 max-w-3xl prose prose-invert prose-blue prose-sm sm:prose-base">
+            @RenderBody()
+        </article>
+    </div>
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

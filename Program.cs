@@ -31,8 +31,7 @@ var slackSettings = builder.Services.AddValidatedConfiguration<SlackSettings>(
 var encryptionSettings = builder.Services.AddValidatedConfiguration<EncryptionSettings>(
     builder.Configuration, EncryptionSettings.SectionName);
 
-var internalApiSettings = builder.Services.AddValidatedConfiguration<InternalApiSettings>(
-    builder.Configuration, InternalApiSettings.SectionName);
+
 
 
 // ============================================================================

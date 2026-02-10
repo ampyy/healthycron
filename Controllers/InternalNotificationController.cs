@@ -14,25 +14,27 @@ namespace HealthyCron.Controllers
         private readonly IMonitorRepository _monitorRepository;
         private readonly IHubContext<MonitorHub> _hubContext;
         private readonly ILogger<InternalNotificationController> _logger;
-        private readonly InternalApiSettings _settings;
+        private readonly IConfiguration _configuration;
 
         public InternalNotificationController(
             IMonitorRepository monitorRepository,
             IHubContext<MonitorHub> hubContext,
             ILogger<InternalNotificationController> logger,
-            IOptions<InternalApiSettings> settings)
+            IConfiguration configuration)
         {
             _monitorRepository = monitorRepository;
             _hubContext = hubContext;
             _logger = logger;
-            _settings = settings.Value;
+            _configuration = configuration;
         }
 
         [HttpPost("notify-status")]
         public async Task<IActionResult> NotifyStatusChange([FromBody] NotifyStatusRequest request)
         {
+            var internalToken = _configuration["InternalApi:AuthToken"];
+            
             // Validate Internal Token
-            if (!Request.Headers.TryGetValue("X-Internal-Token", out var token) || token != _settings.AuthToken)
+            if (string.IsNullOrEmpty(internalToken) || !Request.Headers.TryGetValue("X-Internal-Token", out var token) || token != internalToken)
             {
                 return Unauthorized("Invalid or missing internal token.");
             }

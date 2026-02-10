@@ -243,6 +243,9 @@ namespace HealthyCron.Controllers
             var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
             ViewBag.MonitorIntegrations = integrations.ToList();
 
+            var monthlyStats = await _monitorRepository.GetMonthlyStatsAsync(monitor.Id);
+            ViewBag.MonthlyStats = monthlyStats.ToList();
+
             return View(monitor);
         }
 

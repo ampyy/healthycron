@@ -41,26 +41,17 @@
 
 <!-- Stats Overview -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-blue">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Total Monitors</span>
-            <i data-lucide="activity" class="w-4 h-4 text-blue"></i>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Monitors.Count</div>
+    <div class="glass-card rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] uppercase tracking-widest font-black text-text-secondary opacity-50 mb-1">Total</p>
+        <div class="text-xl font-black text-white">@Model.Monitors.Count</div>
     </div>
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-emerald-500">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Healthy</span>
-            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Monitors.Count(m => m.Monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success)</div>
+    <div class="glass-card rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] uppercase tracking-widest font-black text-emerald-500/80 mb-1">Healthy</p>
+        <div class="text-xl font-black text-white">@Model.Monitors.Count(m => m.Monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success)</div>
     </div>
-    <div class="glass-card rounded-2xl p-5 border-l-4 border-l-rose-500">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-text-secondary">Down</span>
-            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>
-        </div>
-        <div class="text-2xl font-black text-white">@Model.Monitors.Count(m => m.Monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed)</div>
+    <div class="glass-card rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] uppercase tracking-widest font-black text-rose-500/80 mb-1">Down</p>
+        <div class="text-xl font-black text-white">@Model.Monitors.Count(m => m.Monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed)</div>
     </div>
 </div>
 
@@ -88,12 +79,13 @@ else
             var monitor = item.Monitor;
             var integrations = item.Integrations;
             var statusColor = monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "emerald" :
-                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" : "slate");
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Failed ? "rose" : 
+                             (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "amber" : "slate"));
 
             <div class="glass-card rounded-2xl p-0 hover:border-blue-500/30 transition-all group relative">
                 <!-- Status Glow -->
                 <div class="absolute -left-1 top-6 bottom-6 w-1 rounded-full bg-@statusColor-500 shadow-[0_0_15px_rgba(var(--status-rgb),0.4)]"
-                     style="--status-rgb: @(statusColor == "emerald" ? "16,185,129" : (statusColor == "rose" ? "244,63,94" : "100,116,139"))">
+                     style="--status-rgb: @(statusColor == "emerald" ? "16,185,129" : (statusColor == "rose" ? "244,63,94" : (statusColor == "amber" ? "245,158,11" : "100,116,139")))">
                 </div>
 
                 <div class="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -112,8 +104,9 @@ else
                                 <span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-black border tracking-wider
                                     @(statusColor == "emerald" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
                                       statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                                      statusColor == "amber" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
                                       "bg-slate-500/10 text-slate-400 border-slate-500/20")">
-                                    @(monitor.LastStatus.HasValue ? monitor.LastStatus.ToString() : "Paused")
+                                    @(monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "Healthy" : (monitor.LastStatus.HasValue ? (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Paused" : monitor.LastStatus.ToString()) : "Paused"))
                                 </span>
 
                                 <!-- Integrations -->
