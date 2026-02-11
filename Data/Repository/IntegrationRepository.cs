@@ -185,20 +185,19 @@ namespace HealthyCron.Data.Repository
             return rows > 0;
         }
 
-        public async Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId, AlertType alertType)
+        public async Task<Guid> CreateNotificationJobAsync(int monitorPingId, Guid integrationId)
         {
             var id = Guid.NewGuid();
             const string sql = @"
-                INSERT INTO notification_jobs (id, monitor_ping_id, integration_id, alert_type, status)
-                VALUES (@Id, @MonitorPingId, @IntegrationId, @AlertType, 0)
+                INSERT INTO notification_jobs (id, monitor_ping_id, integration_id, status)
+                VALUES (@Id, @MonitorPingId, @IntegrationId, 0)
                 RETURNING id";
 
             return await ExecuteScalarAsync<Guid>(sql, new
             {
                 Id = id,
                 MonitorPingId = monitorPingId,
-                IntegrationId = integrationId,
-                AlertType = (short)alertType
+                IntegrationId = integrationId
             });
         }
     }

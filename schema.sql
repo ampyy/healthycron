@@ -126,8 +126,7 @@ CREATE TABLE IF NOT EXISTS notification_jobs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     monitor_ping_id INTEGER NOT NULL,
     integration_id UUID NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
-    alert_type SMALLINT NOT NULL, -- 1=Down, 2=Recovery
-    status SMALLINT NOT NULL DEFAULT 0, -- 0=Pending, 1=Processing, 2=Sent, 3=Failed
+    status SMALLINT NOT NULL DEFAULT 0, -- 0=Pending, 1=Sent, 2=Failed
     retry_count SMALLINT NOT NULL DEFAULT 0,
     last_error TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

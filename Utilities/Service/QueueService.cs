@@ -2,7 +2,7 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Interface;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace HealthyCron.Utilities.Service
 {
@@ -19,7 +19,7 @@ namespace HealthyCron.Utilities.Service
 
         public async Task SendMessageAsync(object message)
         {
-            var jsonMessage = JsonSerializer.Serialize(message);
+            var jsonMessage = JsonConvert.SerializeObject(message);
             var sendRequest = new SendMessageRequest
             {
                 QueueUrl = _queueUrl,

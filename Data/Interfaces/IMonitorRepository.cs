@@ -10,7 +10,7 @@ namespace HealthyCron.Data.Interfaces
         Task<IEnumerable<CronMonitor>> GetMonitorsByProjectIdAsync(Guid projectId);
         Task<Guid> CreateMonitorAsync(CronMonitor monitor);
         Task<bool> SlugExistsAsync(Guid projectId, string slug);
-        Task<bool> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus);
+        Task<int?> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus);
         Task<IEnumerable<MonitorPing>> GetPingsByMonitorIdAsync(Guid monitorId, int limit = 50);
         Task<IEnumerable<MonitorPing>> GetPingsByProjectIdAsync(Guid projectId, int limit = 100);
         Task<IEnumerable<MonitorPing>> GetPingsWithFiltersAsync(Guid projectId, Guid? monitorId, int? status, string? search, int limit = 100, int offset = 0);

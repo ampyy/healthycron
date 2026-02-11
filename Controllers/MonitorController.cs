@@ -3,6 +3,8 @@ using HealthyCron.Filters;
 using HealthyCron.Models;
 using HealthyCron.Models.DTOs;
 using HealthyCron.Enums;
+using HealthyCron.Utilities.Interface;
+using HealthyCron.Logic.Interfaces;
 using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -250,7 +252,7 @@ namespace HealthyCron.Controllers
         }
 
         [HttpPost("{id:guid}/pause")]
-        public async Task<IActionResult> Pause(Guid id)
+        public async Task<IActionResult> Pause(Guid id, [FromServices] IPingService pingService)
         {
             var user = HttpContext.Items["User"] as User;
             if (user == null) return Unauthorized();
@@ -261,8 +263,59 @@ namespace HealthyCron.Controllers
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
             if (project == null || project.UserId != user.Id) return NotFound();
 
-            var newStatus = monitor.LastStatus == MonitorStatus.Paused ? MonitorStatus.Success : MonitorStatus.Paused;
+            var isPausing = monitor.LastStatus != MonitorStatus.Paused;
+            var newStatus = isPausing ? MonitorStatus.Paused : MonitorStatus.Success;
+
+            // Update status
             await _monitorRepository.UpdateStatusAsync(id, newStatus);
+
+            // Record a manual ping for the state change
+            var now = DateTime.UtcNow;
+            var alertType = isPausing ? Enums.AlertType.Paused : Enums.AlertType.Resumed;
+            
+            var ping = new MonitorPing
+            {
+                MonitorId = monitor.Id,
+                Status = isPausing ? PingType.Fail : PingType.Success, // Best fit for pause/resume
+                Message = isPausing ? "Monitor paused manually" : "Monitor resumed manually",
+                ReceivedAt = now,
+                HttpMethod = "INTERNAL",
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+            };
+
+            var pingId = await _monitorRepository.RecordPingAsync(ping, newStatus);
+
+            if (pingId.HasValue)
+            {
+                var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
+                foreach (var item in integrations)
+                {
+                    if (!item.IsEnabledForMonitor) continue;
+
+                    var integration = item.Integration;
+                    try
+                    {
+                        var jobId = await _integrationRepository.CreateNotificationJobAsync(
+                            pingId.Value,
+                            integration.Id
+                        );
+
+                        // Trigger SQS
+                        var queueService = HttpContext.RequestServices.GetRequiredService<IQueueService>();
+                        var sqsPayload = new HealthyCron.Models.DTOs.SqsMessagePayload
+                        {
+                            JobId = jobId,
+                            MonitorId = monitor.Id,
+                            IntegrationId = integration.Id
+                        };
+                        await queueService.SendMessageAsync(sqsPayload);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to trigger pause notification: {ex.Message}");
+                    }
+                }
+            }
 
             return Ok(new { success = true, status = newStatus.ToString() });
         }

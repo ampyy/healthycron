@@ -88,10 +88,10 @@ namespace HealthyCron.Logic.Service
             };
 
             // Record the ping and update monitor state
-            await _monitorRepository.RecordPingAsync(ping, newStatus);
+            var pingId = await _monitorRepository.RecordPingAsync(ping, newStatus);
 
             // Broadcast real-time update via SignalR
-            var payload = new
+            var signalRPayload = new
             {
                 id = ping.Id,
                 receivedAt = ping.ReceivedAt,
@@ -109,8 +109,8 @@ namespace HealthyCron.Logic.Service
                 monitorName = monitor.Name
             };
 
-            await _hubContext.Clients.Group(monitor.Id.ToString()).SendAsync("PingReceived", payload);
-            await _hubContext.Clients.Group(monitor.ProjectId.ToString()).SendAsync("PingReceived", payload);
+            await _hubContext.Clients.Group(monitor.Id.ToString()).SendAsync("PingReceived", signalRPayload);
+            await _hubContext.Clients.Group(monitor.ProjectId.ToString()).SendAsync("PingReceived", signalRPayload);
 
             // Detect state transitions and create notification jobs
             Enums.AlertType? alertType = null;
@@ -132,7 +132,7 @@ namespace HealthyCron.Logic.Service
             }
 
             // If there's an alert, create notification jobs for all monitor integrations
-            if (alertType.HasValue)
+            if (alertType.HasValue && pingId.HasValue)
             {
                 var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(monitor.Id);
 
@@ -143,31 +143,29 @@ namespace HealthyCron.Logic.Service
                     var integration = item.Integration;
                     try
                     {
-                        // Get the ping ID (we need to retrieve it since RecordPingAsync doesn't return it)
-                        var recentPings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 1);
-                        var pingId = recentPings.FirstOrDefault()?.Id ?? 0;
+                        var jobId = await _integrationRepository.CreateNotificationJobAsync(
+                            pingId.Value,
+                            integration.Id
+                        );
 
-                        if (pingId > 0)
+                        _logger.LogInformation("Created notification job {JobId} for monitor {MonitorId}, integration {IntegrationId}, alert type {AlertType}",
+                            jobId, monitor.Id, integration.Id, alertType.Value);
+
+                        // Send full payload to SQS queue for processing
+                        try
                         {
-                            var jobId = await _integrationRepository.CreateNotificationJobAsync(
-                                pingId,
-                                integration.Id,
-                                alertType.Value
-                            );
-
-                            _logger.LogInformation("Created notification job {JobId} for monitor {MonitorId}, integration {IntegrationId}, alert type {AlertType}",
-                                jobId, monitor.Id, integration.Id, alertType.Value);
-
-                            // Send Job ID to SQS queue for processing
-                            try
+                            var sqsPayload = new HealthyCron.Models.DTOs.SqsMessagePayload
                             {
-                                await _queueService.SendMessageAsync(new { jobId = jobId });
-                                _logger.LogInformation("Successfully sent Job ID {JobId} to SQS queue", jobId);
-                            }
-                            catch (Exception queueEx)
-                            {
-                                _logger.LogError(queueEx, "Failed to send Job ID {JobId} to SQS queue", jobId);
-                            }
+                                JobId = jobId,
+                                MonitorId = monitor.Id,
+                                IntegrationId = integration.Id
+                            };
+                            await _queueService.SendMessageAsync(sqsPayload);
+                            _logger.LogInformation("Successfully sent Job ID {JobId} to SQS queue", jobId);
+                        }
+                        catch (Exception queueEx)
+                        {
+                            _logger.LogError(queueEx, "Failed to send Job ID {JobId} to SQS queue", jobId);
                         }
                     }
                     catch (Exception ex)

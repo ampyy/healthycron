@@ -122,10 +122,10 @@ namespace HealthyCron.Data.Repository
             return await QueryAsync<MonitorPing>(sql, new { ProjectId = projectId, MonitorId = monitorId, Status = status, Search = $"%{search}%", Limit = limit, Offset = offset });
         }
 
-        public async Task<bool> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus)
+        public async Task<int?> RecordPingAsync(MonitorPing ping, MonitorStatus newStatus)
         {
             var monitor = await GetMonitorByIdAsync(ping.MonitorId);
-            if (monitor == null) return false;
+            if (monitor == null) return null;
 
             var nextExpectedAt = CalculateNextExpectedAt(monitor);
             var now = DateTime.UtcNow;
@@ -145,9 +145,9 @@ namespace HealthyCron.Data.Repository
                 VALUES (
                     @MonitorId, @ReceivedAt, @Status, @Message,
                     CAST(@IpAddress AS inet), @UserAgent, @HttpMethod, CAST(@RequestHeaders AS jsonb), @DurationMs
-                );";
+                ) RETURNING id;";
 
-            var rowsAffected = await ExecuteAsync(sql, new
+            return await ExecuteScalarAsync<int>(sql, new
             {
                 Id = ping.MonitorId,
                 LastPingAt = now,
@@ -165,8 +165,6 @@ namespace HealthyCron.Data.Repository
                 RequestHeaders = ping.RequestHeaders,
                 DurationMs = ping.DurationMs
             });
-
-            return rowsAffected > 0;
         }
 
         private DateTime? CalculateNextExpectedAt(CronMonitor monitor)
