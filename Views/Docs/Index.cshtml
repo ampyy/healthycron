@@ -1,138 +1,213 @@
 @{
     Layout = "_DocsLayout";
-    ViewData["Title"] = "Introduction";
+    ViewData["Title"] = "Introduction - HealthyCron Documentation";
 }
 
-<div class="space-y-12">
-    <header class="space-y-4">
-        <h1 class="text-4xl font-black text-white tracking-tight">HealthyCron Documentation</h1>
-        <p class="text-xl text-text-secondary leading-relaxed">
-            HealthyCron is a service for monitoring cron jobs and similar periodic processes through simple HTTP heartbeats.
+<div class="space-y-8">
+    <header>
+        <h1 class="text-4xl font-black text-white mb-4">HealthyCron Documentation</h1>
+        <p class="text-lg text-text-secondary leading-relaxed">
+            HealthyCron is a service for monitoring cron jobs and similar periodic processes:
         </p>
     </header>
 
-    <section class="space-y-6">
-        <div class="bg-blue/5 border border-blue-500/10 rounded-2xl p-6">
-            <h2 class="text-lg font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-                <i data-lucide="activity" class="text-blue"></i>
-                How it works
-            </h2>
-            <ul class="space-y-4 text-text-secondary">
-                <li class="flex gap-3">
-                    <span class="w-6 h-6 rounded-full bg-blue/10 text-blue flex items-center justify-center shrink-0 text-xs font-bold">1</span>
-                    <span>HealthyCron listens for HTTP requests ("pings") from your cron jobs and scheduled tasks.</span>
-                </li>
-                <li class="flex gap-3">
-                    <span class="w-6 h-6 rounded-full bg-blue/10 text-blue flex items-center justify-center shrink-0 text-xs font-bold">2</span>
-                    <span>It keeps silent as long as pings arrive on time according to your schedule.</span>
-                </li>
-                <li class="flex gap-3">
-                    <span class="w-6 h-6 rounded-full bg-blue/10 text-blue flex items-center justify-center shrink-0 text-xs font-bold">3</span>
-                    <span>It raises an alert as soon as a ping does not arrive on time, surpassing the grace period.</span>
-                </li>
-            </ul>
-        </div>
-    </section>
+    <section class="space-y-4">
+        <ul class="space-y-3 text-text-secondary">
+            <li class="flex gap-3">
+                <span class="text-blue mt-1">•</span>
+                <span>HealthyCron listens for HTTP requests ("pings") from your cron jobs and scheduled tasks.</span>
+            </li>
+            <li class="flex gap-3">
+                <span class="text-blue mt-1">•</span>
+                <span>It keeps silent as long as pings arrive on time.</span>
+            </li>
+            <li class="flex gap-3">
+                <span class="text-blue mt-1">•</span>
+                <span>It raises an alert as soon as a ping does not arrive on time.</span>
+            </li>
+        </ul>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white tracking-tight">When to use HealthyCron</h2>
-        <p class="text-text-secondary">
-            HealthyCron works as a dead man's switch for processes that need to run continuously or on a regular, known schedule.
+        <p class="text-text-secondary pt-4">
+            HealthyCron works as a dead man's switch for processes that need to run continuously or on a regular, known schedule. Some examples of jobs that would benefit from HealthyCron monitoring:
         </p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="glass-card p-4 rounded-xl space-y-2">
-                <h3 class="font-bold text-white text-sm">Recommended for:</h3>
-                <ul class="text-xs text-text-secondary space-y-1 opacity-80">
-                    <li>• Filesystem & Database backups</li>
-                    <li>• Task queues & background workers</li>
-                    <li>• Database replication scripts</li>
-                    <li>• Report generation & data sync jobs</li>
-                    <li>• SSL renewal & DDNS scripts</li>
-                </ul>
-            </div>
-            <div class="glass-card p-4 rounded-xl space-y-2 border-rose-500/10 hover:border-rose-500/20">
-                <h3 class="font-bold text-white text-sm">Not designed for:</h3>
-                <ul class="text-xs text-text-secondary space-y-1 opacity-80">
-                    <li>• General website uptime monitoring</li>
-                    <li>• Application performance metrics (APM)</li>
-                    <li>• Log aggregation or error tracking</li>
-                </ul>
-            </div>
-        </div>
+
+        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-text-secondary pt-2">
+            <li class="flex gap-2"><span class="text-blue">✓</span> filesystem backups, database backups</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> task queues</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> database replication monitoring scripts</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> report generation scripts</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> periodic data import and sync jobs</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> periodic antivirus scans</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> DDNS updater scripts</li>
+            <li class="flex gap-2"><span class="text-blue">✓</span> SSL renewal scripts</li>
+        </ul>
     </section>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white tracking-tight">Core Concepts</h2>
-        
-        <div class="space-y-8">
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-blue"></span>
-                    The Check
-                </h3>
-                <p class="text-text-secondary">
-                    A Check represents a single service you want to monitor. For example, when monitoring cron jobs, you would create a separate check for each cron job. Each check has a unique ping URL, schedule, and associated integrations.
-                </p>
-            </div>
+    <section class="bg-navy-light border border-white/10 rounded-lg p-6 space-y-3">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wide">HealthyCron is not the right tool for:</h3>
+        <ul class="space-y-2 text-sm text-text-secondary">
+            <li class="flex gap-2"><span class="text-rose-500">×</span> monitoring website uptime by probing it with HTTP requests</li>
+            <li class="flex gap-2"><span class="text-rose-500">×</span> collecting application performance metrics</li>
+            <li class="flex gap-2"><span class="text-rose-500">×</span> log aggregation</li>
+        </ul>
+    </section>
 
+    <section class="space-y-6 pt-4">
+        <h2 class="text-2xl font-black text-white">Concepts</h2>
+
+        <div class="space-y-6">
+            <!-- Check -->
             <div class="space-y-3">
-                <h3 class="text-lg font-bold text-white">Status States</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-slate-500 mt-2 shrink-0"></div>
+                <h3 class="text-lg font-bold text-white">A Check</h3>
+                <p class="text-text-secondary">
+                    A <strong class="text-white">Check</strong> represents a single service you want to monitor. For example, when monitoring cron jobs, you would create a separate check for each cron job to be monitored. Each check has a unique ping URL, schedule, and associated integrations. For the available configuration options, see Configuring checks.
+                </p>
+                <p class="text-text-secondary">
+                    Each check is always in one of the following states, depicted by a status icon:
+                </p>
+                
+                <div class="space-y-3 pt-2">
+                    <div class="flex gap-3 items-start">
+                        <div class="w-3 h-3 rounded-full bg-slate-500 mt-1.5"></div>
                         <div>
-                            <div class="font-bold text-xs text-white uppercase">New</div>
-                            <p class="text-[10px] text-text-secondary opacity-70">A newly created check that has not received any pings yet.</p>
+                            <strong class="text-white">New.</strong>
+                            <span class="text-text-secondary"> A newly created check that has not received any pings yet. Each new check you create will start in this state.</span>
                         </div>
                     </div>
-                    <div class="flex gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 shrink-0 animate-pulse"></div>
+                    <div class="flex gap-3 items-start">
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5"></div>
                         <div>
-                            <div class="font-bold text-xs text-white uppercase">Healthy (Up)</div>
-                            <p class="text-[10px] text-text-secondary opacity-70">All is well. The last "success" signal has arrived on time.</p>
+                            <strong class="text-white">Up.</strong>
+                            <span class="text-text-secondary"> All is well. The last "success" signal has arrived on time.</span>
                         </div>
                     </div>
-                    <div class="flex gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 shrink-0"></div>
+                    <div class="flex gap-3 items-start">
+                        <div class="w-3 h-3 rounded-full bg-amber-500 mt-1.5"></div>
                         <div>
-                            <div class="font-bold text-xs text-white uppercase">Late</div>
-                            <p class="text-[10px] text-text-secondary opacity-70">The signal is due but has not exceeded the Grace Time yet.</p>
+                            <strong class="text-white">Late.</strong>
+                            <span class="text-text-secondary"> The "success" signal is due but has not arrived yet. It is not yet late by more than the check's configured Grace Time.</span>
                         </div>
                     </div>
-                    <div class="flex gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-rose-500 mt-2 shrink-0"></div>
+                    <div class="flex gap-3 items-start">
+                        <div class="w-3 h-3 rounded-full bg-rose-500 mt-1.5"></div>
                         <div>
-                            <div class="font-bold text-xs text-white uppercase">Down</div>
-                            <p class="text-[10px] text-text-secondary opacity-70">The Grace Time has elapsed. Alerts have been sent.</p>
+                            <strong class="text-white">Down.</strong>
+                            <span class="text-text-secondary"> The "success" signal has not arrived yet, and the Grace Time has elapsed. When a check transitions into the "Down" state, HealthyCron sends alert messages via the configured integrations.</span>
                         </div>
                     </div>
-                    <div class="flex gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                        <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 shrink-0"></div>
+                    <div class="flex gap-3 items-start">
+                        <div class="w-3 h-3 rounded-full bg-gray-500 mt-1.5"></div>
                         <div>
-                            <div class="font-bold text-xs text-white uppercase">Paused</div>
-                            <p class="text-[10px] text-text-secondary opacity-70">Monitoring has been manually disabled for this check.</p>
+                            <strong class="text-white">Paused.</strong>
+                            <span class="text-text-secondary"> You can manually pause the monitoring of specific checks. For example, if a frequently running cron job has a known problem, and a fix is in the works but not yet ready, you can pause monitoring the corresponding check temporarily to avoid unwanted alerts about a known issue.</span>
                         </div>
                     </div>
                 </div>
+                
+                <p class="text-text-secondary text-sm pt-2">
+                    Additionally, if the most recent received signal is a "start" signal, this will be indicated by three animated dots under the check's status icon.
+                </p>
             </div>
 
+            <!-- Ping URL -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Ping URL</h3>
+                <p class="text-text-secondary">
+                    Each check has a unique <strong class="text-white">Ping URL</strong>. Clients (cron jobs, background workers, batch scripts, scheduled tasks, web services) make HTTP requests to the ping URL to signal a start of the execution, a success, or a failure.
+                </p>
+                <p class="text-text-secondary">
+                    HealthyCron supports two ping URL formats:
+                </p>
+                
+                <div class="space-y-3">
+                    <div class="bg-navy-light border border-white/10 rounded-lg p-4">
+                        <code class="text-blue text-sm">https://healthycron.com/ping/&lt;uuid&gt;</code>
+                        <p class="text-text-secondary text-sm mt-2">
+                            The check is identified by its UUID. Check UUIDs are assigned automatically by HealthyCron, and are guaranteed to be unique.
+                        </p>
+                    </div>
+                    <div class="bg-navy-light border border-white/10 rounded-lg p-4">
+                        <code class="text-blue text-sm">https://healthycron.com/ping/&lt;project-ping-key&gt;/&lt;name-slug&gt;</code>
+                        <p class="text-text-secondary text-sm mt-2">
+                            The check is identified by project's Ping key and check's slug (user-chosen, URL-friendly identifier). Optionally supports auto-provisioning: if you ping a slug value that does not have a corresponding check, HealthyCron can create the check automatically.
+                        </p>
+                    </div>
+                </div>
+                
+                <p class="text-text-secondary">
+                    You can append <code class="text-blue text-sm">/start</code>, <code class="text-blue text-sm">/fail</code> or <code class="text-blue text-sm">/&lt;exitcode&gt;</code> to the base ping URL to send "start" and "failure" signals. The "start" and "failure" signals are optional. You don't have to use them, but you can gain additional monitoring insights if you do use them. See Measuring script run time and Signaling failures for details.
+                </p>
+                
+                <div class="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mt-4">
+                    <p class="text-amber-200 text-sm">
+                        <strong>⚠️ Security Note:</strong> You should treat check UUIDs and project Ping keys as secrets. If you make them public, anybody can send telemetry signals to your checks and mess with your monitoring.
+                    </p>
+                </div>
+                
+                <p class="text-text-secondary text-sm">
+                    Read more about Ping URLs in <a href="/docs/pinging-api" class="text-blue hover:underline">Pinging API</a>.
+                </p>
+            </div>
+
+            <!-- Grace Time -->
             <div class="space-y-3">
                 <h3 class="text-lg font-bold text-white">Grace Time</h3>
                 <p class="text-text-secondary">
-                    Grace Time is the additional time to wait before sending an alert when a check is late. Use this to account for minor, expected deviations in job execution times.
+                    <strong class="text-white">Grace Time</strong> is one of the configuration parameters you can set for each check. It is the additional time to wait before sending an alert when a check is late. Use this parameter to account for minor, expected deviations in job execution times.
                 </p>
-                <div class="bg-navy-light p-4 rounded-xl border border-white/5 text-sm font-mono text-blue flex items-center gap-3">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
-                    Schedule Time + Grace Time = Alert Time
+                <p class="text-text-secondary">
+                    When a check is considered late depends on whether the check uses a simple or cron schedule, and whether or not you are tracking job durations using the "start" events.
+                </p>
+                
+                <div class="bg-navy-light border border-white/10 rounded-lg p-4 space-y-3">
+                    <p class="text-sm text-text-secondary">
+                        <strong class="text-white">For simple schedules,</strong> the check is late when the check's configured period has passed. For example, consider a periodic task that should run every hour, and the gaps between runs should not deviate by more than 5 minutes (Period = 1 hour, Grace Time = 5 minutes). And let's say the last successful ping arrived at 12:00.
+                    </p>
+                    <ul class="space-y-2 text-sm text-text-secondary">
+                        <li class="flex gap-2"><span class="text-blue">•</span> At 13:00 the check will be declared late (because 1 hour will have passed since the last ping).</li>
+                        <li class="flex gap-2"><span class="text-blue">•</span> At 13:05 the check will be declared down and the alerts will go out (because 1 hour + 5 minutes will have passed since the last ping).</li>
+                    </ul>
                 </div>
+                
+                <div class="bg-navy-light border border-white/10 rounded-lg p-4 space-y-3">
+                    <p class="text-sm text-text-secondary">
+                        <strong class="text-white">For cron and OnCalendar schedules,</strong> the check enters the late state at the exact moment when the current wall clock time matches the schedule. Let's consider a cron job with the schedule <code class="text-blue">10 * * * *</code> (10 minutes past every hour) and grace time of 5 minutes. And let's say the last successful ping arrived at 12:30.
+                    </p>
+                    <ul class="space-y-2 text-sm text-text-secondary">
+                        <li class="flex gap-2"><span class="text-blue">•</span> At 13:10 the check will be declared late (because 13:10 is the next scheduled time the cron job is expected to send a ping according to the cron schedule).</li>
+                        <li class="flex gap-2"><span class="text-blue">•</span> At 13:15 the check will be declared down and the alerts will go out (because 5 minutes will have passed since the time the cron job was expected to check in).</li>
+                    </ul>
+                </div>
+                
+                <p class="text-text-secondary">
+                    If you use "start" signals to measure job execution time, Grace Time also sets the maximum allowed time gap between "start" and "success" signals. If a job sends a "start" signal but does not send a "success" signal within grace time, HealthyCron will assume failure and send out alerts.
+                </p>
+            </div>
+
+            <!-- Integration -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">An Integration</h3>
+                <p class="text-text-secondary">
+                    An <strong class="text-white">Integration</strong> is a specific method for delivering monitoring alerts when a check's change states. HealthyCron supports many types of integrations: email, webhooks, SMS, Slack, PagerDuty, etc. You can set up multiple integrations. For each check, you can specify which integrations it should use.
+                </p>
+                <p class="text-text-secondary text-sm">
+                    For more information on integrations, see <a href="/docs/notifications" class="text-blue hover:underline">Configuring notifications</a>.
+                </p>
+            </div>
+
+            <!-- Project -->
+            <div class="space-y-3">
+                <h3 class="text-lg font-bold text-white">Project</h3>
+                <p class="text-text-secondary">
+                    To keep things organized, you can group checks and integrations in <strong class="text-white">Projects</strong>. Your account starts with a single default project, but you can create additional projects as needed. You can transfer existing checks between projects while preserving their configuration and ping URLs.
+                </p>
+                <p class="text-text-secondary">
+                    Each project has a configurable name, a separate set of API keys, and a separate project team. The project's team is the set of people you have granted read-only or read-write access to the project.
+                </p>
+                <p class="text-text-secondary text-sm">
+                    For more information on projects, see <a href="/docs/projects" class="text-blue hover:underline">Projects and teams</a>.
+                </p>
             </div>
         </div>
     </section>
-
-    <div class="pt-10 border-t border-white/5 flex justify-end">
-        <a href="/docs/pinging-api" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue/10 hover:bg-blue/20 text-blue font-black uppercase tracking-widest text-[10px] transition-all group">
-            Next: Pinging API
-            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-        </a>
-    </div>
 </div>

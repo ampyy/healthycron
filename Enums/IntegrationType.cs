@@ -4,7 +4,8 @@ namespace HealthyCron.Enums
     {
         Slack = 1,
         Teams = 2,
-        Email = 3,
-        PagerDuty = 4
+        GoogleChat = 3,
+        Email = 4,
+        PagerDuty = 5
     }
 }

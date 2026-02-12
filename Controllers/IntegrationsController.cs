@@ -48,7 +48,7 @@ namespace HealthyCron.Controllers
 
             var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
 
-            // Get Slack details for each Slack integration
+            // Get integration details for each integration
             var integrationsWithDetails = new List<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>();
             foreach (var integration in integrations)
             {
@@ -59,6 +59,24 @@ namespace HealthyCron.Controllers
                     {
                         Integration = integration,
                         SlackDetails = slackDetails
+                    });
+                }
+                else if (integration.Type == IntegrationType.Teams)
+                {
+                    var teamsDetails = await _integrationRepository.GetTeamsIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        TeamsDetails = teamsDetails
+                    });
+                }
+                else if (integration.Type == IntegrationType.GoogleChat)
+                {
+                    var googleChatDetails = await _integrationRepository.GetGoogleChatIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        GoogleChatDetails = googleChatDetails
                     });
                 }
                 else
@@ -178,6 +196,201 @@ namespace HealthyCron.Controllers
             {
                 return BadRequest("Project not found");
             }
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("project/{slug}/integrations/teams/add")]
+        public async Task<IActionResult> TeamsAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/teams")]
+        public async Task<IActionResult> TeamsCreate(string slug, [FromForm] string webhookUrl, [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            // Validate webhook URL
+            if (string.IsNullOrWhiteSpace(webhookUrl))
+            {
+                TempData["Error"] = "Webhook URL is required";
+                return RedirectToAction("TeamsAdd", new { slug });
+            }
+
+            // Validate HTTPS
+            if (!webhookUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "Webhook URL must use HTTPS";
+                return RedirectToAction("TeamsAdd", new { slug });
+            }
+
+            // Validate Teams webhook URL format - support both legacy and new formats
+            // Legacy format: https://outlook.office.com/webhook/...
+            // New PowerPlatform format: https://*.api.powerplatform.com/.../triggers/manual/paths/invoke?...&sig=...
+            var isLegacyFormat = System.Text.RegularExpressions.Regex.IsMatch(
+                webhookUrl, 
+                @"^https:\/\/outlook\.office\.com\/webhook\/.+$", 
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            var isNewFormat = System.Text.RegularExpressions.Regex.IsMatch(
+                webhookUrl,
+                @"^https:\/\/.*\.api\.powerplatform\.com(:\d+)?\/.*\/triggers\/manual\/paths\/invoke.*sig=.*$",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            if (!isLegacyFormat && !isNewFormat)
+            {
+                TempData["Error"] = "Invalid Microsoft Teams webhook URL. Must be either:\n" +
+                    "• Legacy format: https://outlook.office.com/webhook/...\n" +
+                    "• Power Automate format: https://*.api.powerplatform.com/.../triggers/manual/paths/invoke?...&sig=...";
+                return RedirectToAction("TeamsAdd", new { slug });
+            }
+
+            // Create integration record
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Teams,
+                Name = string.IsNullOrWhiteSpace(name) ? "Microsoft Teams" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            // Create Teams integration record
+            var teamsIntegration = new TeamsIntegration
+            {
+                IntegrationId = integrationId,
+                WebhookUrl = webhookUrl,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _integrationRepository.CreateTeamsIntegrationAsync(teamsIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
+
+            await _axiomLogger.LogInfo("Teams integration created", new Dictionary<string, object>
+            {
+                ["project_id"] = project.Id,
+                ["integration_name"] = integration.Name
+            });
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("project/{slug}/integrations/googlechat/add")]
+        public async Task<IActionResult> GoogleChatAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/googlechat")]
+        public async Task<IActionResult> GoogleChatCreate(string slug, [FromForm] string webhookUrl, [FromForm] string? name, [FromForm] string? spaceName)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            // Validate webhook URL
+            if (string.IsNullOrWhiteSpace(webhookUrl))
+            {
+                TempData["Error"] = "Webhook URL is required";
+                return RedirectToAction("GoogleChatAdd", new { slug });
+            }
+
+            // Validate HTTPS
+            if (!webhookUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "Webhook URL must use HTTPS";
+                return RedirectToAction("GoogleChatAdd", new { slug });
+            }
+
+            // Validate Google Chat webhook URL format
+            // Must contain: chat.googleapis.com, /spaces/, key=, token=
+            if (!webhookUrl.Contains("chat.googleapis.com", StringComparison.OrdinalIgnoreCase) ||
+                !webhookUrl.Contains("/spaces/", StringComparison.OrdinalIgnoreCase) ||
+                !webhookUrl.Contains("key=", StringComparison.OrdinalIgnoreCase) ||
+                !webhookUrl.Contains("token=", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "Invalid Google Chat webhook URL. Must contain chat.googleapis.com, /spaces/, key=, and token=";
+                return RedirectToAction("GoogleChatAdd", new { slug });
+            }
+
+            // Create integration record
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.GoogleChat,
+                Name = string.IsNullOrWhiteSpace(name) ? "Google Chat" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            // Create Google Chat integration record
+            var googleChatIntegration = new GoogleChatIntegration
+            {
+                IntegrationId = integrationId,
+                WebhookUrl = webhookUrl,
+                SpaceName = spaceName,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _integrationRepository.CreateGoogleChatIntegrationAsync(googleChatIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
+
+            await _axiomLogger.LogInfo("Google Chat integration created", new Dictionary<string, object>
+            {
+                ["project_id"] = project.Id,
+                ["integration_name"] = integration.Name
+            });
 
             return RedirectToAction("Index", new { slug = project.Slug });
         }

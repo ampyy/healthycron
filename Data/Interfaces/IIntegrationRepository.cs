@@ -16,6 +16,15 @@ namespace HealthyCron.Data.Interfaces
         Task CreateSlackIntegrationAsync(SlackIntegration slackIntegration);
         Task<SlackIntegration?> GetSlackIntegrationByIntegrationIdAsync(Guid integrationId);
 
+        // Teams Integration
+        Task CreateTeamsIntegrationAsync(TeamsIntegration teamsIntegration);
+        Task<TeamsIntegration?> GetTeamsIntegrationByIntegrationIdAsync(Guid integrationId);
+
+        // Google Chat Integration
+        Task CreateGoogleChatIntegrationAsync(GoogleChatIntegration googleChatIntegration);
+        Task<GoogleChatIntegration?> GetGoogleChatIntegrationByIntegrationIdAsync(Guid integrationId);
+
+
         // Monitor Integration Mapping
         Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId);
         Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId);

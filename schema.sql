@@ -113,6 +113,32 @@ CREATE TABLE IF NOT EXISTS slack_integrations (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Teams Integrations Table
+CREATE TABLE IF NOT EXISTS teams_integrations (
+    integration_id UUID PRIMARY KEY,
+    webhook_url TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CONSTRAINT fk_teams_integrations
+        FOREIGN KEY (integration_id)
+        REFERENCES integrations (id)
+        ON DELETE CASCADE
+);
+
+-- Google Chat Integrations Table
+CREATE TABLE IF NOT EXISTS google_chat_integrations (
+    integration_id UUID PRIMARY KEY,
+    webhook_url TEXT NOT NULL,
+    space_name TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CONSTRAINT fk_google_chat_integrations
+        FOREIGN KEY (integration_id)
+        REFERENCES integrations (id)
+        ON DELETE CASCADE
+);
+
+
 -- Monitor Integrations Mapping Table
 CREATE TABLE IF NOT EXISTS monitor_integrations (
     monitor_id UUID NOT NULL REFERENCES monitors(id) ON DELETE CASCADE,

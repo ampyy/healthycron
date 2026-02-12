@@ -94,6 +94,45 @@ namespace HealthyCron.Data.Repository
             return await QueryFirstOrDefaultAsync<SlackIntegration>(sql, new { IntegrationId = integrationId });
         }
 
+        public async Task CreateTeamsIntegrationAsync(TeamsIntegration teamsIntegration)
+        {
+            const string sql = @"
+                INSERT INTO teams_integrations (integration_id, webhook_url)
+                VALUES (@IntegrationId, @WebhookUrl)";
+
+            await ExecuteAsync(sql, teamsIntegration);
+        }
+
+        public async Task<TeamsIntegration?> GetTeamsIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, webhook_url, created_at
+                FROM teams_integrations 
+                WHERE integration_id = @IntegrationId";
+
+            return await QueryFirstOrDefaultAsync<TeamsIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task CreateGoogleChatIntegrationAsync(GoogleChatIntegration googleChatIntegration)
+        {
+            const string sql = @"
+                INSERT INTO google_chat_integrations (integration_id, webhook_url, space_name)
+                VALUES (@IntegrationId, @WebhookUrl, @SpaceName)";
+
+            await ExecuteAsync(sql, googleChatIntegration);
+        }
+
+        public async Task<GoogleChatIntegration?> GetGoogleChatIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, webhook_url, space_name, created_at
+                FROM google_chat_integrations 
+                WHERE integration_id = @IntegrationId";
+
+            return await QueryFirstOrDefaultAsync<GoogleChatIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+
         public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)
         {
             const string sql = @"

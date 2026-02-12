@@ -2,58 +2,164 @@
     Layout = "_Layout";
 }
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-20 mt-16">
-    <div class="flex flex-col lg:flex-row gap-12">
-        <!-- Sidebar -->
-        <aside class="w-full lg:w-64 shrink-0">
-            <nav class="space-y-8 sticky top-24">
-                <div>
-                    <h3 class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-4 px-2 opacity-50">Getting Started</h3>
+<div class="min-h-screen bg-navy pt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex gap-8">
+            <!-- Sidebar - Table of Contents (Left) -->
+            <aside class="hidden lg:block w-64 shrink-0">
+                <nav class="space-y-6">
+                    <!-- Header -->
+                    <div class="pb-3 border-b border-white/10">
+                        <h2 class="text-lg font-black text-white">Documentation</h2>
+                        <p class="text-xs text-text-secondary mt-1">HealthyCron</p>
+                    </div>
+
+                    <!-- Getting Started Section -->
                     <div class="space-y-1">
-                        <a href="/docs" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
-                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-text-secondary/60 mb-2">Getting Started</h3>
+                        <a 
+                            href="/docs" 
+                            class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
                             Introduction
                         </a>
                     </div>
-                </div>
 
-                <div>
-                    <h3 class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-4 px-2 opacity-50">Core Concepts</h3>
+                    <!-- Core Concepts Section -->
                     <div class="space-y-1">
-                        <a href="/docs/pinging-api" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "PingingApi" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
-                            <i data-lucide="zap" class="w-4 h-4"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-text-secondary/60 mb-2">Core Concepts</h3>
+                        <a 
+                            href="/docs/pinging-api" 
+                            class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "PingingApi" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
                             Pinging API
                         </a>
-                        <a href="/docs/configuring-checks" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "ConfiguringChecks" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
-                            <i data-lucide="settings" class="w-4 h-4"></i>
+                        <a 
+                            href="/docs/configuring-checks" 
+                            class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "ConfiguringChecks" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
                             Configuring Checks
                         </a>
                     </div>
-                </div>
 
-                <div>
-                    <h3 class="text-[10px] font-black uppercase tracking-widest text-text-secondary mb-4 px-2 opacity-50">Integration</h3>
+                    <!-- Integrations Section -->
                     <div class="space-y-1">
-                        <a href="/docs/notifications" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "Notifications" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
-                            <i data-lucide="bell" class="w-4 h-4"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-text-secondary/60 mb-2">Integrations</h3>
+                        <a 
+                            href="/docs/notifications" 
+                            class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "Notifications" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
                             Notifications
                         </a>
-                        <a href="/docs/projects" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold @(ViewContext.RouteData.Values["action"]?.ToString() == "Projects" ? "bg-blue/10 text-blue border border-blue/20" : "text-text-secondary hover:text-white hover:bg-white/5") transition-all">
-                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        <a 
+                            href="/docs/projects" 
+                            class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "Projects" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
                             Projects & Teams
                         </a>
                     </div>
-                </div>
-            </nav>
-        </aside>
+                </nav>
+            </aside>
 
-        <!-- Main Content -->
-        <article class="flex-1 max-w-3xl prose prose-invert prose-blue prose-sm sm:prose-base">
-            @RenderBody()
-        </article>
+            <!-- Main Content (Right) -->
+            <main class="flex-1 min-w-0">
+                <article class="prose prose-invert max-w-3xl">
+                    @RenderBody()
+                </article>
+            </main>
+        </div>
+
+        <!-- Mobile Menu (Bottom FAB) -->
+        <button 
+            id="mobile-menu-btn" 
+            class="lg:hidden fixed bottom-6 right-6 z-50 bg-blue hover:bg-blue-600 text-white p-4 rounded-full shadow-lg transition-all">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div 
+            id="mobile-overlay" 
+            class="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden">
+        </div>
+
+        <!-- Mobile Sidebar -->
+        <aside 
+            id="mobile-sidebar" 
+            class="lg:hidden fixed top-0 left-0 h-full w-64 bg-navy-light border-r border-white/10 z-50 transform -translate-x-full transition-transform duration-300 overflow-y-auto">
+            <div class="p-6 space-y-6">
+                <!-- Header -->
+                <div class="pb-3 border-b border-white/10">
+                    <h2 class="text-lg font-black text-white">Documentation</h2>
+                    <p class="text-xs text-text-secondary mt-1">HealthyCron</p>
+                </div>
+
+                <!-- Getting Started Section -->
+                <div class="space-y-1">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-text-secondary/60 mb-2">Getting Started</h3>
+                    <a 
+                        href="/docs" 
+                        class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
+                        Introduction
+                    </a>
+                </div>
+
+                <!-- Core Concepts Section -->
+                <div class="space-y-1">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-text-secondary/60 mb-2">Core Concepts</h3>
+                    <a 
+                        href="/docs/pinging-api" 
+                        class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "PingingApi" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
+                        Pinging API
+                    </a>
+                    <a 
+                        href="/docs/configuring-checks" 
+                        class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "ConfiguringChecks" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
+                        Configuring Checks
+                    </a>
+                </div>
+
+                <!-- Integrations Section -->
+                <div class="space-y-1">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-text-secondary/60 mb-2">Integrations</h3>
+                    <a 
+                        href="/docs/notifications" 
+                        class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "Notifications" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
+                        Notifications
+                    </a>
+                    <a 
+                        href="/docs/projects" 
+                        class="block px-3 py-2 rounded-lg text-sm font-medium transition-all @(ViewContext.RouteData.Values["action"]?.ToString() == "Projects" ? "bg-blue/10 text-blue" : "text-text-secondary hover:text-white hover:bg-white/5")">
+                        Projects & Teams
+                    </a>
+                </div>
+            </div>
+        </aside>
     </div>
 </div>
 
 @section Scripts {
+    <script>
+        // Mobile menu toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+        
+        function openMobileMenu() {
+            mobileSidebar.classList.remove('-translate-x-full');
+            mobileOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            mobileSidebar.classList.add('-translate-x-full');
+            mobileOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        menuBtn?.addEventListener('click', openMobileMenu);
+        mobileOverlay?.addEventListener('click', closeMobileMenu);
+        
+        // Close sidebar when clicking navigation links on mobile
+        const mobileLinks = mobileSidebar?.querySelectorAll('a');
+        mobileLinks?.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 }

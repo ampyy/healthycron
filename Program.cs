@@ -2,7 +2,7 @@ using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.WebHost.UseUrls("https://localhost:5032");
+builder.WebHost.UseUrls("https://localhost:5032");
 
 // ============================================================================
 // CONFIGURATION SETUP - Strongly-typed and validated at startup

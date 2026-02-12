@@ -6,6 +6,8 @@ namespace HealthyCron.Models.ViewModels
     {
         public Integration Integration { get; set; } = null!;
         public SlackIntegration? SlackDetails { get; set; }
+        public TeamsIntegration? TeamsDetails { get; set; }
+        public GoogleChatIntegration? GoogleChatDetails { get; set; }
         public bool IsEnabledForMonitor { get; set; }
     }
 }

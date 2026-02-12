@@ -43,7 +43,11 @@
                 {
                     var integration = item.Integration;
                     var slackDetails = item.SlackDetails;
+                    var teamsDetails = item.TeamsDetails;
+                    var googleChatDetails = item.GoogleChatDetails;
                     var isSlack = integration.Type == HealthyCron.Enums.IntegrationType.Slack;
+                    var isTeams = integration.Type == HealthyCron.Enums.IntegrationType.Teams;
+                    var isGoogleChat = integration.Type == HealthyCron.Enums.IntegrationType.GoogleChat;
 
                     <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-blue-500/20 transition-all group">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -53,6 +57,22 @@
                                     <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shrink-0">
                                         <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                                        </svg>
+                                    </div>
+                                }
+                                else if (isTeams)
+                                {
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shrink-0">
+                                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M20.625 7.5H19.5V3c0-.621-.504-1.125-1.125-1.125h-15C2.754 1.875 2.25 2.379 2.25 3v13.5c0 .621.504 1.125 1.125 1.125H7.5v2.25c0 .621.504 1.125 1.125 1.125h12c.621 0 1.125-.504 1.125-1.125v-12c0-.621-.504-1.125-1.125-1.125zM7.125 16.5H3.375V3.375h14.25v4.125h-9c-.621 0-1.125.504-1.125 1.125v7.875zm13.5 3.375h-10.5v-11.25h10.5v11.25z"/>
+                                        </svg>
+                                    </div>
+                                }
+                                else if (isGoogleChat)
+                                {
+                                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center shrink-0">
+                                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/>
                                         </svg>
                                     </div>
                                 }
@@ -68,6 +88,27 @@
                                     @if (isSlack && slackDetails != null)
                                     {
                                         <p class="text-xs text-text-secondary">Workspace: @slackDetails.WorkspaceName | Channel: #@slackDetails.ChannelName</p>
+                                    }
+                                    else if (isTeams && teamsDetails != null)
+                                    {
+                                        var maskedUrl = teamsDetails.WebhookUrl.Length > 50 
+                                            ? teamsDetails.WebhookUrl.Substring(0, 50) + "..." 
+                                            : teamsDetails.WebhookUrl;
+                                        <p class="text-xs text-text-secondary font-mono">@maskedUrl</p>
+                                    }
+                                    else if (isGoogleChat && googleChatDetails != null)
+                                    {
+                                        if (!string.IsNullOrEmpty(googleChatDetails.SpaceName))
+                                        {
+                                            <p class="text-xs text-text-secondary">Space: @googleChatDetails.SpaceName</p>
+                                        }
+                                        else
+                                        {
+                                            var maskedUrl = googleChatDetails.WebhookUrl.Length > 50 
+                                                ? googleChatDetails.WebhookUrl.Substring(0, 50) + "..." 
+                                                : googleChatDetails.WebhookUrl;
+                                            <p class="text-xs text-text-secondary font-mono">@maskedUrl</p>
+                                        }
                                     }
                                 </div>
                             </div>
@@ -128,6 +169,44 @@
                 </div>
                 <a href="/project/@project.Slug/integrations/slack/authorize" 
                    class="p-2.5 rounded-xl bg-blue hover:bg-blue/80 text-white transition-all shadow-lg shadow-blue/20">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+            </div>
+
+            <!-- Microsoft Teams -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-blue-500/20 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.625 7.5H19.5V3c0-.621-.504-1.125-1.125-1.125h-15C2.754 1.875 2.25 2.379 2.25 3v13.5c0 .621.504 1.125 1.125 1.125H7.5v2.25c0 .621.504 1.125 1.125 1.125h12c.621 0 1.125-.504 1.125-1.125v-12c0-.621-.504-1.125-1.125-1.125zM7.125 16.5H3.375V3.375h14.25v4.125h-9c-.621 0-1.125.504-1.125 1.125v7.875zm13.5 3.375h-10.5v-11.25h10.5v11.25z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white">Microsoft Teams</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Webhook Integration</p>
+                    </div>
+                </div>
+                <a href="/project/@project.Slug/integrations/teams/add" 
+                   class="p-2.5 rounded-xl bg-blue hover:bg-blue/80 text-white transition-all shadow-lg shadow-blue/20">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+            </div>
+
+            <!-- Google Chat -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-green-500/20 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white">Google Chat</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Webhook Integration</p>
+                    </div>
+                </div>
+                <a href="/project/@project.Slug/integrations/googlechat/add" 
+                   class="p-2.5 rounded-xl bg-green-500 hover:bg-green-600 text-white transition-all shadow-lg shadow-green-500/20">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
