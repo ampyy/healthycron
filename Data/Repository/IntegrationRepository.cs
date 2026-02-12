@@ -132,6 +132,44 @@ namespace HealthyCron.Data.Repository
             return await QueryFirstOrDefaultAsync<GoogleChatIntegration>(sql, new { IntegrationId = integrationId });
         }
 
+        public async Task CreateDiscordIntegrationAsync(DiscordIntegration discordIntegration)
+        {
+            const string sql = @"
+                INSERT INTO discord_integrations (integration_id, webhook_url, channel_name)
+                VALUES (@IntegrationId, @WebhookUrl, @ChannelName)";
+
+            await ExecuteAsync(sql, discordIntegration);
+        }
+
+        public async Task<DiscordIntegration?> GetDiscordIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, webhook_url, channel_name, created_at
+                FROM discord_integrations 
+                WHERE integration_id = @IntegrationId";
+
+            return await QueryFirstOrDefaultAsync<DiscordIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task CreateEmailIntegrationAsync(EmailIntegration emailIntegration)
+        {
+            const string sql = @"
+                INSERT INTO email_integrations (integration_id, email)
+                VALUES (@IntegrationId, @Email)";
+
+            await ExecuteAsync(sql, emailIntegration);
+        }
+
+        public async Task<EmailIntegration?> GetEmailIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, email, created_at
+                FROM email_integrations 
+                WHERE integration_id = @IntegrationId";
+
+            return await QueryFirstOrDefaultAsync<EmailIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
 
         public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)
         {

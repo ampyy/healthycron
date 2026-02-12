@@ -138,6 +138,31 @@ CREATE TABLE IF NOT EXISTS google_chat_integrations (
         ON DELETE CASCADE
 );
 
+-- Discord Integrations Table
+CREATE TABLE IF NOT EXISTS discord_integrations (
+    integration_id UUID PRIMARY KEY,
+    webhook_url TEXT NOT NULL,
+    channel_name TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CONSTRAINT fk_discord_integrations
+        FOREIGN KEY (integration_id)
+        REFERENCES integrations (id)
+        ON DELETE CASCADE
+);
+
+-- Email Integrations Table
+CREATE TABLE IF NOT EXISTS email_integrations (
+    integration_id UUID PRIMARY KEY,
+    email TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CONSTRAINT fk_email_integrations
+        FOREIGN KEY (integration_id)
+        REFERENCES integrations (id)
+        ON DELETE CASCADE
+);
+
 
 -- Monitor Integrations Mapping Table
 CREATE TABLE IF NOT EXISTS monitor_integrations (

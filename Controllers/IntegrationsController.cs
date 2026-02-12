@@ -79,6 +79,24 @@ namespace HealthyCron.Controllers
                         GoogleChatDetails = googleChatDetails
                     });
                 }
+                else if (integration.Type == IntegrationType.Discord)
+                {
+                    var discordDetails = await _integrationRepository.GetDiscordIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        DiscordDetails = discordDetails
+                    });
+                }
+                else if (integration.Type == IntegrationType.Email)
+                {
+                    var emailDetails = await _integrationRepository.GetEmailIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        EmailDetails = emailDetails
+                    });
+                }
                 else
                 {
                     integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
@@ -390,6 +408,177 @@ namespace HealthyCron.Controllers
             {
                 ["project_id"] = project.Id,
                 ["integration_name"] = integration.Name
+            });
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("project/{slug}/integrations/discord/add")]
+        public async Task<IActionResult> DiscordAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/discord")]
+        public async Task<IActionResult> DiscordCreate(string slug, [FromForm] string webhookUrl, [FromForm] string? name, [FromForm] string? channelName)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            // Validate webhook URL
+            if (string.IsNullOrWhiteSpace(webhookUrl))
+            {
+                TempData["Error"] = "Webhook URL is required";
+                return RedirectToAction("DiscordAdd", new { slug });
+            }
+
+            // Validate HTTPS
+            if (!webhookUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "Webhook URL must use HTTPS";
+                return RedirectToAction("DiscordAdd", new { slug });
+            }
+
+            // Validate Discord webhook URL format
+            if ((!webhookUrl.Contains("discord.com", StringComparison.OrdinalIgnoreCase) && 
+                 !webhookUrl.Contains("discordapp.com", StringComparison.OrdinalIgnoreCase)) ||
+                !webhookUrl.Contains("/api/webhooks/", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "Invalid Discord webhook URL. Must be from discord.com or discordapp.com and contain /api/webhooks/";
+                return RedirectToAction("DiscordAdd", new { slug });
+            }
+
+            // Create integration record
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Discord,
+                Name = string.IsNullOrWhiteSpace(name) ? "Discord" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            // Create Discord integration record
+            var discordIntegration = new DiscordIntegration
+            {
+                IntegrationId = integrationId,
+                WebhookUrl = webhookUrl,
+                ChannelName = channelName,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _integrationRepository.CreateDiscordIntegrationAsync(discordIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
+
+            await _axiomLogger.LogInfo("Discord integration created", new Dictionary<string, object>
+            {
+                ["project_id"] = project.Id,
+                ["integration_name"] = integration.Name
+            });
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("project/{slug}/integrations/email/add")]
+        public async Task<IActionResult> EmailAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/email")]
+        public async Task<IActionResult> EmailCreate(string slug, [FromForm] string email, [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            // Validate email
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["Error"] = "Email address is required";
+                return RedirectToAction("EmailAdd", new { slug });
+            }
+
+            // Basic email validation
+            if (!email.Contains("@") || !email.Contains("."))
+            {
+                TempData["Error"] = "Invalid email address format";
+                return RedirectToAction("EmailAdd", new { slug });
+            }
+
+            // Create integration record
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Email,
+                Name = string.IsNullOrWhiteSpace(name) ? $"Email - {email}" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            // Create Email integration record
+            var emailIntegration = new EmailIntegration
+            {
+                IntegrationId = integrationId,
+                Email = email.Trim().ToLower(),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _integrationRepository.CreateEmailIntegrationAsync(emailIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
+
+            await _axiomLogger.LogInfo("Email integration created", new Dictionary<string, object>
+            {
+                ["project_id"] = project.Id,
+                ["integration_name"] = integration.Name,
+                ["email"] = email
             });
 
             return RedirectToAction("Index", new { slug = project.Slug });

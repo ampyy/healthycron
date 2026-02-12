@@ -24,7 +24,13 @@ namespace HealthyCron.Data.Interfaces
         Task CreateGoogleChatIntegrationAsync(GoogleChatIntegration googleChatIntegration);
         Task<GoogleChatIntegration?> GetGoogleChatIntegrationByIntegrationIdAsync(Guid integrationId);
 
+        // Discord Integration
+        Task CreateDiscordIntegrationAsync(DiscordIntegration discordIntegration);
+        Task<DiscordIntegration?> GetDiscordIntegrationByIntegrationIdAsync(Guid integrationId);
 
+        // Email Integration
+        Task CreateEmailIntegrationAsync(EmailIntegration emailIntegration);
+        Task<EmailIntegration?> GetEmailIntegrationByIntegrationIdAsync(Guid integrationId);
         // Monitor Integration Mapping
         Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId);
         Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId);
