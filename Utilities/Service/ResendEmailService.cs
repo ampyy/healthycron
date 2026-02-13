@@ -35,7 +35,7 @@ namespace HealthyCron.Utilities.Service
 
                 var message = new EmailMessage
                 {
-                    From = "HealthyCron <onboarding@resend.dev>", // TODO: Change to your verified domain (e.g. noreply@healthycron.com)
+                    From = "HealthyCron <team@healthycron.com>",
                     To = toEmail,
                     Subject = subject,
                     HtmlBody = htmlBody
