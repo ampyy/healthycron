@@ -31,6 +31,16 @@ namespace HealthyCron.Data.Interfaces
         // Email Integration
         Task CreateEmailIntegrationAsync(EmailIntegration emailIntegration);
         Task<EmailIntegration?> GetEmailIntegrationByIntegrationIdAsync(Guid integrationId);
+
+        // PagerDuty Integration
+        Task CreatePagerDutyIntegrationAsync(PagerDutyIntegration pagerDutyIntegration);
+        Task<PagerDutyIntegration?> GetPagerDutyIntegrationByIntegrationIdAsync(Guid integrationId);
+        Task UpdatePagerDutyTokensAsync(Guid integrationId, string accessToken, string refreshToken, DateTime expiresAt);
+
+        // Opsgenie Integration
+        Task CreateOpsgenieIntegrationAsync(OpsgenieIntegration opsgenieIntegration);
+        Task<OpsgenieIntegration?> GetOpsgenieIntegrationByIntegrationIdAsync(Guid integrationId);
+
         // Monitor Integration Mapping
         Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId);
         Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId);

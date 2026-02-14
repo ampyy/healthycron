@@ -170,6 +170,66 @@ namespace HealthyCron.Data.Repository
             return await QueryFirstOrDefaultAsync<EmailIntegration>(sql, new { IntegrationId = integrationId });
         }
 
+        public async Task CreatePagerDutyIntegrationAsync(PagerDutyIntegration pagerDutyIntegration)
+        {
+            const string sql = @"
+                INSERT INTO pagerduty_integrations 
+                (integration_id, account_id, service_id, access_token, refresh_token, token_expires_at)
+                VALUES (@IntegrationId, @AccountId, @ServiceId, @AccessToken, @RefreshToken, @TokenExpiresAt)";
+
+            await ExecuteAsync(sql, pagerDutyIntegration);
+        }
+
+        public async Task<PagerDutyIntegration?> GetPagerDutyIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, account_id, service_id, access_token, refresh_token, token_expires_at, created_at, updated_at
+                FROM pagerduty_integrations 
+                WHERE integration_id = @IntegrationId";
+
+            return await QueryFirstOrDefaultAsync<PagerDutyIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task UpdatePagerDutyTokensAsync(Guid integrationId, string accessToken, string refreshToken, DateTime expiresAt)
+        {
+            const string sql = @"
+                UPDATE pagerduty_integrations 
+                SET access_token = @AccessToken, 
+                    refresh_token = @RefreshToken, 
+                    token_expires_at = @TokenExpiresAt,
+                    updated_at = @UpdatedAt
+                WHERE integration_id = @IntegrationId";
+
+            await ExecuteAsync(sql, new 
+            { 
+                IntegrationId = integrationId, 
+                AccessToken = accessToken, 
+                RefreshToken = refreshToken, 
+                TokenExpiresAt = expiresAt,
+                UpdatedAt = DateTime.UtcNow
+            });
+        }
+
+        public async Task CreateOpsgenieIntegrationAsync(OpsgenieIntegration opsgenieIntegration)
+        {
+            const string sql = @"
+                INSERT INTO opsgenie_integrations 
+                (integration_id, api_key, region, team_name, priority)
+                VALUES (@IntegrationId, @ApiKey, @Region, @TeamName, @Priority)";
+
+            await ExecuteAsync(sql, opsgenieIntegration);
+        }
+
+        public async Task<OpsgenieIntegration?> GetOpsgenieIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, api_key, region, team_name, priority, created_at, updated_at
+                FROM opsgenie_integrations 
+                WHERE integration_id = @IntegrationId";
+
+            return await QueryFirstOrDefaultAsync<OpsgenieIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
 
         public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)
         {

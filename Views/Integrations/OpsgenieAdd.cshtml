@@ -1,0 +1,163 @@
+@{
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    var user = (ViewBag.User as HealthyCron.Models.User)!;
+    ViewData["Title"] = $"{project.Name} - Add Opsgenie Integration";
+    Layout = "_DashboardLayout";
+}
+
+<div class="max-w-2xl mx-auto pb-20">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-amber-500 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Add Opsgenie</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-3">
+            <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shrink-0">
+                <i data-lucide="bell-ring" class="w-8 h-8 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-white">Add Opsgenie Integration</h1>
+                <p class="text-text-secondary mt-1">Create incidents in Opsgenie for monitor failures</p>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-start gap-3">
+            <i data-lucide="alert-circle" class="w-5 h-5 mt-0.5 shrink-0"></i>
+            <p class="text-sm font-medium">@TempData["Error"]</p>
+        </div>
+    }
+
+    <!-- Instructions -->
+    <div class="glass-card rounded-2xl p-6 border border-amber-500/20 bg-amber-500/5 mb-6">
+        <h2 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+            <i data-lucide="info" class="w-5 h-5 text-amber-500"></i>
+            How to Get Your API Key
+        </h2>
+        <div class="text-sm text-text-secondary space-y-2">
+            <p>1. Go to your Opsgenie account settings</p>
+            <p>2. Navigate to <strong class="text-white">API Key Management</strong></p>
+            <p>3. Click <strong class="text-white">Add New API Key</strong></p>
+            <p>4. Set permissions: <strong class="text-white">Create and Update</strong> for alerts</p>
+            <p>5. Copy the generated API key and paste it below</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form method="post" action="/project/@project.Slug/integrations/opsgenie" class="glass-card rounded-2xl p-8 border border-white/5">
+        <div class="space-y-6">
+            <!-- API Key -->
+            <div>
+                <label for="apiKey" class="block text-sm font-bold text-white mb-2">
+                    API Key <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                    type="password" 
+                    id="apiKey" 
+                    name="apiKey" 
+                    required
+                    placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                    class="w-full px-4 py-3 rounded-xl bg-navy border border-border-color text-white placeholder-text-secondary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all font-mono"
+                />
+                <p class="mt-2 text-xs text-text-secondary">Your Opsgenie API key will be encrypted before storage</p>
+            </div>
+
+            <!-- Region -->
+            <div>
+                <label for="region" class="block text-sm font-bold text-white mb-2">
+                    Region <span class="text-rose-500">*</span>
+                </label>
+                <select 
+                    id="region" 
+                    name="region" 
+                    required
+                    class="w-full px-4 py-3 rounded-xl bg-navy border border-border-color text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                >
+                    <option value="us">US (api.opsgenie.com)</option>
+                    <option value="eu">EU (api.eu.opsgenie.com)</option>
+                </select>
+                <p class="mt-2 text-xs text-text-secondary">Select the region where your Opsgenie instance is hosted</p>
+            </div>
+
+            <!-- Team Name (Optional) -->
+            <div>
+                <label for="teamName" class="block text-sm font-bold text-white mb-2">
+                    Team Name <span class="text-text-secondary text-xs font-normal">(Optional)</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="teamName" 
+                    name="teamName" 
+                    placeholder="DevOps Team"
+                    class="w-full px-4 py-3 rounded-xl bg-navy border border-border-color text-white placeholder-text-secondary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                />
+                <p class="mt-2 text-xs text-text-secondary">Assign alerts to a specific team</p>
+            </div>
+
+            <!-- Priority -->
+            <div>
+                <label for="priority" class="block text-sm font-bold text-white mb-2">
+                    Default Priority <span class="text-rose-500">*</span>
+                </label>
+                <select 
+                    id="priority" 
+                    name="priority" 
+                    required
+                    class="w-full px-4 py-3 rounded-xl bg-navy border border-border-color text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                >
+                    <option value="P1">P1 - Critical</option>
+                    <option value="P2">P2 - High</option>
+                    <option value="P3">P3 - Moderate</option>
+                    <option value="P4">P4 - Low</option>
+                    <option value="P5">P5 - Informational</option>
+                </select>
+                <p class="mt-2 text-xs text-text-secondary">Priority level for created alerts</p>
+            </div>
+
+            <!-- Integration Name (Optional) -->
+            <div>
+                <label for="name" class="block text-sm font-bold text-white mb-2">
+                    Integration Name <span class="text-text-secondary text-xs font-normal">(Optional)</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    placeholder="Production Alerts"
+                    class="w-full px-4 py-3 rounded-xl bg-navy border border-border-color text-white placeholder-text-secondary focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all"
+                />
+                <p class="mt-2 text-xs text-text-secondary">If left empty, will default to "Opsgenie - [REGION]"</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-white/5">
+            <a href="/project/@project.Slug/integrations" class="px-6 py-2.5 rounded-xl text-text-secondary hover:text-white font-bold text-sm transition-colors">
+                Cancel
+            </a>
+            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Integration
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>

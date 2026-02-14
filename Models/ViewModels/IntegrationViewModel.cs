@@ -10,6 +10,7 @@ namespace HealthyCron.Models.ViewModels
         public GoogleChatIntegration? GoogleChatDetails { get; set; }
         public DiscordIntegration? DiscordDetails { get; set; }
         public EmailIntegration? EmailDetails { get; set; }
+        public PagerDutyIntegration? PagerDutyDetails { get; set; }
         public bool IsEnabledForMonitor { get; set; }
     }
 }

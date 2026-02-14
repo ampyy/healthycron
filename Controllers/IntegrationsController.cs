@@ -2,10 +2,13 @@ using HealthyCron.Data.Interfaces;
 using HealthyCron.Enums;
 using HealthyCron.Filters;
 using HealthyCron.Logic.Interfaces;
+using HealthyCron.Logic.Service;
 using HealthyCron.Models;
 using HealthyCron.Utilities.Interface;
 using HealthyCron.Utilities.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace HealthyCron.Controllers
 {
@@ -16,7 +19,10 @@ namespace HealthyCron.Controllers
         private readonly IIntegrationRepository _integrationRepository;
         private readonly IMonitorRepository _monitorRepository;
         private readonly ISlackOAuthService _slackOAuthService;
+        private readonly IPagerDutyService _pagerDutyService;
         private readonly IEncryptionService _encryptionService;
+        private readonly ICacheService _cacheService;
+        private readonly IConfiguration _configuration;
         private readonly AxiomLogger _axiomLogger;
 
         public IntegrationsController(
@@ -24,14 +30,20 @@ namespace HealthyCron.Controllers
             IIntegrationRepository integrationRepository,
             IMonitorRepository monitorRepository,
             ISlackOAuthService slackOAuthService,
+            IPagerDutyService pagerDutyService,
             IEncryptionService encryptionService,
+            ICacheService cacheService,
+            IConfiguration configuration,
             AxiomLogger axiomLogger)
         {
             _projectRepository = projectRepository;
             _integrationRepository = integrationRepository;
             _monitorRepository = monitorRepository;
             _slackOAuthService = slackOAuthService;
+            _pagerDutyService = pagerDutyService;
             _encryptionService = encryptionService;
+            _cacheService = cacheService;
+            _configuration = configuration;
             _axiomLogger = axiomLogger;
         }
 
@@ -95,6 +107,15 @@ namespace HealthyCron.Controllers
                     {
                         Integration = integration,
                         EmailDetails = emailDetails
+                    });
+                }
+                else if (integration.Type == IntegrationType.PagerDuty)
+                {
+                    var pagerDutyDetails = await _integrationRepository.GetPagerDutyIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        PagerDutyDetails = pagerDutyDetails
                     });
                 }
                 else
@@ -581,6 +602,310 @@ namespace HealthyCron.Controllers
                 ["email"] = email
             });
 
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("project/{slug}/integrations/opsgenie/add")]
+        public async Task<IActionResult> OpsgenieAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/opsgenie")]
+        public async Task<IActionResult> OpsgenieCreate(string slug, [FromForm] string apiKey, [FromForm] string? name, [FromForm] string region = "us", [FromForm] string? teamName = null, [FromForm] string priority = "P1")
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            // Validate API key
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                TempData["Error"] = "API key is required";
+                return RedirectToAction("OpsgenieAdd", new { slug });
+            }
+
+            // Encrypt API key
+            var encryptedApiKey = _encryptionService.Encrypt(apiKey.Trim());
+
+            // Create integration record
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Opsgenie,
+                Name = string.IsNullOrWhiteSpace(name) ? $"Opsgenie - {region.ToUpper()}" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            // Create Opsgenie integration record
+            var opsgenieIntegration = new OpsgenieIntegration
+            {
+                IntegrationId = integrationId,
+                ApiKey = encryptedApiKey,
+                Region = region,
+                TeamName = teamName,
+                Priority = priority,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _integrationRepository.CreateOpsgenieIntegrationAsync(opsgenieIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
+
+            await _axiomLogger.LogInfo("Opsgenie integration created", new Dictionary<string, object>
+            {
+                ["project_id"] = project.Id,
+                ["integration_name"] = integration.Name,
+                ["region"] = region
+            });
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("project/{slug}/integrations/pagerduty/authorize")]
+        public async Task<IActionResult> PagerDutyAuthorize(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+
+            if (project == null || project.UserId != user!.Id)
+            {
+                return NotFound();
+            }
+
+            // Generate cryptographically secure state parameter
+            var state = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "_").Replace("+", "-");
+
+            // Store state with project/user context in Redis (5 min TTL)
+            var oauthState = new PagerDutyOAuthState
+            {
+                State = state,
+                ProjectId = project.Id,
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+            };
+
+            await _cacheService.SetAsync($"pagerduty_oauth:{state}", oauthState, TimeSpan.FromMinutes(5));
+
+            // Build PagerDuty OAuth URL
+            var clientId = _configuration["PagerDuty:ClientId"] ?? _configuration["PAGERDUTY_CLIENT_ID"];
+            var redirectUri = "https://localhost:5032/integrations/pagerduty/callback"; // TODO: Use env-specific URL
+            var scope = "incidents.write services.read users.read";
+
+            var authUrl = $"https://app.pagerduty.com/oauth/authorize?" +
+                         $"client_id={clientId}&" +
+                         $"redirect_uri={HttpUtility.UrlEncode(redirectUri)}&" +
+                         $"response_type=code&" +
+                         $"scope={HttpUtility.UrlEncode(scope)}&" +
+                         $"state={state}";
+
+            return Redirect(authUrl);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("integrations/pagerduty/callback")]
+        public async Task<IActionResult> PagerDutyCallback([FromQuery] string? code, [FromQuery] string? state, [FromQuery] string? error)
+        {
+            // Handle error from PagerDuty
+            if (!string.IsNullOrEmpty(error))
+            {
+                await _axiomLogger.LogError($"PagerDuty OAuth error: {error}", new Dictionary<string, object> { ["error"] = error });
+                return BadRequest($"PagerDuty authorization failed: {error}");
+            }
+
+            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(state))
+            {
+                return BadRequest("Missing code or state parameter");
+            }
+
+            // Validate state and retrieve project context
+            var oauthState = await _cacheService.GetAsync<PagerDutyOAuthState>($"pagerduty_oauth:{state}");
+            if (oauthState == null || oauthState.ExpiresAt < DateTime.UtcNow)
+            {
+                return BadRequest("Invalid or expired state parameter");
+            }
+
+            // Delete state from cache (one-time use)
+            await _cacheService.RemoveAsync($"pagerduty_oauth:{state}");
+
+            // Exchange code for tokens
+            var redirectUri = "https://localhost:5032/integrations/pagerduty/callback";
+            
+            await _axiomLogger.LogInfo("Attempting PagerDuty token exchange", new Dictionary<string, object>
+            {
+                ["redirect_uri"] = redirectUri,
+                ["code_length"] = code.Length,
+                ["state"] = state
+            });
+            
+            var tokenResponse = await _pagerDutyService.ExchangeCodeForTokensAsync(code, redirectUri);
+
+            if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
+            {
+                await _axiomLogger.LogError("Failed to exchange PagerDuty authorization code for tokens - token response was null or empty", new Dictionary<string, object>
+                {
+                    ["redirect_uri"] = redirectUri,
+                    ["has_token_response"] = tokenResponse != null,
+                    ["has_access_token"] = tokenResponse?.AccessToken != null
+                });
+                return BadRequest("Failed to complete PagerDuty authorization");
+            }
+
+            // Get account info to verify token and get account ID
+            var accountInfo = await _pagerDutyService.GetAccountInfoAsync(tokenResponse.AccessToken);
+            if (accountInfo == null || string.IsNullOrEmpty(accountInfo.Id))
+            {
+                await _axiomLogger.LogError("Failed to get PagerDuty account info", new Dictionary<string, object>());
+                return BadRequest("Failed to verify PagerDuty account");
+            }
+
+            // Create temporary session for service selection
+            var sessionId = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            var session = new PagerDutyOAuthSession
+            {
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken ?? string.Empty,
+                ExpiresIn = tokenResponse.ExpiresIn,
+                AccountId = accountInfo.Id,
+                AccountName = accountInfo.Name ?? accountInfo.Email ?? "Unknown",
+                ProjectId = oauthState.ProjectId,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(10)
+            };
+
+            // Store session in Redis with 10-minute TTL
+            await _cacheService.SetAsync($"pagerduty_session:{sessionId}", session, TimeSpan.FromMinutes(10));
+
+           await _axiomLogger.LogInfo("PagerDuty OAuth session created", new Dictionary<string, object>
+            {
+                ["session_id"] = sessionId,
+                ["project_id"] = oauthState.ProjectId,
+                ["account_id"] = accountInfo.Id
+            });
+
+            // Redirect to service selection page
+            return Redirect($"/integrations/pagerduty/select-service?session={sessionId}");
+        }
+
+        [AllowAnonymous]
+        [HttpGet("integrations/pagerduty/select-service")]
+        public async Task<IActionResult> PagerDutySelectService([FromQuery] string session)
+        {
+            // Retrieve session from Redis
+            var oauthSession = await _cacheService.GetAsync<PagerDutyOAuthSession>($"pagerduty_session:{session}");
+            if (oauthSession == null || oauthSession.ExpiresAt < DateTime.UtcNow)
+            {
+                return BadRequest("Session expired or invalid. Please try connecting again.");
+            }
+
+            // Fetch services from PagerDuty
+            var services = await _pagerDutyService.GetServicesAsync(oauthSession.AccessToken);
+            if (services == null || !services.Any())
+            {
+                // If no services found, show error
+                return BadRequest("No PagerDuty services found in your account. Please create a service in PagerDuty first.");
+            }
+
+            // Pass data to view
+            ViewBag.SessionId = session;
+            ViewBag.AccountName = oauthSession.AccountName;
+            ViewBag.Services = services;
+
+            return View("SelectPagerDutyService");
+        }
+
+        [AllowAnonymous]
+        [HttpPost("integrations/pagerduty/complete")]
+        public async Task<IActionResult> PagerDutyComplete([FromForm] string session, [FromForm] string serviceId)
+        {
+            // Retrieve session from Redis
+            var oauthSession = await _cacheService.GetAsync<PagerDutyOAuthSession>($"pagerduty_session:{session}");
+            if (oauthSession == null || oauthSession.ExpiresAt < DateTime.UtcNow)
+            {
+                return BadRequest("Session expired. Please try connecting again.");
+            }
+
+            // Delete session from Redis
+            await _cacheService.RemoveAsync($"pagerduty_session:{session}");
+
+            // Load project
+            var project = await _projectRepository.GetProjectByIdAsync(oauthSession.ProjectId);
+            if (project == null)
+            {
+                return NotFound("Project not found");
+            }
+
+            // Encrypt tokens before storing
+            var encryptedAccessToken = _encryptionService.Encrypt(oauthSession.AccessToken);
+            var encryptedRefreshToken = _encryptionService.Encrypt(oauthSession.RefreshToken);
+            var tokenExpiresAt = DateTime.UtcNow.AddSeconds(oauthSession.ExpiresIn);
+
+            // Create integration record
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.PagerDuty,
+                Name = $"PagerDuty - {oauthSession.AccountName}",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            // Create PagerDuty integration record with selected service
+            var pagerDutyIntegration = new PagerDutyIntegration
+            {
+                IntegrationId = integrationId,
+                AccountId = oauthSession.AccountId,
+                ServiceId = serviceId,
+                AccessToken = encryptedAccessToken,
+                RefreshToken = encryptedRefreshToken,
+                TokenExpiresAt = tokenExpiresAt,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _integrationRepository.CreatePagerDutyIntegrationAsync(pagerDutyIntegration);
+
+            // Auto-enable for all project monitors
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+            {
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+            }
+
+            await _axiomLogger.LogInfo("PagerDuty integration created with service", new Dictionary<string, object>
+            {
+                ["project_id"] = project.Id,
+                ["integration_name"] = integration.Name,
+                ["account_id"] = oauthSession.AccountId,
+                ["service_id"] = serviceId
+            });
+
+            // Redirect back to integrations page
             return RedirectToAction("Index", new { slug = project.Slug });
         }
 

@@ -47,11 +47,13 @@
                     var googleChatDetails = item.GoogleChatDetails;
                     var discordDetails = item.DiscordDetails;
                     var emailDetails = item.EmailDetails;
+                    var pagerDutyDetails = item.PagerDutyDetails;
                     var isSlack = integration.Type == HealthyCron.Enums.IntegrationType.Slack;
                     var isTeams = integration.Type == HealthyCron.Enums.IntegrationType.Teams;
                     var isGoogleChat = integration.Type == HealthyCron.Enums.IntegrationType.GoogleChat;
                     var isDiscord = integration.Type == HealthyCron.Enums.IntegrationType.Discord;
                     var isEmail = integration.Type == HealthyCron.Enums.IntegrationType.Email;
+                    var isPagerDuty = integration.Type == HealthyCron.Enums.IntegrationType.PagerDuty;
 
                     <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-blue-500/20 transition-all group">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -92,6 +94,12 @@
                                 {
                                     <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shrink-0">
                                         <i data-lucide="mail" class="w-7 h-7 text-white"></i>
+                                    </div>
+                                }
+                                else if (isPagerDuty)
+                                {
+                                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shrink-0">
+                                        <i data-lucide="siren" class="w-7 h-7 text-white"></i>
                                     </div>
                                 }
                                 else
@@ -145,6 +153,10 @@
                                     else if (isEmail && emailDetails != null)
                                     {
                                         <p class="text-xs text-text-secondary">@emailDetails.Email</p>
+                                    }
+                                    else if (isPagerDuty && pagerDutyDetails != null)
+                                    {
+                                        <p class="text-xs text-text-secondary">Account ID: @pagerDutyDetails.AccountId</p>
                                     }
                                 </div>
                             </div>
@@ -283,20 +295,38 @@
                 </a>
             </div>
 
-            <!-- PagerDuty (Placeholder) -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 opacity-40 grayscale flex items-center justify-between">
+            <!-- PagerDuty -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-orange-500/20 transition-all flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center shrink-0">
-                        <i data-lucide="mail" class="w-6 h-6 text-white"></i>
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="siren" class="w-6 h-6 text-white"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-white">Email</h3>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Direct alerts</p>
+                        <h3 class="font-bold text-white">PagerDuty</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Incident Management</p>
                     </div>
                 </div>
-                <button disabled class="p-2.5 rounded-xl bg-white/5 text-text-secondary border border-white/10 cursor-not-allowed">
-                    <span class="text-[10px] font-black uppercase">Soon</span>
-                </button>
+                <a href="/project/@project.Slug/integrations/pagerduty/authorize" 
+                   class="p-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white transition-all shadow-lg shadow-orange-500/20">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+            </div>
+            
+            <!-- Opsgenie -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-amber-500/20 transition-all flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="bell-ring" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white">Opsgenie</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Incident Response</p>
+                    </div>
+                </div>
+                <a href="/project/@project.Slug/integrations/opsgenie/add" 
+                   class="p-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-all shadow-lg shadow-amber-500/20">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
             </div>
             
             <!-- Webhook (Placeholder) -->

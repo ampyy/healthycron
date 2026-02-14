@@ -2,7 +2,7 @@ using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.WebHost.UseUrls("https://localhost:5032");
+builder.WebHost.UseUrls("https://localhost:5032");
 
 // ============================================================================
 // CONFIGURATION SETUP - Strongly-typed and validated at startup
@@ -68,6 +68,9 @@ builder.Services.AddSingleton<HealthyCron.Utilities.Service.AxiomLogger>();
 
 // Register HttpClient for SlackOAuthService
 builder.Services.AddHttpClient<HealthyCron.Logic.Interfaces.ISlackOAuthService, HealthyCron.Logic.Service.SlackOAuthService>();
+
+// Register HttpClient for PagerDutyService
+builder.Services.AddHttpClient<HealthyCron.Logic.Service.IPagerDutyService, HealthyCron.Logic.Service.PagerDutyService>();
 
 // Register Background Services
 

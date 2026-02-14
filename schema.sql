@@ -163,6 +163,26 @@ CREATE TABLE IF NOT EXISTS email_integrations (
         ON DELETE CASCADE
 );
 
+-- PagerDuty Integrations Table
+CREATE TABLE IF NOT EXISTS pagerduty_integrations (
+    integration_id UUID PRIMARY KEY,
+
+    account_id TEXT NOT NULL,
+    service_id TEXT,
+    access_token TEXT NOT NULL,
+    refresh_token TEXT NOT NULL,
+    token_expires_at TIMESTAMPTZ NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    CONSTRAINT fk_pagerduty_integrations
+        FOREIGN KEY (integration_id)
+        REFERENCES integrations (id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_pagerduty_integrations_account_id ON pagerduty_integrations(account_id);
 
 -- Monitor Integrations Mapping Table
 CREATE TABLE IF NOT EXISTS monitor_integrations (
