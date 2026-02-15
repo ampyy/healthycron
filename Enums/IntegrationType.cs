@@ -7,7 +7,6 @@ namespace HealthyCron.Enums
         GoogleChat = 3,
         Discord = 4,
         Email = 5,
-        PagerDuty = 6,
-        Opsgenie = 7
+        PagerDuty = 6
     }
 }

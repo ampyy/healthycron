@@ -607,87 +607,6 @@ namespace HealthyCron.Controllers
             return RedirectToAction("Index", new { slug = project.Slug });
         }
 
-        [HttpGet("project/{slug}/integrations/opsgenie/add")]
-        public async Task<IActionResult> OpsgenieAdd(string slug)
-        {
-            var user = HttpContext.Items["User"] as User;
-            var project = await _projectRepository.GetProjectBySlugAsync(slug);
-
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
-
-            ViewBag.Project = project;
-            ViewBag.User = user;
-
-            return View();
-        }
-
-        [HttpPost("project/{slug}/integrations/opsgenie")]
-        public async Task<IActionResult> OpsgenieCreate(string slug, [FromForm] string apiKey, [FromForm] string? name, [FromForm] string region = "us", [FromForm] string? teamName = null, [FromForm] string priority = "P1")
-        {
-            var user = HttpContext.Items["User"] as User;
-            var project = await _projectRepository.GetProjectBySlugAsync(slug);
-
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
-
-            // Validate API key
-            if (string.IsNullOrWhiteSpace(apiKey))
-            {
-                TempData["Error"] = "API key is required";
-                return RedirectToAction("OpsgenieAdd", new { slug });
-            }
-
-            // Encrypt API key
-            var encryptedApiKey = _encryptionService.Encrypt(apiKey.Trim());
-
-            // Create integration record
-            var integration = new Integration
-            {
-                ProjectId = project.Id,
-                Type = IntegrationType.Opsgenie,
-                Name = string.IsNullOrWhiteSpace(name) ? $"Opsgenie - {region.ToUpper()}" : name,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
-
-            // Create Opsgenie integration record
-            var opsgenieIntegration = new OpsgenieIntegration
-            {
-                IntegrationId = integrationId,
-                ApiKey = encryptedApiKey,
-                Region = region,
-                TeamName = teamName,
-                Priority = priority,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-
-            await _integrationRepository.CreateOpsgenieIntegrationAsync(opsgenieIntegration);
-
-            // Auto-enable for all project monitors
-            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
-            foreach (var monitor in monitors)
-            {
-                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
-            }
-
-            await _axiomLogger.LogInfo("Opsgenie integration created", new Dictionary<string, object>
-            {
-                ["project_id"] = project.Id,
-                ["integration_name"] = integration.Name,
-                ["region"] = region
-            });
-
-            return RedirectToAction("Index", new { slug = project.Slug });
-        }
-
         [HttpGet("project/{slug}/integrations/pagerduty/authorize")]
         public async Task<IActionResult> PagerDutyAuthorize(string slug)
         {
@@ -716,7 +635,7 @@ namespace HealthyCron.Controllers
             // Build PagerDuty OAuth URL
             var clientId = _configuration["PagerDuty:ClientId"] ?? _configuration["PAGERDUTY_CLIENT_ID"];
             var redirectUri = _configuration["PagerDuty:RedirectUri"] ?? "https://localhost:5032/integrations/pagerduty/callback";
-            var scope = "incidents.write services.read users.read";
+            var scope = "incidents.write incidents.read services.read users.read";
 
             var authUrl = $"https://app.pagerduty.com/oauth/authorize?" +
                          $"client_id={clientId}&" +

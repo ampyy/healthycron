@@ -210,25 +210,7 @@ namespace HealthyCron.Data.Repository
             });
         }
 
-        public async Task CreateOpsgenieIntegrationAsync(OpsgenieIntegration opsgenieIntegration)
-        {
-            const string sql = @"
-                INSERT INTO opsgenie_integrations 
-                (integration_id, api_key, region, team_name, priority)
-                VALUES (@IntegrationId, @ApiKey, @Region, @TeamName, @Priority)";
 
-            await ExecuteAsync(sql, opsgenieIntegration);
-        }
-
-        public async Task<OpsgenieIntegration?> GetOpsgenieIntegrationByIntegrationIdAsync(Guid integrationId)
-        {
-            const string sql = @"
-                SELECT integration_id, api_key, region, team_name, priority, created_at, updated_at
-                FROM opsgenie_integrations 
-                WHERE integration_id = @IntegrationId";
-
-            return await QueryFirstOrDefaultAsync<OpsgenieIntegration>(sql, new { IntegrationId = integrationId });
-        }
 
 
         public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)

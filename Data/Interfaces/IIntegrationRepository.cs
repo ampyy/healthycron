@@ -38,8 +38,7 @@ namespace HealthyCron.Data.Interfaces
         Task UpdatePagerDutyTokensAsync(Guid integrationId, string accessToken, string refreshToken, DateTime expiresAt);
 
         // Opsgenie Integration
-        Task CreateOpsgenieIntegrationAsync(OpsgenieIntegration opsgenieIntegration);
-        Task<OpsgenieIntegration?> GetOpsgenieIntegrationByIntegrationIdAsync(Guid integrationId);
+
 
         // Monitor Integration Mapping
         Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId);
