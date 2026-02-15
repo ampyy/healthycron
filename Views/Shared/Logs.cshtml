@@ -1,0 +1,392 @@
+@model IEnumerable<HealthyCron.Models.MonitorPing>
+@{
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    var monitors = ViewBag.Monitors as IEnumerable<HealthyCron.Models.Monitor>;
+    ViewData["Title"] = $"{project?.Name} - Event Logs";
+    Layout = "_DashboardLayout";
+    
+    int? currentStatus = ViewBag.Status as int?;
+    string? currentSearch = ViewBag.Search as string;
+    Guid? currentMonitorId = ViewBag.MonitorId as Guid?;
+    int currentLimit = ViewBag.Limit ?? 25;
+}
+
+<div class="max-w-6xl mx-auto pb-20 px-4 sm:px-6">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex flex-wrap items-center gap-2 text-text-secondary text-sm uppercase tracking-wider font-semibold">
+            <a href="/dashboard" class="hover:text-blue transition-colors flex items-center gap-1">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                Projects
+            </a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            <a href="/@project!.Slug/monitors" class="hover:text-white transition-colors">@project!.Name</a>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            <span class="text-white">Event Logs</span>
+        </div>
+    </div>
+
+    <!-- Header & Filters -->
+    <div class="glass-card rounded-2xl p-6 mb-8 bg-navy/30 border border-white/5">
+        <div class="flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-black text-white mb-1 uppercase tracking-tight">Project Activity Logs</h1>
+                    <p class="text-xs text-text-secondary">Viewing recent events for @project?.Name.</p>
+                </div>
+                
+                <form method="get" class="flex flex-wrap items-center gap-3">
+                    <input type="hidden" name="limit" value="@currentLimit" />
+                    
+                    <div class="relative group">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary group-focus-within:text-blue transition-colors"></i>
+                        <input type="text" name="search" value="@currentSearch" placeholder="Search logs..." 
+                            class="bg-navy border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:ring-2 focus:ring-blue/50 outline-none w-48 transition-all">
+                    </div>
+                    
+                    <!-- Monitor Selection Removed -->
+
+                    <select name="status" onchange="this.form.submit()" class="bg-navy border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all font-bold">
+                        <option value="">All Statuses</option>
+                        <option value="0" selected="@(currentStatus == 0 ? "selected" : null)">Success</option>
+                        <option value="1" selected="@(currentStatus == 1 ? "selected" : null)">Failure</option>
+                    </select>
+
+                    @if (currentStatus != null || !string.IsNullOrEmpty(currentSearch) || currentMonitorId != null)
+                    {
+                        <a href="/@project?.Slug/logs" class="text-rose-500 hover:text-rose-400 text-xs font-bold transition-all p-2 flex items-center gap-1">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                            Reset
+                        </a>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs Table -->
+    <section class="glass-card rounded-2xl overflow-hidden w-full bg-navy/20">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-navy/50">
+                        <th class="px-6 py-4">Date / Time</th>
+                        <th class="px-6 py-4">Monitor</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">User Agent</th>
+                        <th class="px-6 py-4 text-right">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    @foreach (var ping in Model)
+                    {
+                        var statusStr = ping.Status == HealthyCron.Models.PingType.Success ? "Up" : "Down";
+                        <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group" onclick="showPingDetails(this)" 
+                            data-id="@ping.Id" data-time="@ping.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss")" 
+                            data-status="@statusStr" data-message="@ping.Message" 
+                            data-ip="@ping.IpAddress" data-ua="@ping.UserAgent" 
+                            data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-white font-bold">@ping.ReceivedAt.ToString("MMM dd")</span>
+                                    <span class="text-[10px] text-text-secondary font-mono">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-xs text-blue font-black uppercase tracking-wider">@ping.MonitorName</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest @(statusStr == "Up" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20")">
+                                    @statusStr
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="text-[10px] text-text-secondary font-mono truncate max-w-[150px] block" title="@ping.UserAgent">
+                                    @(ping.UserAgent?.Length > 20 ? ping.UserAgent.Substring(0, 20) + "..." : ping.UserAgent)
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button class="p-2 rounded-lg bg-white/5 text-text-secondary group-hover:text-white transition-all"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="px-6 py-20 text-center text-text-secondary font-medium italic opacity-50">No logs matching your criteria were found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="load-more-container" class="px-6 py-6 bg-white/[0.02] border-t border-white/5 text-center @(Model.Count() < currentLimit ? "hidden" : "")">
+            <button onclick="loadMoreLogs()" id="btn-load-more" class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-blue/10 hover:bg-blue/20 text-blue font-black uppercase tracking-widest text-[10px] transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-blue/5">
+                <span>Load More Logs</span>
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+            <div id="loader-load-more" class="hidden flex justify-center">
+                <div class="w-6 h-6 border-2 border-blue/20 border-t-blue rounded-full animate-spin"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Ping Details Modal -->
+<div id="pingModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closePingModal()"></div>
+        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2"><i data-lucide="activity" class="text-blue"></i>Ping Details</h3>
+                <button onclick="closePingModal()" class="text-text-secondary hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-navy/50 rounded-xl p-4 border border-white/5">
+                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Status</p>
+                            <span id="modal-status" class="text-sm font-black uppercase tracking-widest"></span>
+                        </div>
+                        <div class="bg-navy/50 rounded-xl p-4 border border-white/5">
+                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Received At</p>
+                            <span id="modal-time" class="text-sm text-white font-bold"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-navy/50 rounded-xl p-4 border border-white/5">
+                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Source IP</p>
+                            <span id="modal-ip" class="text-sm text-white font-mono break-all"></span>
+                        </div>
+                        <div class="bg-navy/50 rounded-xl p-4 border border-white/5">
+                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Method</p>
+                            <span id="modal-method" class="text-sm text-white font-mono font-bold"></span>
+                        </div>
+                    </div>
+
+                    <div class="bg-navy/50 rounded-xl p-4 border border-white/5">
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Ping Message</p>
+                        <p id="modal-message" class="text-sm text-white italic"></p>
+                    </div>
+
+                    <div class="bg-navy/50 rounded-xl p-4 border border-white/5">
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">User Agent</p>
+                        <p id="modal-ua" class="text-xs text-text-secondary break-all font-mono"></p>
+                    </div>
+
+                    <div class="bg-black/40 rounded-xl p-4 border border-white/5 overflow-x-auto">
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-2">Request Headers</p>
+                        <pre id="modal-headers" class="text-[10px] text-emerald-400 font-mono"></pre>
+                    </div>
+
+                    <button onclick="closePingModal()" class="w-full bg-blue text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue/20">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SignalR Client -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+<script>
+    // SignalR Connection
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/monitorHub")
+        .withAutomaticReconnect()
+        .build();
+
+    async function startSignalR() {
+        try {
+            await connection.start();
+            console.log("SignalR Connected.");
+            await connection.invoke("JoinProject", "@project?.Id");
+        } catch (err) {
+            console.error("SignalR Connection Error: ", err);
+            setTimeout(startSignalR, 5000);
+        }
+    }
+
+    connection.on("PingReceived", (data) => {
+        console.log("Ping Received:", data);
+        
+        // Check filters
+        const currentStatusFilter = "@currentStatus";
+        const currentSearch = "@currentSearch".toLowerCase();
+        
+        const statusVal = data.status === 'Fail' ? 1 : 0;
+        
+        if (currentStatusFilter !== "" && statusVal.toString() !== currentStatusFilter) return;
+        if (currentSearch !== "" && !(data.monitorName.toLowerCase().includes(currentSearch) || (data.message || "").toLowerCase().includes(currentSearch))) return;
+
+        addLogRow(data);
+    });
+
+    startSignalR();
+
+    function addLogRow(data) {
+        const tbody = document.querySelector('table tbody');
+        if (!tbody) return;
+
+        // Remove "No logs" row
+        const noLogsRow = tbody.querySelector('td[colspan="5"]');
+        if (noLogsRow && noLogsRow.innerText.includes("No logs")) {
+            tbody.removeChild(noLogsRow.parentElement);
+        }
+
+        const statusStr = data.status === 'Fail' ? 'Down' : 'Up';
+        
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/[0.04] transition-all cursor-pointer group opacity-0 translate-y-2';
+        tr.onclick = function() { showPingDetails(this); };
+        
+        tr.dataset.id = data.id;
+        tr.dataset.time = data.timeStr;
+        tr.dataset.status = statusStr;
+        tr.dataset.message = data.message || '';
+        tr.dataset.ip = data.ipAddress || '';
+        tr.dataset.ua = data.userAgent || '';
+        tr.dataset.method = data.method || '';
+        tr.dataset.headers = data.headers || '{}';
+
+        tr.innerHTML = `
+            <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-white font-bold">${data.dateDisplay}</span>
+                    <span class="text-[10px] text-text-secondary font-mono">${data.timeDisplay}</span>
+                </div>
+            </td>
+            <td class="px-6 py-4">
+                <span class="text-xs text-blue font-black uppercase tracking-wider">${data.monitorName}</span>
+            </td>
+            <td class="px-6 py-4">
+                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusStr == 'Up' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'}">
+                    ${statusStr}
+                </span>
+            </td>
+            <td class="px-6 py-4">
+                <span class="text-[10px] text-text-secondary font-mono truncate max-w-[150px] block" title="${data.userAgent || ''}">
+                    ${(data.userAgent && data.userAgent.length > 20) ? data.userAgent.substring(0, 20) + '...' : (data.userAgent || 'N/A')}
+                </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+                <button class="p-2 rounded-lg bg-white/5 text-text-secondary group-hover:text-white transition-all"><i data-lucide="eye" class="w-4 h-4"></i></button>
+            </td>
+        `;
+
+        tbody.insertBefore(tr, tbody.firstChild);
+        tr.offsetHeight;
+        tr.classList.remove('opacity-0', 'translate-y-2');
+        tr.classList.add('duration-500');
+        
+        lucide.createIcons();
+
+        // Limit rows if needed, but usually logs page is long. Still, let's keep it sane.
+        if (tbody.children.length > 100) tbody.removeChild(tbody.lastChild);
+    }
+
+    function onMonitorChange(select) {
+        const url = select.options[select.selectedIndex].getAttribute('data-url');
+        window.location.href = url;
+    }
+
+    function openPingModal() { document.getElementById('pingModal').classList.remove('hidden'); }
+    function closePingModal() { document.getElementById('pingModal').classList.add('hidden'); }
+
+    function showPingDetails(row) {
+        const dataset = row.dataset;
+        document.getElementById('modal-time').innerText = dataset.time;
+        document.getElementById('modal-message').innerText = dataset.message || 'Regular heartbeat ping.';
+        
+        const statusEl = document.getElementById('modal-status');
+        statusEl.innerText = dataset.status;
+        statusEl.className = 'text-sm font-black uppercase tracking-widest ' + (dataset.status === 'Up' ? 'text-emerald-500' : 'text-rose-500');
+        
+        document.getElementById('modal-ip').innerText = dataset.ip || 'N/A';
+        document.getElementById('modal-method').innerText = dataset.method || '-';
+        document.getElementById('modal-ua').innerText = dataset.ua || 'N/A';
+        
+        try {
+            const headers = JSON.parse(dataset.headers || '{}');
+            document.getElementById('modal-headers').innerText = JSON.stringify(headers, null, 2);
+        } catch {
+            document.getElementById('modal-headers').innerText = '{}';
+        }
+
+        document.getElementById('pingModal').classList.remove('hidden');
+        lucide.createIcons();
+    }
+
+    let currentOffset = @Model.Count();
+    const limitStep = 25;
+    let isLoading = false;
+
+    async function loadMoreLogs() {
+        if (isLoading) return;
+        isLoading = true;
+
+        const btn = document.getElementById('btn-load-more');
+        const loader = document.getElementById('loader-load-more');
+        
+        btn.classList.add('hidden');
+        loader.classList.remove('hidden');
+
+        try {
+            const params = new URLSearchParams({
+                monitorId: '@currentMonitorId',
+                status: '@currentStatus',
+                search: '@currentSearch',
+                limit: limitStep,
+                offset: currentOffset
+            });
+
+            // Clean up empty params
+            if (!params.get('monitorId')) params.delete('monitorId');
+            if (!params.get('status')) params.delete('status');
+            if (!params.get('search')) params.delete('search');
+
+            const response = await fetch(`/@project!.Slug/logs/partials/logs?${params.toString()}`);
+            if (!response.ok) throw new Error('Failed to load logs');
+
+            const html = await response.text();
+            
+            if (html.trim().length === 0) {
+                document.getElementById('load-more-container').classList.add('hidden');
+                return; 
+            }
+
+            // Append to table
+            const tbody = document.querySelector('table tbody');
+            const tempDiv = document.createElement('tbody');
+            tempDiv.innerHTML = html;
+            
+            let addedCount = 0;
+            while (tempDiv.firstChild) {
+                if (tempDiv.firstChild.nodeType === 1) { // Element node
+                    tbody.appendChild(tempDiv.firstChild);
+                    currentOffset++;
+                    addedCount++;
+                } else {
+                    tempDiv.removeChild(tempDiv.firstChild);
+                }
+            }
+            
+            lucide.createIcons();
+
+            if (addedCount < limitStep) {
+                document.getElementById('load-more-container').classList.add('hidden');
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert('Failed to load more logs.');
+        } finally {
+            isLoading = false;
+            if (document.getElementById('load-more-container').classList.contains('hidden') === false) {
+                 btn.classList.remove('hidden');
+            }
+            loader.classList.add('hidden');
+        }
+    }
+</script>

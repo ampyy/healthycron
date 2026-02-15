@@ -41,7 +41,7 @@ namespace HealthyCron.Controllers
 
             var logs = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, null, status, search, limit);
 
-            return View("~/Views/Logs/Index.cshtml", logs);
+            return View("~/Views/Shared/Logs.cshtml", logs);
         }
 
         [HttpGet("/checks/{monitorId:guid}/log")]
@@ -68,7 +68,7 @@ namespace HealthyCron.Controllers
 
             var logs = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, monitorId, status, search, limit);
 
-            return View("~/Views/Logs/Index.cshtml", logs);
+            return View("~/Views/Shared/Logs.cshtml", logs);
         }
 
         [HttpGet("/monitor/{slug}/logs")]
@@ -106,7 +106,7 @@ namespace HealthyCron.Controllers
 
             var pings = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, monitorId, status, search, limit, offset);
             
-            return PartialView("~/Views/Logs/_LogRows.cshtml", pings);
+            return PartialView("~/Views/Shared/_LogRows.cshtml", pings);
         }
     }
 }
