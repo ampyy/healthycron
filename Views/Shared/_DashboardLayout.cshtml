@@ -3,11 +3,20 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>@ViewData["Title"] - HealthyCron</title>
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="~/favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="~/favicon/android-chrome-512x512.png">
+    <link rel="manifest" href="~/favicon/site.webmanifest">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -134,7 +143,7 @@
                 <span class="sidebar-text font-medium truncate">Overview</span>
             </a>
             <a href="/dashboard/projects"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Action"]?.ToString() == "Projects" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" ? "active" : "")">
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @((ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Monitor" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Log") ? "active" : "")">
                 <i data-lucide="folder" class="w-5 h-5 shrink-0"></i>
                 <span class="sidebar-text font-medium truncate">Project</span>
             </a>
@@ -168,7 +177,7 @@
     </aside>
 
     <!-- Main Content -->
-    <div id="main-content" class="flex-1 flex flex-col h-screen transition-all duration-300 main-content">
+    <div id="main-content" class="flex-1 flex flex-col h-screen transition-all duration-300 main-content overflow-x-hidden w-full max-w-[100vw]">
         <!-- Top Bar -->
         <header
             class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-border-color bg-navy/50 backdrop-blur-md">

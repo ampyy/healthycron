@@ -161,20 +161,20 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
                                 <button onclick="openMonitorSelector('@integration.Id', '@integration.Name')" 
-                                        class="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue/10 text-blue border border-blue-500/20 hover:bg-blue hover:text-white transition-all font-bold text-sm">
-                                    <i data-lucide="list-checks" class="w-4 h-4"></i>
+                                        class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-blue/10 text-blue border border-blue-500/20 hover:bg-blue hover:text-white transition-all font-bold text-xs sm:text-sm">
+                                    <i data-lucide="list-checks" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
                                     Checks
                                 </button>
-                                <button disabled class="px-4 py-2 rounded-xl bg-white/5 text-text-secondary border border-white/10 opacity-50 cursor-not-allowed font-bold text-sm flex items-center gap-2">
-                                    <i data-lucide="play" class="w-4 h-4"></i>
+                                <button disabled class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 text-text-secondary border border-white/10 opacity-50 cursor-not-allowed font-bold text-xs sm:text-sm">
+                                    <i data-lucide="play" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
                                     Test
                                 </button>
                                 <button onclick="deleteIntegration('@integration.Id')" 
-                                        class="px-4 py-2 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all font-bold text-sm flex items-center gap-2">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                    Delete
+                                        class="flex-1 sm:flex-none flex items-center justify-center px-3 sm:px-4 py-2 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all font-bold text-xs sm:text-sm">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
+                                    <span class="sm:inline">Delete</span>
                                 </button>
                             </div>
                         </div>

@@ -57,79 +57,81 @@
             </div>
         </div>
         <div class="p-0">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5">
-                            <th class="px-6 py-4">Type</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4">Prefix</th>
-                            <th class="px-6 py-4">Created</th>
-                            <th class="px-6 py-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/5">
-                        @{
-                            var keyTypes = new[] { 
-                                new { Type = HealthyCron.Models.ApiKeyType.Ping, Label = "Ping Key", Desc = "Used for updating check status" },
-                                new { Type = HealthyCron.Models.ApiKeyType.FullAccess, Label = "Access Key", Desc = "Full access to project data" },
-                                new { Type = HealthyCron.Models.ApiKeyType.ReadAccess, Label = "Read-only Key", Desc = "View access to project data" }
-                            };
-                        }
-                        @foreach (var kt in keyTypes)
-                        {
-                            var activeKey = keys.OrderByDescending(k => k.CreatedAt).FirstOrDefault(k => k.KeyType == kt.Type && !k.RevokedAt.HasValue);
-                            <tr>
-                                <td class="px-6 py-4">
-                                    <div class="font-bold text-white">@kt.Label</div>
-                                    <div class="text-[10px] text-text-secondary">@kt.Desc</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if (activeKey != null)
-                                    {
-                                        <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] rounded uppercase font-bold">Active</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="px-2 py-0.5 bg-white/5 text-text-secondary text-[10px] rounded uppercase font-bold">Not Generated</span>
-                                    }
-                                </td>
-                                <td class="px-6 py-4">
-                                    @if (activeKey != null)
-                                    {
-                                        <div class="flex items-center gap-2">
-                                            <code class="text-xs bg-black/30 px-2 py-1 rounded border border-white/5 text-text-secondary">@activeKey.KeyPrefix...</code>
-                                            <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Prefix">
-                                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-text-secondary">---</span>
-                                    }
-                                </td>
-                                <td class="px-6 py-4 text-xs text-text-secondary">
-                                    @(activeKey?.CreatedAt.ToString("MMM dd, yyyy") ?? "---")
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    @if (activeKey != null)
-                                    {
-                                        <button onclick="confirmRevoke('@activeKey.Id')" class="text-rose-500 hover:text-rose-400 p-2 hover:bg-rose-500/10 rounded-lg transition-all" title="Revoke Key">
-                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button onclick="confirmGenerate(@((int)kt.Type), '@kt.Label')" class="text-blue hover:opacity-80 p-2 hover:bg-blue/10 rounded-lg transition-all" title="Generate Key">
-                                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                                        </button>
-                                    }
-                                </td>
+            <div class="overflow-x-auto -mx-6 sm:mx-0">
+                <div class="inline-block min-w-full align-middle">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-white/[0.02]">
+                                <th class="px-6 py-4">Type</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Prefix</th>
+                                <th class="px-6 py-4">Created</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            @{
+                                var keyTypes = new[] { 
+                                    new { Type = HealthyCron.Models.ApiKeyType.Ping, Label = "Ping Key", Desc = "Used for updating check status" },
+                                    new { Type = HealthyCron.Models.ApiKeyType.FullAccess, Label = "Access Key", Desc = "Full access to project data" },
+                                    new { Type = HealthyCron.Models.ApiKeyType.ReadAccess, Label = "Read-only Key", Desc = "View access to project data" }
+                                };
+                            }
+                            @foreach (var kt in keyTypes)
+                            {
+                                var activeKey = keys.OrderByDescending(k => k.CreatedAt).FirstOrDefault(k => k.KeyType == kt.Type && !k.RevokedAt.HasValue);
+                                <tr class="hover:bg-white/[0.01] transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-white text-sm sm:text-base whitespace-nowrap">@kt.Label</div>
+                                        <div class="text-[10px] text-text-secondary">@kt.Desc</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        @if (activeKey != null)
+                                        {
+                                            <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[10px] rounded uppercase font-bold">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="px-2 py-0.5 bg-white/5 text-text-secondary text-[10px] rounded uppercase font-bold">Not Generated</span>
+                                        }
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        @if (activeKey != null)
+                                        {
+                                            <div class="flex items-center gap-2">
+                                                <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-text-secondary font-mono">@activeKey.KeyPrefix...</code>
+                                                <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Prefix">
+                                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-text-secondary">---</span>
+                                        }
+                                    </td>
+                                    <td class="px-6 py-4 text-[11px] text-text-secondary whitespace-nowrap">
+                                        @(activeKey?.CreatedAt.ToString("MMM dd, yyyy") ?? "---")
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        @if (activeKey != null)
+                                        {
+                                            <button onclick="confirmRevoke('@activeKey.Id')" class="text-rose-500 hover:text-rose-400 p-2 hover:bg-rose-500/10 rounded-lg transition-all" title="Revoke Key">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button onclick="confirmGenerate(@((int)kt.Type), '@kt.Label')" class="text-blue hover:opacity-80 p-2 hover:bg-blue/10 rounded-lg transition-all" title="Generate Key">
+                                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="px-6 py-4 bg-navy/50 border-t border-white/5 flex items-center gap-2">

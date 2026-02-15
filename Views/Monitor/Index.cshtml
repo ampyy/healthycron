@@ -35,10 +35,10 @@
     <p class="mt-4 text-white font-black uppercase tracking-[0.2em] text-[10px] animate-pulse">Processing Request</p>
 </div>
 
-<div class="max-w-6xl mx-auto pb-20">
+<div class="max-w-6xl mx-auto pb-20 px-4 sm:px-6 lg:px-8">
     <!-- Breadcrumbs -->
     <div class="flex items-center justify-between mb-8">
-        <div class="flex items-center gap-2 text-text-secondary text-sm uppercase tracking-wider font-semibold">
+        <div class="flex flex-wrap items-center gap-2 text-text-secondary text-sm uppercase tracking-wider font-semibold">
             <a href="/dashboard" class="hover:text-blue transition-colors flex items-center gap-1">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                 Projects
@@ -53,122 +53,172 @@
     </div>
 
     <!-- Simple Header -->
-    <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-10 pb-8 border-b border-white/5">
-        <div class="flex items-start gap-5">
-            <div class="w-16 h-16 rounded-2xl bg-blue/10 border border-blue/20 flex items-center justify-center shrink-0">
-                <i data-lucide="activity" class="w-8 h-8 text-blue"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-black text-white mb-2">@Model.Name</h1>
-                <div class="flex items-center gap-4 mb-3">
-                    @if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused)
-                    {
-                        <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500">
-                            <i data-lucide="pause-circle" class="w-3 h-3"></i>
-                            Paused
-                        </span>
-                    }
-                    else if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Success)
-                    {
-                        <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            Healthy
-                        </span>
-                    }
-                    else
-                    {
-                        <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500">
-                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                            Down
-                        </span>
-                    }
+    <div class="flex flex-col gap-6 mb-10 pb-8 border-b border-white/5">
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div class="flex items-start gap-4 sm:gap-5">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue/10 border border-blue/20 flex items-center justify-center shrink-0">
+                    <i data-lucide="activity" class="w-7 h-7 sm:w-8 sm:h-8 text-blue"></i>
                 </div>
-                
-                <div class="space-y-3">
-                    <!-- Schedule Info (Simplified) -->
-                    <div class="flex items-center justify-between gap-4 bg-white/[0.03] border border-white/10 rounded-xl p-3 cursor-pointer hover:border-blue/50 hover:bg-blue/5 transition-all group w-full" onclick="openScheduleModal()">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="timer" class="w-4 h-4 text-blue"></i>
-                            <div>
-                                <h3 class="text-xs font-bold text-white leading-tight">@scheduleDisplay</h3>
-                                <p class="text-[10px] text-text-secondary mt-0.5">Grace: <span class="text-blue">@FormatMinutes(Model.GraceSeconds)</span></p>
-                            </div>
-                        </div>
-                        <i data-lucide="edit-2" class="w-3.5 h-3.5 text-text-secondary opacity-50 group-hover:opacity-100 transition-all"></i>
-                    </div>
-
-                    <!-- URL Card with Toggle -->
-                    <div class="space-y-2 pt-2">
-                        <div class="flex items-center justify-between gap-4">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">How To Ping</p>
-                            <div class="flex items-center gap-1 p-0.5 bg-black/40 border border-white/10 rounded-lg">
-                                <button onclick="switchEndpoint('uuid')" id="tab-uuid" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab active bg-blue/10 text-blue">UUID</button>
-                                <button onclick="switchEndpoint('slug')" id="tab-slug" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab text-text-secondary opacity-50">Slug</button>
-                            </div>
-                        </div>
-
-                        <div class="w-full">
-                            <!-- UUID Version -->
-                            <div id="endpoint-uuid" class="endpoint-content">
-                                <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2">
-                                    <div class="bg-navy px-2 py-1 rounded-lg border border-white/5 shrink-0 text-[10px] font-black text-blue uppercase">Endpoint</div>
-                                    <div class="flex-1 overflow-hidden px-2">
-                                        <div id="url-uuid" class="text-white/80 font-mono text-[10px] truncate">
-                                            @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id
-                                        </div>
-                                    </div>
-                                    <button onclick="copyUrl('url-uuid')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
-                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Slug Version -->
-                            <div id="endpoint-slug" class="endpoint-content hidden">
-                                <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2">
-                                    <div class="bg-navy px-2 py-1 rounded-lg border border-white/5 shrink-0 text-[10px] font-black text-purple uppercase">Endpoint</div>
-                                    <div class="flex-1 overflow-hidden px-2">
-                                        <div id="url-slug" class="text-white/80 font-mono text-[10px] truncate">
-                                            @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug
-                                        </div>
-                                    </div>
-                                    <button onclick="copyUrl('url-slug')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
-                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-xl sm:text-2xl font-black text-white mb-2 break-words">@Model.Name</h1>
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        @if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused)
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 shrink-0 w-fit">
+                                <i data-lucide="pause-circle" class="w-3 h-3"></i>
+                                Paused
+                            </span>
+                        }
+                        else if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Success)
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500 shrink-0 w-fit">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Healthy
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 shrink-0 w-fit">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                Down
+                            </span>
+                        }
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="flex flex-col items-end gap-4">
-            <div class="flex items-center gap-2">
-                <button onclick="openEditModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-navy border border-white/10 text-white hover:border-blue transition-all text-xs font-bold">
+
+            <!-- Action Buttons - Stack on mobile -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+                <button onclick="openEditModal()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-blue transition-all text-xs font-bold w-full sm:w-auto">
                     <i data-lucide="edit-3" class="w-4 h-4 text-blue"></i>
-                    Edit
+                    <span class="inline">Edit</span>
                 </button>
-                <button onclick="togglePause()" id="pause-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-navy border border-white/10 text-white hover:border-amber-500 transition-all text-xs font-bold">
+                <button onclick="togglePause()" id="pause-btn" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-amber-500 transition-all text-xs font-bold w-full sm:w-auto">
                     <i data-lucide="@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "play" : "pause")" class="w-4 h-4 text-amber-500"></i>
                     <span>@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Resume" : "Pause")</span>
                 </button>
-                <button onclick="deleteMonitor()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-navy border border-white/10 text-white hover:border-rose-500 transition-all text-xs font-bold">
+                <button onclick="deleteMonitor()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-rose-500 transition-all text-xs font-bold w-full sm:w-auto">
                     <i data-lucide="trash-2" class="w-4 h-4 text-rose-500"></i>
-                    Delete
+                    <span class="inline">Delete</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- How To Ping Section -->
+        <div class="space-y-4 max-w-2xl">
+            <!-- URL Card with Toggle -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between gap-4">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">How To Ping</p>
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                             <div class="relative">
+                                <input type="checkbox" id="enable-filtering" class="sr-only peer" onchange="toggleFiltering()">
+                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue"></div>
+                            </div>
+                            <span class="text-[9px] font-bold text-text-secondary group-hover:text-white transition-colors uppercase tracking-widest">Filter Rules</span>
+                        </label>
+                        <div class="flex items-center gap-1 p-0.5 bg-black/40 border border-white/10 rounded-lg">
+                            <button onclick="switchEndpoint('uuid')" id="tab-uuid" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab active bg-blue/10 text-blue">UUID</button>
+                            <button onclick="switchEndpoint('slug')" id="tab-slug" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab text-text-secondary opacity-50">Slug</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full space-y-2">
+                    <!-- UUID Version -->
+                    <div id="endpoint-uuid" class="endpoint-content space-y-2">
+                         <!-- Success -->
+                        <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-emerald-500/20 transition-all">
+                            <div class="bg-emerald-500/10 px-2 py-1.5 rounded-lg border border-emerald-500/20 shrink-0 text-[10px] font-black text-emerald-500 uppercase w-16 text-center">Success</div>
+                            <div class="flex-1 overflow-hidden px-2 min-w-0">
+                                <div id="url-uuid-success" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                    @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id
+                                </div>
+                            </div>
+                            <button onclick="copyUrl('url-uuid-success')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                         <!-- Start -->
+                        <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-blue/20 transition-all">
+                            <div class="bg-blue/10 px-2 py-1.5 rounded-lg border border-blue/20 shrink-0 text-[10px] font-black text-blue uppercase w-16 text-center">Start</div>
+                            <div class="flex-1 overflow-hidden px-2 min-w-0">
+                                <div id="url-uuid-start" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                    @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id/start
+                                </div>
+                            </div>
+                            <button onclick="copyUrl('url-uuid-start')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                         <!-- Fail -->
+                        <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-rose-500/20 transition-all">
+                            <div class="bg-rose-500/10 px-2 py-1.5 rounded-lg border border-rose-500/20 shrink-0 text-[10px] font-black text-rose-500 uppercase w-16 text-center">Fail</div>
+                            <div class="flex-1 overflow-hidden px-2 min-w-0">
+                                <div id="url-uuid-fail" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                    @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id/fail
+                                </div>
+                            </div>
+                            <button onclick="copyUrl('url-uuid-fail')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Slug Version -->
+                    <div id="endpoint-slug" class="endpoint-content hidden space-y-2">
+                        <!-- Success -->
+                        <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-purple/20 transition-all">
+                            <div class="bg-purple/10 px-2 py-1.5 rounded-lg border border-purple/20 shrink-0 text-[10px] font-black text-purple uppercase w-16 text-center">Success</div>
+                            <div class="flex-1 overflow-hidden px-2 min-w-0">
+                                <div id="url-slug-success" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                    @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug
+                                </div>
+                            </div>
+                            <button onclick="copyUrl('url-slug-success')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                         <!-- Start -->
+                        <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-blue/20 transition-all">
+                            <div class="bg-blue/10 px-2 py-1.5 rounded-lg border border-blue/20 shrink-0 text-[10px] font-black text-blue uppercase w-16 text-center">Start</div>
+                            <div class="flex-1 overflow-hidden px-2 min-w-0">
+                                <div id="url-slug-start" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                    @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug/start
+                                </div>
+                            </div>
+                            <button onclick="copyUrl('url-slug-start')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                         <!-- Fail -->
+                        <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-rose-500/20 transition-all">
+                            <div class="bg-rose-500/10 px-2 py-1.5 rounded-lg border border-rose-500/20 shrink-0 text-[10px] font-black text-rose-500 uppercase w-16 text-center">Fail</div>
+                            <div class="flex-1 overflow-hidden px-2 min-w-0">
+                                <div id="url-slug-fail" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                    @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug/fail
+                                </div>
+                            </div>
+                            <button onclick="copyUrl('url-slug-fail')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Rest remains the same (Graph & Logs) -->
-    <section class="glass-card rounded-2xl p-6 mb-8 w-full">
+    <!-- Heartbeat Chart -->
+    <section class="glass-card rounded-2xl p-6 mb-8 w-full border border-white/5 overflow-hidden">
         <div class="flex items-center justify-between mb-8">
-            <h2 class="font-black text-white uppercase tracking-widest text-xs">Last 24 Hours Heartbeats</h2>
+            <h2 class="font-black text-white uppercase tracking-widest text-xs opacity-50">Last 24 Hours Heartbeats</h2>
             <div class="flex items-center gap-4 text-[10px] text-text-secondary uppercase tracking-widest font-bold">
                 <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue"></span> Ping Received</span>
             </div>
         </div>
-        <div class="h-32 flex items-end gap-1 px-2">
+        <div class="h-32 flex items-end gap-px sm:gap-1 px-2">
             @if (graphData != null)
             {
                 for (int i = 0; i < 24; i++)
@@ -195,44 +245,63 @@
         </div>
     </section>
 
-    <!-- Monthly Stats Table -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <section class="glass-card rounded-2xl p-6 lg:col-span-1 border border-white/5 h-fit">
-             <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
-                <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue"></i>
-                Monthly Uptime
-            </h3>
-            <div class="w-full">
-                <table class="w-full text-left table-auto">
-                    <thead>
-                        <tr class="text-[9px] uppercase font-black text-text-secondary opacity-40">
-                            <th class="py-2 text-left">Month</th>
-                            <th class="py-2 text-right">Downtime</th>
-                            <th class="py-2 text-right">Uptime</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-[10px]">
-                        @foreach (var stat in monthlyStats)
-                        {
-                            <tr class="border-b border-white/[0.02] last:border-0 hover:bg-white/[0.02] transition-colors group">
-                                <td class="py-2.5 font-bold text-white group-hover:text-blue transition-colors">@stat.Month</td>
-                                <td class="py-2.5 text-right font-mono text-rose-400/80">@stat.DowntimeDuration</td>
-                                <td class="py-2.5 text-right font-mono font-bold @(stat.UptimePercentage >= 99.9 ? "text-emerald-500" : (stat.UptimePercentage >= 99 ? "text-emerald-400" : "text-amber-500"))">@stat.UptimePercentage%</td>
-                            </tr>
-                        }
-                        @if (!monthlyStats.Any())
-                        {
-                            <tr>
-                                <td colspan="3" class="py-6 text-center text-text-secondary italic opacity-50">No data available yet.</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+        <!-- Sidebar Column -->
+        <div class="lg:col-span-4 space-y-8 order-2 lg:order-1">
+            <!-- Monthly Status Table -->
+            <!-- Monthly Status (Grid Layout) -->
+            <section class="glass-card rounded-2xl p-5 border border-white/5">
+                 <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue"></i>
+                    Monthly Uptime
+                </h3>
+                <div class="space-y-1.5">
+                    @foreach (var stat in monthlyStats.Take(5)) 
+                    {
+                        <div class="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors group">
+                             <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-1.5 rounded-full @(stat.UptimePercentage >= 99.9 ? "bg-emerald-500" : (stat.UptimePercentage >= 99 ? "bg-emerald-400" : "bg-amber-500"))"></div>
+                                <span class="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">@stat.Month</span>
+                             </div>
+                             <div class="flex items-center gap-4">
+                                <span class="text-[9px] font-mono text-white/40 group-hover:text-white/60 transition-colors">@stat.DowntimeDuration</span>
+                                <span class="text-[10px] font-mono font-bold @(stat.UptimePercentage >= 99.9 ? "text-emerald-500" : (stat.UptimePercentage >= 99 ? "text-emerald-400" : "text-amber-500"))">@stat.UptimePercentage%</span>
+                             </div>
+                        </div>
+                    }
+                    @if (!monthlyStats.Any())
+                    {
+                        <div class="text-center py-4 text-[10px] text-text-secondary italic opacity-50">No data available yet.</div>
+                    }
+                </div>
+            </section>
 
-        <!-- Integration Section moved to right column -->
-        <section class="lg:col-span-2">
+            <!-- Scheduling Rules -->
+            <!-- Scheduling Rules (Simplified) -->
+            <section class="glass-card rounded-2xl p-5 border border-white/5">
+                 <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
+                    <i data-lucide="timer" class="w-3.5 h-3.5 text-blue"></i>
+                    Scheduling
+                </h3>
+                
+                <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all cursor-pointer" onclick="openScheduleModal()">
+                    <div class="space-y-1 min-w-0">
+                        <div class="text-[11px] font-bold text-white truncate">@scheduleDisplay</div>
+                         <div class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue"></span>
+                            <p class="text-[10px] text-text-secondary truncate">Grace: <span class="text-white/80">@FormatMinutes(Model.GraceSeconds)</span></p>
+                        </div>
+                    </div>
+                    <div class="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-blue/10 group-hover:text-blue transition-colors">
+                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Notification Column -->
+        <section class="lg:col-span-8 order-1 lg:order-2">
              <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
                 <i data-lucide="bell" class="w-3.5 h-3.5 text-blue"></i>
                 Active Notifications
@@ -243,7 +312,7 @@
                     foreach (var item in monitorIntegrations)
                     {
                         <div class="glass-card rounded-2xl p-4 border border-white/5 hover:border-blue-500/20 transition-all flex items-center justify-between group">
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-3 min-w-0 flex-1">
                                 <div class="w-10 h-10 rounded-xl bg-navy-light border border-white/5 flex items-center justify-center shrink-0">
                                     @if (item.Integration.Type == HealthyCron.Enums.IntegrationType.Slack)
                                     {
@@ -256,8 +325,8 @@
                                         <i data-lucide="bell" class="w-5 h-5 text-blue"></i>
                                     }
                                 </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-white">@item.Integration.Name</h4>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-xs font-bold text-white truncate pr-2">@item.Integration.Name</h4>
                                     <p class="text-[9px] text-text-secondary uppercase tracking-widest leading-none mt-1">@item.Integration.Type</p>
                                 </div>
                             </div>
@@ -290,11 +359,12 @@
             <table class="w-full text-left">
                 <thead>
                     <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-navy/20">
-                        <th class="px-6 py-3">#</th>
-                        <th class="px-6 py-3">Status</th>
-                        <th class="px-6 py-3">Timestamp</th>
-                        <th class="px-6 py-3">Source & User Agent</th>
-                        <th class="px-6 py-3 text-right">Details</th>
+                        <th class="px-4 py-2 w-12 text-center">#</th>
+                        <th class="px-4 py-2 w-24">Status</th>
+                        <th class="px-4 py-2 w-24">Date</th>
+                        <th class="px-4 py-2 w-24">Time</th>
+                        <th class="px-4 py-2">Source</th>
+                        <th class="px-4 py-2 text-right"></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
@@ -311,47 +381,44 @@
                             data-status="@currentStatus" data-message="@ping.Message" 
                             data-ip="@ping.IpAddress" data-ua="@ping.UserAgent" 
                             data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
-                            <td class="px-6 py-3">
-                                <span class="text-[10px] text-text-secondary font-black opacity-30">#@(pings.Count - i)</span>
+                            <td class="px-4 py-3 text-center">
+                                <span class="text-[10px] text-text-secondary font-black opacity-30">@((pings.Count - i))</span>
                             </td>
-                            <td class="px-6 py-3">
+                            <td class="px-4 py-3">
                                 <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest @(currentStatus == "Success" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : (currentStatus == "Starting" ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"))">
-                                    @currentStatus
+                                    @currentStatus.Substring(0, Math.Min(3, currentStatus.Length))
                                 </span>
                             </td>
-                            <td class="px-6 py-3">
-                                <div class="flex flex-col">
-                                    <span class="text-xs text-white font-bold">@ping.ReceivedAt.ToString("MMM dd, yyyy")</span>
-                                    <span class="text-[10px] text-text-secondary font-mono">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
-                                </div>
+                            <td class="px-4 py-3">
+                                <span class="text-xs text-white font-bold whitespace-nowrap">@ping.ReceivedAt.ToString("MMM dd")</span>
                             </td>
-                            <td class="px-6 py-3 max-w-sm">
-                                <div class="flex flex-col gap-1">
+                            <td class="px-4 py-3">
+                                <span class="text-[10px] text-text-secondary font-mono whitespace-nowrap">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
+                            </td>
+                            <td class="px-4 py-3 max-w-[150px] sm:max-w-xs">
+                                <div class="flex flex-col gap-0.5">
                                     <div class="flex items-center gap-1.5 opacity-60">
-                                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">IP</span>
                                         <span class="text-[10px] text-white font-mono truncate">@ping.HttpMethod @ping.IpAddress</span>
                                     </div>
-                                    <div class="flex items-center gap-1.5 opacity-60 overflow-hidden">
-                                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">UA</span>
-                                        <span class="text-[10px] text-text-secondary font-mono truncate" title="@ping.UserAgent">@ping.UserAgent</span>
+                                    <div class="flex items-center gap-1.5 opacity-40 overflow-hidden">
+                                        <span class="text-[9px] text-text-secondary font-mono truncate" title="@ping.UserAgent">@ping.UserAgent</span>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-3 text-right">
-                                <i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary group-hover:text-blue transition-all ml-auto"></i>
+                            <td class="px-4 py-3 text-right">
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-text-secondary group-hover:text-blue transition-all ml-auto opacity-50 group-hover:opacity-100"></i>
                             </td>
                         </tr>
 
                         @if (nextPing != null && currentStatus != nextStatus)
                         {
                             <tr class="bg-blue/5 border-y border-white/5">
-                                <td colspan="5" class="px-6 py-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-2 h-2 rounded-full @(currentStatus == "Success" ? "bg-emerald-500" : "bg-rose-500") animate-pulse"></div>
-                                        <span class="text-[10px] font-black uppercase tracking-widest text-text-secondary">Status Change:</span>
-                                        <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
+                                <td colspan="6" class="px-4 py-2">
+                                    <div class="flex items-center justify-center gap-3">
+                                        <div class="w-1.5 h-1.5 rounded-full @(currentStatus == "Success" ? "bg-emerald-500" : "bg-rose-500") animate-pulse"></div>
+                                        <div class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest">
                                             <span class="@(nextStatus == "Success" ? "text-emerald-500/50" : (nextStatus == "Starting" ? "text-blue-500/50" : "text-rose-500/50"))">@nextStatus</span>
-                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-text-secondary opacity-30"></i>
+                                            <i data-lucide="arrow-right" class="w-3 h-3 text-text-secondary opacity-30"></i>
                                             <span class="@(currentStatus == "Success" ? "text-emerald-500" : (currentStatus == "Starting" ? "text-blue-500" : "text-rose-500"))">@currentStatus</span>
                                         </div>
                                     </div>
@@ -362,7 +429,7 @@
                     @if (!pings.Any())
                     {
                         <tr>
-                            <td colspan="5" class="px-6 py-16 text-center text-text-secondary font-medium">No activity recorded yet for this monitor.</td>
+                            <td colspan="6" class="px-6 py-10 text-center text-text-secondary font-medium text-xs opacity-50">No activity recorded yet.</td>
                         </tr>
                     }
                 </tbody>
@@ -683,16 +750,59 @@
         }
     }
 
+    function toggleFiltering() {
+        const isEnabled = document.getElementById('enable-filtering').checked;
+        const uuidDiv = document.getElementById('endpoint-uuid');
+        const slugDiv = document.getElementById('endpoint-slug');
+        const divs = [uuidDiv, slugDiv];
+
+        divs.forEach(container => {
+            if (!container) return;
+            // First child is success, second is start, third is fail
+            // Actually, in the new HTML, they are just divs inside the container.
+            // We need to show/hide the start/fail ones based on checkbox.
+            // The structure is: Container -> [SuccessDiv, StartDiv, FailDiv]
+            
+            const children = Array.from(container.children);
+            if (children.length >= 3) {
+                // Keep only success visible if disabled
+                // Show all if enabled
+                // But wait, the user said "show headers for start fail and success".
+                // My HTML for endpoint-uuid has 3 divs.
+                // I should toggle visibility of the 2nd and 3rd divs?
+                // Or maybe the user wants them ALL shown when enabled?
+                // "checkbox enable filtering rules and below that show the apis for start fail and success"
+                // This implies that normally only one (the main/success/ping) is shown?
+                // Yes, historically only one was shown.
+                
+                if (isEnabled) {
+                    children[1].classList.remove('hidden'); // Start
+                    children[2].classList.remove('hidden'); // Fail
+                } else {
+                    children[1].classList.add('hidden');
+                    children[2].classList.add('hidden');
+                }
+            }
+        });
+    }
+
+    // Initialize state
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleFiltering();
+    });
+
     function addLogRow(data) {
         const tbody = document.querySelector('table tbody');
         if (!tbody) return;
 
-        const noActivityRow = tbody.querySelector('td[colspan="5"]');
+        const noActivityRow = tbody.querySelector('td[colspan="6"]');
         if (noActivityRow && noActivityRow.innerText.includes("No activity")) {
             tbody.removeChild(noActivityRow.parentElement);
         }
 
         const currentStatus = data.status === 'Success' ? 'Success' : (data.status === 'Start' ? 'Starting' : 'Failed');
+        const statusClass = currentStatus == 'Success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : (currentStatus == 'Starting' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20');
+        const statusText = currentStatus.substring(0, Math.min(3, currentStatus.length));
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-white/[0.04] transition-all cursor-pointer group opacity-0 translate-y-2';
@@ -707,39 +817,45 @@
         tr.dataset.method = data.method || '';
         tr.dataset.headers = data.headers || '{}';
 
+        // Split date and time from display string if possible, or use raw
+        // data.dateDisplay usually has "MMM dd, yyyy"
+        // data.timeDisplay usually has "HH:mm:ss"
+        // We'll rely on the server sending these or parse them. 
+        // Assuming the server sends 'dateDisplay' and 'timeDisplay' separately or we parse 'receivedAt'.
+        // Existing code used `data.dateDisplay` and `data.timeDisplay`.
+        
         tr.innerHTML = `
-            <td class="px-6 py-4">
+            <td class="px-4 py-3 text-center">
                 <span class="text-[10px] text-text-secondary font-black opacity-30">NEW</span>
             </td>
-            <td class="px-6 py-4">
-                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${currentStatus == 'Success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : (currentStatus == 'Starting' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20')}">
-                    ${currentStatus}
+            <td class="px-4 py-3">
+                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">
+                    ${statusText}
                 </span>
             </td>
-            <td class="px-6 py-4">
-                <div class="flex flex-col">
-                    <span class="text-xs text-white font-bold">${data.dateDisplay}</span>
-                    <span class="text-[10px] text-text-secondary font-mono">${data.timeDisplay}</span>
-                </div>
+            <td class="px-4 py-3">
+                 <span class="text-xs text-white font-bold whitespace-nowrap">${data.dateDisplay || '-'}</span>
             </td>
-            <td class="px-6 py-4 max-w-sm">
-                <div class="flex flex-col gap-1">
+            <td class="px-4 py-3">
+                <span class="text-[10px] text-text-secondary font-mono whitespace-nowrap">${data.timeDisplay || '-'}</span>
+            </td>
+            <td class="px-4 py-3 max-w-[150px] sm:max-w-xs">
+                <div class="flex flex-col gap-0.5">
                     <div class="flex items-center gap-1.5 opacity-60">
-                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">IP</span>
                         <span class="text-[10px] text-white font-mono truncate">${data.method || 'GET'} ${data.ipAddress || 'N/A'}</span>
                     </div>
-                    <div class="flex items-center gap-1.5 opacity-60 overflow-hidden">
-                        <span class="text-[9px] font-black uppercase tracking-widest text-text-secondary shrink-0">UA</span>
-                        <span class="text-[10px] text-text-secondary font-mono truncate" title="${data.userAgent || ''}">${data.userAgent || 'N/A'}</span>
+                    <div class="flex items-center gap-1.5 opacity-40 overflow-hidden">
+                        <span class="text-[9px] text-text-secondary font-mono truncate" title="${data.userAgent || ''}">${data.userAgent || 'N/A'}</span>
                     </div>
                 </div>
             </td>
-            <td class="px-6 py-4 text-right">
-                <i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary group-hover:text-blue transition-all ml-auto"></i>
+            <td class="px-4 py-3 text-right">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-text-secondary group-hover:text-blue transition-all ml-auto opacity-50 group-hover:opacity-100"></i>
             </td>
         `;
 
         tbody.insertBefore(tr, tbody.firstChild);
+        // Force reflow
         tr.offsetHeight;
         tr.classList.remove('opacity-0', 'translate-y-2');
         tr.classList.add('duration-500');

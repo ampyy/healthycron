@@ -9,6 +9,8 @@ using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
+using Microsoft.Extensions.Options;
+using HealthyCron.Models.Configuration;
 
 namespace HealthyCron.Controllers
 {
@@ -713,7 +715,7 @@ namespace HealthyCron.Controllers
 
             // Build PagerDuty OAuth URL
             var clientId = _configuration["PagerDuty:ClientId"] ?? _configuration["PAGERDUTY_CLIENT_ID"];
-            var redirectUri = "https://localhost:5032/integrations/pagerduty/callback"; // TODO: Use env-specific URL
+            var redirectUri = _configuration["PagerDuty:RedirectUri"] ?? "https://localhost:5032/integrations/pagerduty/callback";
             var scope = "incidents.write services.read users.read";
 
             var authUrl = $"https://app.pagerduty.com/oauth/authorize?" +
@@ -753,7 +755,7 @@ namespace HealthyCron.Controllers
             await _cacheService.RemoveAsync($"pagerduty_oauth:{state}");
 
             // Exchange code for tokens
-            var redirectUri = "https://localhost:5032/integrations/pagerduty/callback";
+            var redirectUri = _configuration["PagerDuty:RedirectUri"] ?? "https://localhost:5032/integrations/pagerduty/callback";
             
             await _axiomLogger.LogInfo("Attempting PagerDuty token exchange", new Dictionary<string, object>
             {

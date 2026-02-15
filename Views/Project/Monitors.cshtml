@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
             <a href="/project/@project.Slug/settings"
                 class="p-2.5 rounded-xl bg-navy-light border border-border-color text-text-secondary hover:text-white hover:border-white/20 transition-all active:scale-95 group"
                 title="Project Settings">
@@ -28,19 +28,19 @@
             <a href="/project/@project.Slug/integrations"
                 class="p-2.5 px-4 rounded-xl bg-navy-light border border-border-color text-text-secondary hover:text-white hover:border-white/20 transition-all active:scale-95 flex items-center gap-2 group">
                 <i data-lucide="zap" class="w-5 h-5 group-hover:text-blue-500 transition-colors"></i>
-                <span class="font-bold text-sm">Integrations</span>
+                <span class="font-bold text-sm hidden sm:inline">Integrations</span>
             </a>
             <button onclick="openCreateModal()"
-                class="bg-blue hover:bg-blue/80 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue/20 active:scale-95">
-                <i data-lucide="plus" class="w-5 h-5"></i>
-                New Monitor
+                class="bg-blue hover:bg-blue/80 text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue/20 active:scale-95 text-xs sm:text-sm">
+                <i data-lucide="plus" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                <span>New Monitor</span>
             </button>
         </div>
     </div>
 </div>
 
 <!-- Stats Overview -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
     <div class="glass-card rounded-2xl p-4 border border-white/5">
         <p class="text-[10px] uppercase tracking-widest font-black text-text-secondary opacity-50 mb-1">Total</p>
         <div class="text-xl font-black text-white">@Model.Monitors.Count</div>
@@ -88,100 +88,100 @@ else
                      style="--status-rgb: @(statusColor == "emerald" ? "16,185,129" : (statusColor == "rose" ? "244,63,94" : (statusColor == "amber" ? "245,158,11" : "100,116,139")))">
                 </div>
 
-                <div class="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div class="flex items-start gap-5 flex-1 min-w-0">
-                        <!-- Type Icon -->
-                        <div class="w-14 h-14 rounded-2xl bg-navy-light border border-white/5 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:scale-105 transition-transform">
-                            <i data-lucide="@(monitor.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "calendar" : (monitor.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "timer" : "activity"))" class="w-7 h-7 text-blue-500"></i>
+                    <div class="p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+                        <div class="flex items-start gap-3 sm:gap-5 flex-1 min-w-0">
+                            <!-- Type Icon -->
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-navy-light border border-white/5 flex items-center justify-center flex-shrink-0 shadow-inner group-hover:scale-105 transition-transform">
+                                <i data-lucide="@(monitor.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "calendar" : (monitor.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "timer" : "activity"))" class="w-6 h-6 sm:w-7 sm:h-7 text-blue-500"></i>
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                                    <a href="/monitor/@monitor.Slug"
+                                        class="text-lg sm:text-xl font-bold text-white hover:text-blue-500 transition-colors truncate block">
+                                        @monitor.Name
+                                    </a>
+                                    <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] uppercase font-black border tracking-wider
+                                        @(statusColor == "emerald" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
+                                          statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
+                                          statusColor == "amber" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
+                                          "bg-slate-500/10 text-slate-400 border-slate-500/20")">
+                                        @(monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "Healthy" : (monitor.LastStatus.HasValue ? (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Paused" : monitor.LastStatus.ToString()) : "Paused"))
+                                    </span>
+
+                                    <!-- Integrations -->
+                                    <div class="flex items-center gap-1 ml-auto lg:ml-0">
+                                        @if (!integrations.Any()) {
+                                            <span class="text-[8px] sm:text-[9px] font-black text-text-secondary/30 uppercase tracking-widest hidden sm:block">No Integrations</span>
+                                        } else {
+                                            @foreach(var integration in integrations.Take(3)) {
+                                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center text-text-secondary"
+                                                     title="@integration.Integration.Name">
+                                                    <i data-lucide="@(integration.Integration.Type == HealthyCron.Enums.IntegrationType.Slack ? "slack" : (integration.Integration.Type == HealthyCron.Enums.IntegrationType.Email ? "mail" : "zap"))" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
+                                                </div>
+                                            }
+                                            @if (integrations.Count > 3) {
+                                                <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-white/5 border border-white/5 flex items-center justify-center text-[8px] sm:text-[9px] font-bold text-text-secondary cursor-help"
+                                                    title="+@(integrations.Count - 3) more integrations">
+                                                    +@(integrations.Count - 3)
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-text-secondary mt-2">
+                                    <!-- Ping URL -->
+                                    <div class="flex items-center gap-2 bg-black/20 rounded-lg px-2 py-0.5 sm:px-2.5 sm:py-1 border border-white/5">
+                                        <code class="text-[10px] sm:text-xs font-mono text-blue-500/80">/ping/@monitor.Id</code>
+                                        <button onclick="copyPingUrl('@monitor.Id', this)"
+                                            class="hover:text-white transition-colors">
+                                            <i data-lucide="copy" class="w-3 sm:w-3.5 h-3 sm:h-3.5"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Schedule + Grace -->
+                                    <div class="flex items-center gap-2 whitespace-nowrap">
+                                        <i data-lucide="timer" class="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-50"></i>
+                                        <span class="font-medium text-[11px] sm:text-sm">
+                                            @if (monitor.ScheduleType == HealthyCron.Models.ScheduleType.Interval)
+                                            {
+                                                @:Every @(monitor.PeriodSeconds >= 60 ? (monitor.PeriodSeconds / 60) + "m" :
+                                            monitor.PeriodSeconds + "s")
+                                            }
+                                            else
+                                            {
+                                                @:Cron: @monitor.CronExpression
+                                            }
+                                        </span>
+                                        <span class="opacity-20">|</span>
+                                        <span class="text-[10px] sm:text-xs">Grace: @((monitor.GraceSeconds ?? 0) / 60)m</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-3 flex-wrap">
-                                <a href="/monitor/@monitor.Slug"
-                                    class="text-xl font-bold text-white hover:text-blue-500 transition-colors truncate block">
-                                    @monitor.Name
-                                </a>
-                                <span class="px-2.5 py-1 rounded-full text-[10px] uppercase font-black border tracking-wider
-                                    @(statusColor == "emerald" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" :
-                                      statusColor == "rose" ? "bg-rose-500/10 text-rose-400 border-rose-500/20" :
-                                      statusColor == "amber" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
-                                      "bg-slate-500/10 text-slate-400 border-slate-500/20")">
-                                    @(monitor.LastStatus == HealthyCron.Models.MonitorStatus.Success ? "Healthy" : (monitor.LastStatus.HasValue ? (monitor.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Paused" : monitor.LastStatus.ToString()) : "Paused"))
-                                </span>
-
-                                <!-- Integrations -->
-                                <div class="flex items-center gap-1.5 ml-auto sm:ml-0">
-                                    @if (!integrations.Any()) {
-                                        <span class="text-[9px] font-black text-text-secondary/30 uppercase tracking-widest">No Integrations</span>
-                                    } else {
-                                        @foreach(var integration in integrations.Take(3)) {
-                                            <div class="w-6 h-6 rounded-md bg-navy-light border border-white/5 flex items-center justify-center text-text-secondary"
-                                                 title="@integration.Integration.Name">
-                                                <i data-lucide="@(integration.Integration.Type == HealthyCron.Enums.IntegrationType.Slack ? "slack" : (integration.Integration.Type == HealthyCron.Enums.IntegrationType.Email ? "mail" : "zap"))" class="w-3.5 h-3.5"></i>
-                                            </div>
-                                        }
-                                        @if (integrations.Count > 3) {
-                                            <div class="w-6 h-6 rounded-md bg-white/5 border border-white/5 flex items-center justify-center text-[9px] font-bold text-text-secondary cursor-help"
-                                                title="+@(integrations.Count - 3) more integrations">
-                                                +@(integrations.Count - 3)
-                                            </div>
-                                        }
+                        <!-- Right Side: Stats & Actions -->
+                        <div class="flex items-center justify-between lg:justify-end gap-6 sm:gap-8 border-t lg:border-t-0 border-white/5 pt-3 sm:pt-4 lg:pt-0">
+                            <div class="flex flex-col items-start lg:items-end">
+                                <p class="text-[9px] sm:text-[10px] uppercase tracking-widest text-text-secondary mb-0.5 sm:mb-1">Last Beat</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs sm:text-sm font-bold text-white">@(monitor.LastPingAt?.ToString("MMM dd, HH:mm") ?? "N/A")</span>
+                                    @if (monitor.LastPingAt.HasValue)
+                                    {
+                                        <div class="w-1.5 h-1.5 rounded-full bg-@statusColor-500 animate-pulse"></div>
                                     }
                                 </div>
                             </div>
 
-                            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-text-secondary mt-2">
-                                <!-- Ping URL -->
-                                <div class="flex items-center gap-2 bg-black/20 rounded-lg px-2.5 py-1 border border-white/5">
-                                    <code class="text-xs font-mono text-blue-500/80">/ping/@monitor.Id</code>
-                                    <button onclick="copyPingUrl('@monitor.Id', this)"
-                                        class="hover:text-white transition-colors">
-                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                </div>
-
-                                <!-- Schedule + Grace -->
-                                <div class="flex items-center gap-2">
-                                    <i data-lucide="timer" class="w-4 h-4 opacity-50"></i>
-                                    <span class="font-medium">
-                                        @if (monitor.ScheduleType == HealthyCron.Models.ScheduleType.Interval)
-                                        {
-                                            @:Every @(monitor.PeriodSeconds >= 60 ? (monitor.PeriodSeconds / 60) + "m" :
-                                        monitor.PeriodSeconds + "s")
-                                        }
-                                        else
-                                        {
-                                            @:Cron: @monitor.CronExpression
-                                        }
-                                    </span>
-                                    <span class="opacity-20">|</span>
-                                    <span class="text-xs">Grace: @((monitor.GraceSeconds ?? 0) / 60)m</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Side: Stats & Actions -->
-                    <div class="flex items-center justify-between lg:justify-end gap-8 border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
-                        <div class="flex flex-col items-start lg:items-end">
-                            <p class="text-[10px] uppercase tracking-widest text-text-secondary mb-1">Last Beat</p>
                             <div class="flex items-center gap-2">
-                                <span class="text-sm font-bold text-white">@(monitor.LastPingAt?.ToString("MMM dd, HH:mm") ?? "N/A")</span>
-                                @if (monitor.LastPingAt.HasValue)
-                                {
-                                    <div class="w-1.5 h-1.5 rounded-full bg-@statusColor-500 animate-pulse"></div>
-                                }
+                                <a href="/monitor/@monitor.Slug"
+                                    class="p-2.5 sm:p-3 bg-navy-light border border-white/5 rounded-xl hover:bg-blue hover:text-white transition-all transform hover:scale-105 shadow-xl active:scale-95">
+                                    <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                                </a>
                             </div>
                         </div>
-
-                        <div class="flex items-center gap-2">
-                            <a href="/monitor/@monitor.Slug"
-                                class="p-3 bg-navy-light border border-white/5 rounded-xl hover:bg-blue hover:text-white transition-all transform hover:scale-105 shadow-xl active:scale-95">
-                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                            </a>
-                        </div>
                     </div>
-                </div>
             </div>
         }
     </div>
