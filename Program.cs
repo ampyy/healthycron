@@ -65,6 +65,7 @@ builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IPingService, HealthyCro
 // Register Utility Services
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IEncryptionService, HealthyCron.Utilities.Service.EncryptionService>();
 builder.Services.AddSingleton<HealthyCron.Utilities.Service.AxiomLogger>();
+builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IAxiomLogger>(sp => sp.GetRequiredService<HealthyCron.Utilities.Service.AxiomLogger>());
 
 // Register HttpClient for SlackOAuthService
 builder.Services.AddHttpClient<HealthyCron.Logic.Interfaces.ISlackOAuthService, HealthyCron.Logic.Service.SlackOAuthService>();
