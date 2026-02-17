@@ -9,12 +9,12 @@ namespace HealthyCron.Utilities.Service
 {
     public class ResendEmailService : IEmailService
     {
-        private readonly ILogger<ResendEmailService> _logger;
+        private readonly IAxiomLogger _logger;
         private readonly string _apiKey;
 
         public ResendEmailService(
             IConfiguration configuration,
-            ILogger<ResendEmailService> logger)
+            IAxiomLogger logger)
         {
             _logger = logger;
 
@@ -46,11 +46,14 @@ namespace HealthyCron.Utilities.Service
                 // The SDK might not throw on error response content, but usually throws on HTTP failure.
                 // Assuming success if no exception for now. 
 
-                _logger.LogInformation($"Magic link email sent successfully to {toEmail} via Resend.");
+                await _logger.LogInfo($"Magic link email sent successfully to {toEmail} via Resend.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Exception occurred while sending email to {toEmail} via Resend");
+                await _logger.LogError($"Exception occurred while sending email to {toEmail} via Resend", new Dictionary<string, object>
+                {
+                    ["exception"] = ex.Message
+                });
                 throw;
             }
         }

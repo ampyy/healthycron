@@ -1,4 +1,5 @@
 using HealthyCron.Data.Interfaces;
+using HealthyCron.Utilities.Interface;
 using HealthyCron.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -13,13 +14,13 @@ namespace HealthyCron.Controllers
     {
         private readonly IMonitorRepository _monitorRepository;
         private readonly IHubContext<MonitorHub> _hubContext;
-        private readonly ILogger<InternalNotificationController> _logger;
+        private readonly IAxiomLogger _logger;
         private readonly IConfiguration _configuration;
 
         public InternalNotificationController(
             IMonitorRepository monitorRepository,
             IHubContext<MonitorHub> hubContext,
-            ILogger<InternalNotificationController> logger,
+            IAxiomLogger logger,
             IConfiguration configuration)
         {
             _monitorRepository = monitorRepository;
@@ -50,8 +51,12 @@ namespace HealthyCron.Controllers
                 return NotFound($"Monitor {request.MonitorId} not found.");
             }
 
-            _logger.LogInformation("External status notification received for monitor {MonitorId} ({MonitorName}). New status: {Status}", 
-                request.MonitorId, monitor.Name, request.NewStatus);
+            await _logger.LogInfo($"External status notification received for monitor {request.MonitorId} ({monitor.Name}). New status: {request.NewStatus}", new Dictionary<string, object>
+            {
+                ["monitor_id"] = request.MonitorId,
+                ["monitor_name"] = monitor.Name,
+                ["new_status"] = request.NewStatus
+            });
 
             // Broadcast status change via SignalR
             // This ensures the dashboard UI updates immediately when the external worker detects a failure

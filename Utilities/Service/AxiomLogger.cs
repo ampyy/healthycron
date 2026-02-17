@@ -1,9 +1,10 @@
+using HealthyCron.Utilities.Interface;
 using System.Text;
 using System.Text.Json;
 
 namespace HealthyCron.Utilities.Service
 {
-    public class AxiomLogger
+    public class AxiomLogger : IAxiomLogger
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;

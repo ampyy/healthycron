@@ -1,5 +1,6 @@
 using System.Net;
 using StackExchange.Redis;
+using HealthyCron.Utilities.Interface;
 
 namespace HealthyCron.Utilities
 {
@@ -7,11 +8,11 @@ namespace HealthyCron.Utilities
     {
         private readonly RequestDelegate _next;
         private readonly IConnectionMultiplexer _redis;
-        private readonly ILogger<RateLimitingMiddleware> _logger;
+        private readonly IAxiomLogger _logger;
         private const int MaxRequests = 100;
         private const int WindowSeconds = 60;
 
-        public RateLimitingMiddleware(RequestDelegate next, IConnectionMultiplexer redis, ILogger<RateLimitingMiddleware> logger)
+        public RateLimitingMiddleware(RequestDelegate next, IConnectionMultiplexer redis, IAxiomLogger logger)
         {
             _next = next;
             _redis = redis;
@@ -57,7 +58,7 @@ namespace HealthyCron.Utilities
 
             if (result == 0)
             {
-                _logger.LogWarning($"Rate limit exceeded for IP: {ipAddress}");
+                await _logger.LogWarn($"Rate limit exceeded for IP: {ipAddress}");
                 context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
                 context.Response.Headers["Retry-After"] = WindowSeconds.ToString();
                 await context.Response.WriteAsync("Too many requests. Please try again later.");

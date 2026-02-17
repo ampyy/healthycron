@@ -1,6 +1,7 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Logic.Interfaces;
 using HealthyCron.Models;
+using HealthyCron.Utilities.Interface;
 using Monitor = HealthyCron.Models.Monitor;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using HealthyCron.Hubs;
 using System.Collections.Generic;
-using HealthyCron.Utilities.Interface;
+
 
 namespace HealthyCron.Logic.Service
 {
@@ -17,7 +18,7 @@ namespace HealthyCron.Logic.Service
         private readonly IMonitorRepository _monitorRepository;
         private readonly IAccessKeyService _accessKeyService;
         private readonly IIntegrationRepository _integrationRepository;
-        private readonly ILogger<PingService> _logger;
+        private readonly IAxiomLogger _logger;
         private readonly IHubContext<MonitorHub> _hubContext;
         private readonly IQueueService _queueService;
 
@@ -25,7 +26,7 @@ namespace HealthyCron.Logic.Service
             IMonitorRepository monitorRepository,
             IAccessKeyService accessKeyService,
             IIntegrationRepository integrationRepository,
-            ILogger<PingService> logger,
+            IAxiomLogger logger,
             IHubContext<MonitorHub> hubContext,
             IQueueService queueService)
         {
@@ -120,15 +121,25 @@ namespace HealthyCron.Logic.Service
                 && newStatus == MonitorStatus.Failed)
             {
                 alertType = Enums.AlertType.Down;
-                _logger.LogWarning("Monitor {MonitorId} ({MonitorName}) transitioned from {PreviousStatus} to DOWN",
-                    monitor.Id, monitor.Name, previousStatus?.ToString() ?? "null");
+                await _logger.LogWarn($"Monitor {monitor.Id} ({monitor.Name}) transitioned from {previousStatus?.ToString() ?? "null"} to DOWN", new Dictionary<string, object>
+                {
+                    ["monitor_id"] = monitor.Id,
+                    ["monitor_name"] = monitor.Name,
+                    ["previous_status"] = previousStatus?.ToString() ?? "null",
+                    ["new_status"] = "DOWN"
+                });
             }
             // DOWN → UP: Trigger RECOVERY alert
             else if (previousStatus == MonitorStatus.Failed && newStatus == MonitorStatus.Success)
             {
                 alertType = Enums.AlertType.Up;
-                _logger.LogInformation("Monitor {MonitorId} ({MonitorName}) RECOVERED from DOWN to UP",
-                    monitor.Id, monitor.Name);
+                await _logger.LogInfo($"Monitor {monitor.Id} ({monitor.Name}) RECOVERED from DOWN to UP", new Dictionary<string, object>
+                {
+                    ["monitor_id"] = monitor.Id,
+                    ["monitor_name"] = monitor.Name,
+                    ["previous_status"] = "DOWN",
+                    ["new_status"] = "UP"
+                });
             }
 
             // If there's an alert, create notification jobs for all monitor integrations
@@ -148,8 +159,13 @@ namespace HealthyCron.Logic.Service
                             integration.Id
                         );
 
-                        _logger.LogInformation("Created notification job {JobId} for monitor {MonitorId}, integration {IntegrationId}, alert type {AlertType}",
-                            jobId, monitor.Id, integration.Id, alertType.Value);
+                        await _logger.LogInfo($"Created notification job {jobId} for monitor {monitor.Id}, integration {integration.Id}, alert type {alertType.Value}", new Dictionary<string, object>
+                        {
+                            ["job_id"] = jobId,
+                            ["monitor_id"] = monitor.Id,
+                            ["integration_id"] = integration.Id,
+                            ["alert_type"] = alertType.Value.ToString()
+                        });
 
                         // Send full payload to SQS queue for processing
                         try
@@ -161,17 +177,25 @@ namespace HealthyCron.Logic.Service
                                 IntegrationId = integration.Id
                             };
                             await _queueService.SendMessageAsync(sqsPayload);
-                            _logger.LogInformation("Successfully sent Job ID {JobId} to SQS queue", jobId);
+                            await _logger.LogInfo($"Successfully sent Job ID {jobId} to SQS queue", new Dictionary<string, object> { ["job_id"] = jobId });
                         }
                         catch (Exception queueEx)
                         {
-                            _logger.LogError(queueEx, "Failed to send Job ID {JobId} to SQS queue", jobId);
+                            await _logger.LogError($"Failed to send Job ID {jobId} to SQS queue", new Dictionary<string, object>
+                            {
+                                ["job_id"] = jobId,
+                                ["exception"] = queueEx.Message
+                            });
                         }
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Failed to create notification job for monitor {MonitorId}, integration {IntegrationId}",
-                            monitor.Id, integration.Id);
+                        await _logger.LogError($"Failed to create notification job for monitor {monitor.Id}, integration {integration.Id}", new Dictionary<string, object>
+                        {
+                            ["monitor_id"] = monitor.Id,
+                            ["integration_id"] = integration.Id,
+                            ["exception"] = ex.Message
+                        });
                     }
                 }
             }
