@@ -32,12 +32,11 @@ namespace HealthyCron.Controllers
         }
 
         [HttpGet("/login")]
-        public IActionResult Login()
+        public IActionResult Login([FromQuery] string? returnUrl)
         {
-            // Redirect if already logged in
             var user = HttpContext.Items["User"] as HealthyCron.Models.User;
-            if (user != null) return Redirect("/dashboard");
-
+            if (user != null) return Redirect(returnUrl ?? "/dashboard");
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
@@ -49,6 +48,10 @@ namespace HealthyCron.Controllers
                 var rawToken = await _authService.RequestMagicLinkAsync(request.Email);
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
                 var magicLink = $"{baseUrl}/auth/magic?token={rawToken}";
+
+                // If a returnUrl was supplied (e.g. invite link), carry it through
+                if (!string.IsNullOrWhiteSpace(request.ReturnUrl))
+                    magicLink += $"&returnUrl={Uri.EscapeDataString(request.ReturnUrl)}";
 
                 await _emailService.SendMagicLinkEmailAsync(request.Email, magicLink);
 
@@ -89,6 +92,10 @@ namespace HealthyCron.Controllers
             }
 
             SetSessionCookie(sessionToken);
+            // Honour returnUrl if present and local
+            var returnUrl = Request.Query["returnUrl"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/"))
+                return Redirect(returnUrl);
             return Redirect("/dashboard");
         }
 

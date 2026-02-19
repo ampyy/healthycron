@@ -1,0 +1,97 @@
+@{
+    var members = (ViewBag.Members as List<HealthyCron.Models.ProjectMember>) ?? new();
+    ViewData["Title"] = "Teams";
+    Layout = "_DashboardLayout";
+
+    // Group by project
+    var byProject = members
+        .GroupBy(m => new { m.ProjectSlug, m.ProjectName })
+        .OrderBy(g => g.Key.ProjectName)
+        .ToList();
+}
+
+<div class="max-w-4xl mx-auto pb-20">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <i data-lucide="users" class="text-blue"></i>
+            Teams
+        </h1>
+    </div>
+
+    @if (!byProject.Any())
+    {
+        <div class="glass-card rounded-2xl p-12 text-center">
+            <i data-lucide="users" class="w-12 h-12 text-text-secondary mx-auto mb-4"></i>
+            <h2 class="text-white font-bold text-lg mb-2">No team members yet</h2>
+            <p class="text-text-secondary text-sm mb-6">Go into any project's Settings to invite collaborators.</p>
+            <a href="/dashboard/projects" class="bg-blue hover:bg-blue/80 text-white px-6 py-2.5 rounded-xl font-bold transition-all text-sm inline-block">
+                View Projects
+            </a>
+        </div>
+    }
+    else
+    {
+        @foreach (var group in byProject)
+        {
+            <section class="glass-card rounded-2xl overflow-hidden mb-6">
+                <!-- Project header -->
+                <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center">
+                            <i data-lucide="folder" class="w-4 h-4 text-blue"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-white">@group.Key.ProjectName</h2>
+                            <p class="text-[10px] text-text-secondary">@group.Count() member@(group.Count() == 1 ? "" : "s")</p>
+                        </div>
+                    </div>
+                    <a href="/project/@group.Key.ProjectSlug/settings" class="text-xs text-blue hover:underline flex items-center gap-1">
+                        <i data-lucide="settings" class="w-3 h-3"></i>
+                        Manage
+                    </a>
+                </div>
+
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-white/[0.02]">
+                            <th class="px-6 py-3">Member</th>
+                            <th class="px-6 py-3">Role</th>
+                            <th class="px-6 py-3">Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        @foreach (var member in group.OrderBy(m => m.JoinedAt))
+                        {
+                            var (badgeCls, roleLabel) = member.Role switch {
+                                HealthyCron.Enums.ProjectRole.Manager  => ("bg-purple-500/10 text-purple-400", "Manager"),
+                                HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
+                                _                                      => ("bg-emerald-500/10 text-emerald-400", "Team Member")
+                            };
+                            <tr class="hover:bg-white/[0.01] transition-colors">
+                                <td class="px-6 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-text-secondary font-bold text-xs shrink-0">
+                                            @(member.UserEmail?.Substring(0,1).ToUpper())
+                                        </div>
+                                        <div>
+                                            <div class="text-white text-sm">@member.UserEmail</div>
+                                            <div class="text-text-secondary text-[10px] font-mono">@member.UserId.ToString().Substring(0,8)…</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3">
+                                    <span class="px-2 py-0.5 @badgeCls text-[10px] rounded uppercase font-bold">@roleLabel</span>
+                                </td>
+                                <td class="px-6 py-3 text-text-secondary text-xs">@member.JoinedAt.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </section>
+        }
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+</script>

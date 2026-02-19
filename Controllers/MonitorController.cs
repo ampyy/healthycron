@@ -22,6 +22,7 @@ namespace HealthyCron.Controllers
         private readonly Logic.Interfaces.IAccessKeyService _accessKeyService;
         private readonly IIntegrationRepository _integrationRepository;
         private readonly AxiomLogger _axiomLogger;
+        private readonly IProjectAuthService _projectAuth;
 
         public MonitorController(
             IMonitorRepository monitorRepository,
@@ -29,7 +30,8 @@ namespace HealthyCron.Controllers
             Logic.Service.ProjectService projectService,
             Logic.Interfaces.IAccessKeyService accessKeyService,
             IIntegrationRepository integrationRepository,
-            AxiomLogger axiomLogger)
+            AxiomLogger axiomLogger,
+            IProjectAuthService projectAuth)
         {
             _monitorRepository = monitorRepository;
             _projectRepository = projectRepository;
@@ -37,6 +39,7 @@ namespace HealthyCron.Controllers
             _accessKeyService = accessKeyService;
             _integrationRepository = integrationRepository;
             _axiomLogger = axiomLogger;
+            _projectAuth = projectAuth;
         }
 
         [HttpPost("create")]
@@ -48,10 +51,10 @@ namespace HealthyCron.Controllers
                 if (user == null) return Unauthorized();
 
                 var project = await _projectRepository.GetProjectBySlugAsync(model.ProjectSlug);
-                if (project == null || project.UserId != user.Id)
-                {
-                    return NotFound("Project not found or access denied");
-                }
+                if (project == null) return NotFound("Project not found");
+
+                if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id))
+                    return Forbid();
 
                 var monitorSlug = !string.IsNullOrWhiteSpace(model.Slug)
                     ? model.Slug
@@ -134,7 +137,10 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound("Monitor not found");
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound("Access denied");
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
 
             if (!string.Equals(monitor.Slug, model.Slug, StringComparison.OrdinalIgnoreCase))
             {
@@ -169,7 +175,10 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound("Monitor not found");
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound("Access denied");
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
 
             monitor.ScheduleType = model.ScheduleType;
             monitor.GraceSeconds = model.GraceSeconds * GetSecondsMultiplier(model.GraceUnit);
@@ -220,10 +229,18 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
+
+            var canManage = await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id);
 
             ViewBag.Project = project;
             ViewBag.UserEmail = user.Email;
+            ViewBag.UserTimezone = string.IsNullOrWhiteSpace(user.Timezone) ? "UTC" : user.Timezone;
+            ViewBag.CanManage = canManage;
+            ViewBag.IsOwner = _projectAuth.IsOwner(project.UserId, user.Id);
 
             var pings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 100);
             ViewBag.RecentPings = pings;
@@ -261,7 +278,10 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
 
             var isPausing = monitor.LastStatus != MonitorStatus.Paused;
             var newStatus = isPausing ? MonitorStatus.Paused : MonitorStatus.Success;
@@ -332,7 +352,10 @@ namespace HealthyCron.Controllers
                 if (monitor == null) return NotFound();
 
                 var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-                if (project == null || project.UserId != user.Id) return NotFound();
+                if (project == null) return NotFound();
+
+                if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id))
+                    return Forbid();
 
                 await _monitorRepository.DeleteMonitorAsync(id);
 
@@ -386,7 +409,8 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id)) return Forbid();
 
             var integrations = await _integrationRepository.GetMonitorIntegrationsAsync(id);
             return Json(integrations);
@@ -402,7 +426,8 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id)) return Forbid();
 
             var integration = await _integrationRepository.GetIntegrationByIdAsync(model.IntegrationId);
             if (integration == null || integration.ProjectId != project.Id)
@@ -424,7 +449,8 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id)) return Forbid();
 
             await _integrationRepository.RemoveMonitorIntegrationAsync(id, integrationId);
             return Ok(new { success = true });
@@ -440,7 +466,8 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id)) return Forbid();
 
             await _integrationRepository.UpdateMonitorIntegrationStatusAsync(id, integrationId, request.IsEnabled);
             return Ok(new { success = true });

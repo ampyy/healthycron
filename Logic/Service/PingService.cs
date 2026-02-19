@@ -38,23 +38,35 @@ namespace HealthyCron.Logic.Service
             _queueService = queueService;
         }
 
-        public async Task ProcessPingAsync(Guid monitorId, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
+        public async Task<PingResult> ProcessPingAsync(Guid monitorId, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
         {
             var monitor = await _monitorRepository.GetMonitorByIdAsync(monitorId);
-            if (monitor == null) return;
+            if (monitor == null) return PingResult.MonitorNotFound;
+
+            if (monitor.LastStatus == MonitorStatus.Paused)
+            {
+                return PingResult.MonitorPaused;
+            }
 
             await ExecutePingAsync(monitor, statusFromUrl, statusHeader, bodyJson, metadata);
+            return PingResult.Processed;
         }
 
-        public async Task ProcessPingBySlugAsync(string pingKey, string slug, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
+        public async Task<PingResult> ProcessPingBySlugAsync(string pingKey, string slug, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)
         {
             var keyModel = await _accessKeyService.ValidateKeyAsync(pingKey);
-            if (keyModel == null || keyModel.KeyType != ApiKeyType.Ping) return;
+            if (keyModel == null || keyModel.KeyType != ApiKeyType.Ping) return PingResult.InvalidKey;
 
             var monitor = await _monitorRepository.GetMonitorBySlugAsync(slug, keyModel.ProjectId);
-            if (monitor == null) return;
+            if (monitor == null) return PingResult.MonitorNotFound;
+
+            if (monitor.LastStatus == MonitorStatus.Paused)
+            {
+                return PingResult.MonitorPaused;
+            }
 
             await ExecutePingAsync(monitor, statusFromUrl, statusHeader, bodyJson, metadata);
+            return PingResult.Processed;
         }
 
         private async Task ExecutePingAsync(Monitor monitor, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata)

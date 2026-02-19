@@ -37,6 +37,7 @@ namespace HealthyCron.Controllers
         {
             var user = HttpContext.Items["User"] as User;
             ViewBag.UserEmail = user!.Email;
+            ViewBag.CurrentUserId = user.Id;
 
             var projects = await _projectRepository.GetProjectsByUserIdAsync(user.Id);
             return View("Projects", projects);

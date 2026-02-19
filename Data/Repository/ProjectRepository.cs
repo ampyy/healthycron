@@ -24,14 +24,29 @@ namespace HealthyCron.Data.Repository
         public async Task<IEnumerable<Project>> GetProjectsByUserIdAsync(Guid userId)
         {
             const string sql = @"
-                SELECT p.*, 
+                SELECT p.*,
+                    u.email as OwnerEmail,
                     (SELECT COUNT(1) FROM monitors m WHERE m.project_id = p.id) as MonitorCount,
                     (SELECT COUNT(1) FROM monitor_pings mp JOIN monitors m ON mp.monitor_id = m.id WHERE m.project_id = p.id) as InteractionsCount
-                FROM projects p 
+                FROM projects p
+                JOIN users u ON u.id = p.user_id
                 WHERE p.user_id = @UserId AND p.is_deleted = FALSE
-                ORDER BY p.created_at DESC";
+
+                UNION
+
+                SELECT p.*,
+                    u.email as OwnerEmail,
+                    (SELECT COUNT(1) FROM monitors m WHERE m.project_id = p.id) as MonitorCount,
+                    (SELECT COUNT(1) FROM monitor_pings mp JOIN monitors m ON mp.monitor_id = m.id WHERE m.project_id = p.id) as InteractionsCount
+                FROM projects p
+                JOIN users u ON u.id = p.user_id
+                JOIN project_members pm ON pm.project_id = p.id AND pm.user_id = @UserId
+                WHERE p.is_deleted = FALSE
+
+                ORDER BY created_at DESC";
             return await QueryAsync<Project>(sql, new { UserId = userId });
         }
+
 
         public async Task<Guid> CreateProjectAsync(Project project)
         {
@@ -81,7 +96,10 @@ namespace HealthyCron.Data.Repository
                 FROM projects p
                 LEFT JOIN monitors m ON m.project_id = p.id AND m.is_deleted = FALSE
                 LEFT JOIN monitor_pings mp ON mp.monitor_id = m.id
-                WHERE p.user_id = @UserId AND p.is_deleted = FALSE";
+                WHERE p.is_deleted = FALSE
+                  AND (p.user_id = @UserId OR EXISTS (
+                        SELECT 1 FROM project_members pm WHERE pm.project_id = p.id AND pm.user_id = @UserId
+                  ))";
 
             var stats = await QueryFirstOrDefaultAsync<HealthyCron.Models.ViewModels.DashboardStats>(sql, new { UserId = userId });
             return stats ?? new HealthyCron.Models.ViewModels.DashboardStats();
@@ -106,7 +124,11 @@ namespace HealthyCron.Data.Repository
                     WHERE hr > date_trunc('hour', CURRENT_TIMESTAMP) - (interval '1 hour' * (@Hours - 1))
                 ),
                 project_list AS (
-                    SELECT id, name FROM projects WHERE user_id = @UserId AND is_deleted = FALSE
+                    SELECT id, name FROM projects
+                    WHERE is_deleted = FALSE
+                      AND (user_id = @UserId OR EXISTS (
+                            SELECT 1 FROM project_members pm WHERE pm.project_id = id AND pm.user_id = @UserId
+                      ))
                 )
                 SELECT 
                     pl.id as ProjectId,

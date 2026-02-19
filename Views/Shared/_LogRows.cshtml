@@ -1,34 +1,36 @@
 @model IEnumerable<HealthyCron.Models.MonitorPing>
+@{
+    var userTz = ViewBag.UserTimezone as string ?? "UTC";
+    int rowNum = Model.Count();
+}
 
 @foreach (var ping in Model)
 {
-    var statusStr = ping.Status == HealthyCron.Models.PingType.Success ? "Up" : "Down";
-    <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group animate-in fade-in slide-in-from-bottom-2 duration-500" onclick="showPingDetails(this)" 
-        data-id="@ping.Id" data-time="@ping.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss")" 
-        data-status="@statusStr" data-message="@ping.Message" 
-        data-ip="@ping.IpAddress" data-ua="@ping.UserAgent" 
+    var statusStr = ping.Status == HealthyCron.Models.PingType.Success ? "OK" : (ping.Status == HealthyCron.Models.PingType.Start ? "Start" : "Fail");
+    var localTime = TimezoneHelper.ToUserTime(ping.ReceivedAt, userTz);
+    var statusClass = statusStr == "OK" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                    : (statusStr == "Start" ? "bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                    : "bg-rose-500/10 text-rose-500 border border-rose-500/20");
+    <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group animate-in fade-in slide-in-from-bottom-2 duration-500" onclick="showPingDetails(this)"
+        data-id="@ping.Id" data-time="@localTime.ToString("MMM dd, yyyy HH:mm:ss") (@userTz)"
+        data-status="@statusStr" data-message="@ping.Message"
+        data-ip="@ping.IpAddress" data-ua="@ping.UserAgent"
         data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
-        <td class="px-6 py-4">
-            <div class="flex items-center gap-2">
-                <span class="text-xs text-white font-bold">@ping.ReceivedAt.ToString("MMM dd")</span>
-                <span class="text-[10px] text-text-secondary font-mono">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
-            </div>
+        <td class="px-4 py-3 pl-6 w-10">
+            <span class="text-[10px] font-mono text-text-secondary/40">@rowNum</span>
         </td>
-        <td class="px-6 py-4">
-            <span class="text-xs text-blue font-black uppercase tracking-wider">@ping.MonitorName</span>
+        <td class="px-4 py-3 w-24">
+            <span class="text-xs text-white font-bold">@localTime.ToString("MMM dd")</span>
         </td>
-        <td class="px-6 py-4">
-            <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest @(statusStr == "Up" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20")">
-                @statusStr
-            </span>
+        <td class="px-4 py-3 w-24">
+            <span class="text-[10px] text-text-secondary font-mono">@localTime.ToString("HH:mm:ss")</span>
         </td>
-        <td class="px-6 py-4">
-            <span class="text-[10px] text-text-secondary font-mono truncate max-w-[150px] block" title="@ping.UserAgent">
-                @(ping.UserAgent?.Length > 20 ? ping.UserAgent.Substring(0, 20) + "..." : ping.UserAgent)
-            </span>
+        <td class="px-4 py-3 w-20">
+            <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest @statusClass">@statusStr</span>
         </td>
-        <td class="px-6 py-4 text-right">
-            <button class="p-2 rounded-lg bg-white/5 text-text-secondary group-hover:text-white transition-all"><i data-lucide="eye" class="w-4 h-4"></i></button>
+        <td class="px-4 py-3">
+            <span class="text-[10px] text-text-secondary font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
         </td>
     </tr>
+    rowNum--;
 }

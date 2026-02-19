@@ -1,0 +1,68 @@
+@model HealthyCron.Controllers.AcceptInviteViewModel
+@{
+    ViewData["Title"] = "Accept Invitation – HealthyCron";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0e17; color: #e2e8f0; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; }
+        .card { background: #111827; border: 1px solid rgba(255,255,255,0.07); border-radius: 1.25rem; padding: 2.5rem; max-width: 440px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div style="margin-bottom:2rem">
+            <a href="/" style="font-size:1.4rem;font-weight:800;color:#fff;text-decoration:none;letter-spacing:-0.5px">HealthyCron</a>
+        </div>
+
+        @if (Model?.Error != null)
+        {
+            <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:0.75rem;padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
+                <i data-lucide="alert-circle" style="color:#f87171;width:20px;height:20px;flex-shrink:0"></i>
+                <p style="color:#fca5a5;font-size:0.875rem;margin:0">@Model.Error</p>
+            </div>
+            <a href="/dashboard" style="display:block;text-align:center;background:rgba(255,255,255,0.05);padding:0.75rem;border-radius:0.75rem;color:#e2e8f0;font-weight:600;font-size:0.875rem;text-decoration:none">Go to Dashboard</a>
+        }
+        else
+        {
+            <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
+                <div style="width:3rem;height:3rem;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                    <i data-lucide="mail" style="color:#60a5fa;width:22px;height:22px"></i>
+                </div>
+                <div>
+                    <h1 style="font-size:1.2rem;font-weight:700;color:#fff;margin:0 0 0.25rem">You've been invited!</h1>
+                    <p style="color:#6b7280;font-size:0.875rem;margin:0">Join <strong style="color:#e2e8f0">@Model!.ProjectName</strong> as <strong style="color:#e2e8f0">@Model.Role</strong></p>
+                </div>
+            </div>
+
+            @if (Model.InvitedEmail != null)
+            {
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:0.75rem;padding:0.875rem 1rem;margin-bottom:1.5rem;font-size:0.8rem;color:#6b7280">
+                    <i data-lucide="info" style="width:13px;height:13px;display:inline-block;vertical-align:middle;margin-right:6px;color:#3b82f6"></i>
+                    This invite was sent to <strong style="color:#9ca3af">@Model.InvitedEmail</strong>. You are currently signed in as <strong style="color:#9ca3af">@ViewBag.UserEmail</strong>.
+                </div>
+            }
+
+            <form action="/team/invite/accept" method="POST">
+                <input type="hidden" name="token" value="@Model.Token" />
+                <button type="submit" style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:0.875rem;padding:0.875rem;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                    Accept Invitation
+                </button>
+            </form>
+
+            <a href="/dashboard" style="display:block;text-align:center;margin-top:1rem;color:#6b7280;font-size:0.8rem;text-decoration:none">Decline and go to Dashboard</a>
+        }
+    </div>
+    <script>document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });</script>
+</body>
+</html>

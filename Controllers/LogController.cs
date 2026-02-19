@@ -1,5 +1,6 @@
 using HealthyCron.Data.Interfaces;
 using HealthyCron.Filters;
+using HealthyCron.Logic.Interfaces;
 using HealthyCron.Models;
 using HealthyCron.Utilities.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,18 @@ namespace HealthyCron.Controllers
         private readonly IProjectRepository _projectRepository;
         private readonly IMonitorRepository _monitorRepository;
         private readonly AxiomLogger _axiomLogger;
+        private readonly IProjectAuthService _projectAuth;
 
-        public LogController(IProjectRepository projectRepository, IMonitorRepository monitorRepository, AxiomLogger axiomLogger)
+        public LogController(
+            IProjectRepository projectRepository,
+            IMonitorRepository monitorRepository,
+            AxiomLogger axiomLogger,
+            IProjectAuthService projectAuth)
         {
             _projectRepository = projectRepository;
             _monitorRepository = monitorRepository;
             _axiomLogger = axiomLogger;
+            _projectAuth = projectAuth;
         }
 
         [HttpGet("")]
@@ -28,7 +35,10 @@ namespace HealthyCron.Controllers
             if (user == null) return Redirect("/login");
 
             var project = await _projectRepository.GetProjectBySlugAsync(projectSlug);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
 
             var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
 
@@ -38,6 +48,7 @@ namespace HealthyCron.Controllers
             ViewBag.Status = status;
             ViewBag.Search = search;
             ViewBag.Limit = limit;
+            ViewBag.UserTimezone = string.IsNullOrWhiteSpace(user.Timezone) ? "UTC" : user.Timezone;
 
             var logs = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, null, status, search, limit);
 
@@ -54,7 +65,10 @@ namespace HealthyCron.Controllers
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
 
             var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
 
@@ -65,6 +79,7 @@ namespace HealthyCron.Controllers
             ViewBag.Search = search;
             ViewBag.MonitorId = monitorId;
             ViewBag.Limit = limit;
+            ViewBag.UserTimezone = string.IsNullOrWhiteSpace(user.Timezone) ? "UTC" : user.Timezone;
 
             var logs = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, monitorId, status, search, limit);
 
@@ -77,14 +92,14 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             if (user == null) return Redirect("/login");
 
-            // Assuming we have a way to get monitor by slug across all projects or we need project context.
-            // Based on existing code, monitor slugs are unique within a project.
-            // Let's find the monitor first.
             var monitor = await _monitorRepository.GetMonitorBySlugAsync(slug);
             if (monitor == null) return NotFound();
 
             var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
 
             return await MonitorLog(monitor.Id, status, search, limit);
         }
@@ -96,16 +111,20 @@ namespace HealthyCron.Controllers
             if (user == null) return Unauthorized();
 
             if (!RouteData.Values.TryGetValue("projectSlug", out var slugObj) || slugObj == null)
-            {
-                 return BadRequest("Project Context Missing");
-            }
+                return BadRequest("Project Context Missing");
+
             string projectSlug = slugObj.ToString()!;
 
             var project = await _projectRepository.GetProjectBySlugAsync(projectSlug);
-            if (project == null || project.UserId != user.Id) return NotFound();
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id))
+                return Forbid();
+
+            ViewBag.UserTimezone = string.IsNullOrWhiteSpace(user.Timezone) ? "UTC" : user.Timezone;
 
             var pings = await _monitorRepository.GetPingsWithFiltersAsync(project.Id, monitorId, status, search, limit, offset);
-            
+
             return PartialView("~/Views/Shared/_LogRows.cshtml", pings);
         }
     }

@@ -1,0 +1,203 @@
+@{
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    var members = (ViewBag.Members as List<HealthyCron.Models.ProjectMember>) ?? new();
+    var invitations = (ViewBag.Invitations as List<HealthyCron.Models.ProjectInvitation>) ?? new();
+    var isOwner = (bool)(ViewBag.IsOwner ?? false);
+    ViewData["Title"] = $"{project.Name} – Team";
+    Layout = "_DashboardLayout";
+}
+
+<div class="max-w-4xl mx-auto pb-20">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Team</span>
+    </div>
+
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+            <i data-lucide="users" class="text-blue"></i>
+            Team Members
+        </h1>
+        <button onclick="openInviteModal()" class="bg-blue hover:bg-blue/80 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue/20 flex items-center gap-2 text-sm">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            Invite Member
+        </button>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 flex items-center gap-2 mb-6 text-emerald-400 text-sm">
+            <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
+            @TempData["Success"]
+        </div>
+    }
+
+    <!-- Members Table -->
+    <section class="glass-card rounded-2xl overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center gap-2">
+            <i data-lucide="users" class="w-5 h-5 text-blue-500"></i>
+            <h2 class="font-bold text-white">Current Members</h2>
+        </div>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-white/[0.02]">
+                    <th class="px-6 py-4">Member</th>
+                    <th class="px-6 py-4">Role</th>
+                    <th class="px-6 py-4">Joined</th>
+                    @if (isOwner) {
+                        <th class="px-6 py-4 text-right">Actions</th>
+                    }
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                <!-- Owner row (always first) -->
+                <tr class="hover:bg-white/[0.01] transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue/20 flex items-center justify-center text-blue font-bold text-xs">@(ViewBag.UserEmail?.ToString()?.Substring(0, 1).ToUpper())</div>
+                            <div>
+                                <div class="text-white font-medium text-sm">You (Owner)</div>
+                                <div class="text-text-secondary text-xs">@ViewBag.UserEmail</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 text-[10px] rounded uppercase font-bold">Owner</span>
+                    </td>
+                    <td class="px-6 py-4 text-text-secondary text-xs">—</td>
+                    @if (isOwner) { <td class="px-6 py-4"></td> }
+                </tr>
+
+                @foreach (var member in members)
+                {
+                    var roleBadge = member.Role switch {
+                        HealthyCron.Enums.ProjectRole.Manager => ("bg-purple-500/10 text-purple-400", "Manager"),
+                        HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
+                        _ => ("bg-emerald-500/10 text-emerald-400", "Team Member")
+                    };
+                    <tr class="hover:bg-white/[0.01] transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-text-secondary font-bold text-xs">@member.UserEmail?.Substring(0, 1).ToUpper()</div>
+                                <div class="text-text-secondary text-sm">@member.UserEmail</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-0.5 @roleBadge.Item1 text-[10px] rounded uppercase font-bold">@roleBadge.Item2</span>
+                        </td>
+                        <td class="px-6 py-4 text-text-secondary text-xs">@member.JoinedAt.ToString("MMM dd, yyyy")</td>
+                        @if (isOwner)
+                        {
+                            <td class="px-6 py-4 text-right">
+                                <form action="/project/@project.Slug/team/members/@member.UserId/remove" method="POST" onsubmit="return confirm('Remove this member?')">
+                                    <button type="submit" class="text-rose-500 hover:text-rose-400 p-2 hover:bg-rose-500/10 rounded-lg transition-all" title="Remove">
+                                        <i data-lucide="user-minus" class="w-4 h-4"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (!members.Any())
+        {
+            <div class="px-6 py-8 text-center text-text-secondary text-sm">No team members yet. Invite someone to get started.</div>
+        }
+    </section>
+
+    <!-- Pending Invitations -->
+    @if (invitations.Any())
+    {
+        <section class="glass-card rounded-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center gap-2">
+                <i data-lucide="mail" class="w-5 h-5 text-amber-400"></i>
+                <h2 class="font-bold text-white">Pending Invitations</h2>
+            </div>
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-white/[0.02]">
+                        <th class="px-6 py-4">Email</th>
+                        <th class="px-6 py-4">Role</th>
+                        <th class="px-6 py-4">Expires</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    @foreach (var inv in invitations)
+                    {
+                        var roleBadge = inv.Role switch {
+                            HealthyCron.Enums.ProjectRole.Manager => ("bg-purple-500/10 text-purple-400", "Manager"),
+                            HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
+                            _ => ("bg-emerald-500/10 text-emerald-400", "Team Member")
+                        };
+                        <tr class="hover:bg-white/[0.01] transition-colors">
+                            <td class="px-6 py-4 text-text-secondary text-sm">@inv.Email</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-0.5 @roleBadge.Item1 text-[10px] rounded uppercase font-bold">@roleBadge.Item2</span>
+                            </td>
+                            <td class="px-6 py-4 text-text-secondary text-xs">@inv.ExpiresAt.ToString("MMM dd, yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    }
+</div>
+
+<!-- Invite Modal -->
+<div id="inviteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeInviteModal()"></div>
+        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i data-lucide="user-plus" class="text-blue w-5 h-5"></i>
+                    Invite Team Member
+                </h3>
+                <button onclick="closeInviteModal()" class="text-text-secondary hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form action="/project/@project.Slug/team/invite" method="POST" class="p-6 space-y-5">
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Email Address</label>
+                    <input type="email" name="email" required placeholder="colleague@example.com"
+                        class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-text-secondary/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Role</label>
+                    <select name="role" class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
+                        <option value="0">Team Member – can create/edit/delete monitors &amp; integrations</option>
+                        <option value="1">Manager – all of Team Member + invite/remove members</option>
+                        <option value="2">Read Only – can only view monitors and logs</option>
+                    </select>
+                </div>
+                <div class="bg-blue/5 border border-blue/10 rounded-xl p-3 text-xs text-text-secondary">
+                    <i data-lucide="info" class="w-3.5 h-3.5 inline-block mr-1 text-blue-400"></i>
+                    An invitation email will be sent. The link expires in 7 days.
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeInviteModal()" class="flex-1 bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl font-bold transition-all border border-white/10">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue hover:bg-blue/80 text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue/20">
+                        Send Invite
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openInviteModal() { document.getElementById('inviteModal').classList.remove('hidden'); lucide.createIcons(); }
+    function closeInviteModal() { document.getElementById('inviteModal').classList.add('hidden'); }
+    document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+</script>

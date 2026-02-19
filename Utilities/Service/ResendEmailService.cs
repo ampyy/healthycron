@@ -157,5 +157,59 @@ namespace HealthyCron.Utilities.Service
 </body>
 </html>";
         }
+
+        public async Task SendInviteEmailAsync(string toEmail, string projectName, string inviterEmail, string role, string acceptUrl)
+        {
+            try
+            {
+                IResend resend = ResendClient.Create(_apiKey);
+
+                var subject = $"You've been invited to {projectName} on HealthyCron";
+                var htmlBody = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafb; color: #111827; margin: 0; padding: 0; line-height: 1.6; }}
+        .container {{ max-width: 480px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }}
+        .logo {{ font-size: 24px; font-weight: 700; color: #111827; letter-spacing: -0.5px; }}
+        h1 {{ font-size: 20px; font-weight: 600; margin-bottom: 8px; color: #111827; }}
+        p {{ color: #4b5563; font-size: 16px; margin-bottom: 16px; }}
+        .badge {{ display: inline-block; background: #f3f4f6; border-radius: 4px; padding: 4px 10px; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 24px; }}
+        .btn {{ display: inline-block; background-color: #111827; color: #ffffff; font-size: 15px; font-weight: 500; text-decoration: none; padding: 12px 24px; border-radius: 6px; }}
+        .footer {{ margin-top: 40px; font-size: 13px; color: #9ca3af; text-align: center; }}
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div style='margin-bottom: 32px'><span class='logo'>HealthyCron</span></div>
+        <h1>You're invited to join {projectName}</h1>
+        <p><strong>{inviterEmail}</strong> has invited you to collaborate on <strong>{projectName}</strong>.</p>
+        <div class='badge'>Role: {role}</div>
+        <div style='margin: 24px 0;'><a href='{acceptUrl}' class='btn'>Accept Invitation</a></div>
+        <p style='font-size:13px;color:#6b7280;word-break:break-all'>Or paste: <a href='{acceptUrl}' style='color:#4b5563'>{acceptUrl}</a></p>
+        <p style='color:#9ca3af;font-size:13px'>This invitation expires in 7 days.</p>
+        <div class='footer'>&copy; {DateTime.UtcNow.Year} HealthyCron. All rights reserved.</div>
+    </div>
+</body>
+</html>";
+
+                var message = new EmailMessage
+                {
+                    From = "HealthyCron <team@healthycron.com>",
+                    To = toEmail,
+                    Subject = subject,
+                    HtmlBody = htmlBody
+                };
+                await resend.EmailSendAsync(message);
+                await _logger.LogInfo($"Invite email sent to {toEmail} via Resend.");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogError($"Failed to send invite email to {toEmail}", new Dictionary<string, object> { ["exception"] = ex.Message });
+                throw;
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@ using HealthyCron.Models.Configuration;
 using HealthyCron.Utilities.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.WebHost.UseUrls("https://localhost:5032");
+builder.WebHost.UseUrls("https://localhost:5032");
 
 // ============================================================================
 // CONFIGURATION SETUP - Strongly-typed and validated at startup
@@ -42,6 +42,14 @@ var encryptionSettings = builder.Services.AddValidatedConfiguration<EncryptionSe
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
+// Authentication for [Authorize]
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    });
+
 // Database Connection Factory Setup
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IDbConnectionFactory>(
     new HealthyCron.Utilities.Service.DbConnectionFactory(databaseSettings.DefaultConnection));
@@ -55,12 +63,16 @@ builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectRepository, Healt
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IMonitorRepository, HealthyCron.Data.Repository.MonitorRepository>();
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectAccessKeyRepository, HealthyCron.Data.Repository.AccessKeyRepository>();
 builder.Services.AddScoped<HealthyCron.Data.Interfaces.IIntegrationRepository, HealthyCron.Data.Repository.IntegrationRepository>();
+builder.Services.AddScoped<HealthyCron.Data.Interfaces.IProjectMemberRepository, HealthyCron.Data.Repository.ProjectMemberRepository>();
+
 
 // Register Logic Services
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAuthService, HealthyCron.Logic.Service.AuthService>();
 builder.Services.AddScoped<HealthyCron.Logic.Service.ProjectService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IAccessKeyService, HealthyCron.Logic.Service.AccessKeyService>();
 builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IPingService, HealthyCron.Logic.Service.PingService>();
+builder.Services.AddScoped<HealthyCron.Logic.Interfaces.IProjectAuthService, HealthyCron.Logic.Service.ProjectAuthService>();
+
 
 // Register Utility Services
 builder.Services.AddSingleton<HealthyCron.Utilities.Interface.IEncryptionService, HealthyCron.Utilities.Service.EncryptionService>();
@@ -178,5 +190,26 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapHub<HealthyCron.Hubs.MonitorHub>("/monitorHub");
+
+// AUTO-MIGRATION: Ensure new columns exist
+using (var scope = app.Services.CreateScope())
+{
+    try 
+    {
+        var db = scope.ServiceProvider.GetRequiredService<HealthyCron.Utilities.Interface.IDbConnectionFactory>();
+        using var conn = db.CreateConnection();
+        await Dapper.SqlMapper.ExecuteAsync(conn, @"
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS timezone VARCHAR(50);
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_weekly_reports BOOLEAN DEFAULT TRUE;
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_monthly_reports BOOLEAN DEFAULT TRUE;
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_incident_reminders BOOLEAN DEFAULT TRUE;
+        ");
+        Console.WriteLine("✅ Database schema verified/updated.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"⚠️ Migration warning: {ex.Message}");
+    }
+}
 
 app.Run();

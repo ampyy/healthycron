@@ -3,6 +3,7 @@ namespace HealthyCron.Models
     public class MagicLinkRequest
     {
         public string Email { get; set; } = string.Empty;
+        public string? ReturnUrl { get; set; }
     }
 
     public class TokenRequest

@@ -38,6 +38,19 @@ namespace HealthyCron.Data.Repository
             await ExecuteAsync(sql, new { Id = userId, PasswordHash = passwordHash });
         }
 
+        public async Task UpdateUserAsync(User user)
+        {
+            const string sql = @"
+                UPDATE users 
+                SET timezone = @Timezone, 
+                    receive_weekly_reports = @ReceiveWeeklyReports, 
+                    receive_monthly_reports = @ReceiveMonthlyReports, 
+                    receive_incident_reminders = @ReceiveIncidentReminders,
+                    updated_at = CURRENT_TIMESTAMP 
+                WHERE id = @Id";
+            await ExecuteAsync(sql, user);
+        }
+
         public async Task CreateMagicTokenAsync(Guid userId, string tokenHash, DateTime expiresAt)
         {
             const string sql = @"

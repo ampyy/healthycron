@@ -1,3 +1,10 @@
+@using HealthyCron.Utilities
+@{
+    ViewBag.UserTimezone = Context.Items["UserTimezone"] as string ?? "UTC";
+    var _debugTz = ViewBag.UserTimezone as string;
+    var _rawTz = Context.Items["UserTimezone"];
+    System.Console.WriteLine($"[LAYOUT] UserTimezone='{_debugTz}' raw='{_rawTz}'");
+}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -138,14 +145,19 @@
         <!-- Links -->
         <nav class="flex-1 overflow-y-auto py-6 space-y-1">
             <a href="/dashboard"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
                 <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
                 <span class="sidebar-text font-medium truncate">Overview</span>
             </a>
             <a href="/dashboard/projects"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @((ViewContext.RouteData.Values["Controller"]?.ToString() == "Project" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Monitor" || ViewContext.RouteData.Values["Controller"]?.ToString() == "Log") ? "active" : "")">
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @((ViewContext.RouteData.Values["Controller"]?.ToString() is "Project" or "Monitor" or "Log" or "Integration" or "Dashboard" && ViewContext.RouteData.Values["Action"]?.ToString() is "Projects" or "Monitors" or null || ViewContext.RouteData.Values["Controller"]?.ToString() is "Project" or "Monitor" or "Log" or "Integration") ? "active" : "")">
                 <i data-lucide="folder" class="w-5 h-5 shrink-0"></i>
                 <span class="sidebar-text font-medium truncate">Project</span>
+            </a>
+            <a href="/teams"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GlobalTeams" ? "active" : "")">
+                <i data-lucide="users" class="w-5 h-5 shrink-0"></i>
+                <span class="sidebar-text font-medium truncate">Teams</span>
             </a>
 
             <!-- Project specific links removed for cleaner sidebar -->
@@ -154,8 +166,8 @@
                 <div class="h-px bg-white/5 w-full"></div>
             </div>
 
-            <a href="#"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white/50 cursor-not-allowed transition-all">
+            <a href="/docs"
+                class="nav-item flex items-center gap-3 px-6 py-3 text-text-secondary hover:text-white transition-all @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Docs" ? "active" : "")">
                 <i data-lucide="book-open" class="w-5 h-5 shrink-0"></i>
                 <span class="sidebar-text font-medium truncate">Documentation</span>
             </a>
@@ -190,20 +202,29 @@
             <!-- Spacer for desktop to align right -->
             <div class="hidden lg:block"></div>
 
-            <div class="flex items-center gap-4">
                 @{
                     var userEmail = ViewBag.UserEmail as string;
+                    var initial = !string.IsNullOrEmpty(userEmail) ? userEmail.Substring(0, 1).ToUpper() : "U";
                 }
-                <span class="text-sm text-text-secondary hidden sm:block">@userEmail</span>
-                <button onclick="handleLogout()"
-                    class="px-4 py-2 text-sm bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 rounded-lg transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Logout
-                </button>
-            </div>
+                
+                <div class="flex items-center gap-4">
+                    <a href="/account" class="flex items-center gap-3 group">
+                        <div class="hidden sm:block text-right">
+                            <div class="text-sm font-bold text-white group-hover:text-blue transition-colors">@userEmail</div>
+                            <div class="text-xs text-text-secondary">Account Settings</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue to-purple flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue/20 group-hover:scale-105 transition-transform border border-white/10">
+                            @initial
+                        </div>
+                    </a>
+
+                    <div class="h-8 w-px bg-white/10 hidden sm:block"></div>
+
+                    <button onclick="handleLogout()" 
+                        class="text-text-secondary hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-white/5" title="Sign Out">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
         </header>
 
         <!-- Page Content -->

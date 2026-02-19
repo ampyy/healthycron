@@ -16,6 +16,13 @@
             <p class="text-text-secondary">Sign in to your account</p>
         </div>
 
+        @if (ViewBag.ReturnUrl != null && ((string)ViewBag.ReturnUrl).Contains("invite"))
+        {
+            <div class="mb-4 bg-blue/10 border border-blue/20 rounded-xl px-4 py-3 text-center text-sm text-blue-400">
+                <span class="font-semibold">Sign in below</span> to accept your project invitation.
+            </div>
+        }
+
         <div class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl">
             <!-- Magic Link Form -->
             <form id="magicLoginForm" class="space-y-5">
@@ -31,6 +38,7 @@
                     Continue with Magic Link
                 </button>
             </form>
+            <input type="hidden" id="returnUrl" value="@(ViewBag.ReturnUrl ?? string.Empty)">
 
             <div id="magicSuccess" class="hidden mt-6 p-4 rounded-lg bg-blue/10 border border-blue/30">
                 <div class="flex items-start gap-3">
@@ -95,8 +103,9 @@
     </div>
 </section>
 
-@section Scripts {
+    @section Scripts {
     <script>
+        const returnUrl = document.getElementById('returnUrl')?.value || '';
         const magicForm = document.getElementById('magicLoginForm');
         const passwordForm = document.getElementById('passwordLoginForm');
         const magicSubmitBtn = document.getElementById('magicSubmitBtn');
@@ -130,7 +139,7 @@
                 const response = await fetch('/auth/request-magic-link', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ email, returnUrl: returnUrl || null })
                 });
 
                 if (response.ok) {
@@ -167,7 +176,7 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = '/dashboard';
+                    window.location.href = returnUrl || '/dashboard';
                 } else {
                     const data = await response.json();
                     alert(data.message || 'Invalid email or password.');

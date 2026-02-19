@@ -38,7 +38,7 @@
 <div class="max-w-6xl mx-auto pb-20 px-4 sm:px-6 lg:px-8">
     <!-- Breadcrumbs -->
     <div class="flex items-center justify-between mb-8">
-        <div class="flex flex-wrap items-center gap-2 text-text-secondary text-sm uppercase tracking-wider font-semibold">
+        <div class="flex flex-wrap items-center gap-2 text-text-secondary text-sm tracking-wider font-semibold">
             <a href="/dashboard" class="hover:text-blue transition-colors flex items-center gap-1">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                 Projects
@@ -106,22 +106,13 @@
 
         <!-- How To Ping Section -->
         <div class="space-y-4 max-w-2xl">
-            <!-- URL Card with Toggle -->
+            <!-- URL Card -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between gap-4">
                     <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">How To Ping</p>
-                    <div class="flex items-center gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer group">
-                             <div class="relative">
-                                <input type="checkbox" id="enable-filtering" class="sr-only peer" onchange="toggleFiltering()">
-                                <div class="w-7 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue"></div>
-                            </div>
-                            <span class="text-[9px] font-bold text-text-secondary group-hover:text-white transition-colors uppercase tracking-widest">Filter Rules</span>
-                        </label>
-                        <div class="flex items-center gap-1 p-0.5 bg-black/40 border border-white/10 rounded-lg">
-                            <button onclick="switchEndpoint('uuid')" id="tab-uuid" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab active bg-blue/10 text-blue">UUID</button>
-                            <button onclick="switchEndpoint('slug')" id="tab-slug" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab text-text-secondary opacity-50">Slug</button>
-                        </div>
+                    <div class="flex items-center gap-1 p-0.5 bg-black/40 border border-white/10 rounded-lg">
+                        <button onclick="switchEndpoint('uuid')" id="tab-uuid" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab active bg-blue/10 text-blue">UUID</button>
+                        <button onclick="switchEndpoint('slug')" id="tab-slug" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab text-text-secondary opacity-50">Slug</button>
                     </div>
                 </div>
 
@@ -246,200 +237,279 @@
     </section>
 
     <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
-        <!-- Sidebar Column -->
-        <div class="lg:col-span-4 space-y-8 order-2 lg:order-1">
+    <div class="space-y-8 mb-8">
+        <!-- Top Row: Uptime & Scheduling -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
             <!-- Monthly Status Table -->
-            <!-- Monthly Status (Grid Layout) -->
-            <section class="glass-card rounded-2xl p-5 border border-white/5">
+            <section class="glass-card rounded-2xl p-5 border border-white/5 h-full">
                  <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-blue"></i>
                     Monthly Uptime
                 </h3>
-                <div class="space-y-1.5">
-                    @foreach (var stat in monthlyStats.Take(5)) 
-                    {
-                        <div class="flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.02] transition-colors group">
-                             <div class="flex items-center gap-3">
-                                <div class="w-1.5 h-1.5 rounded-full @(stat.UptimePercentage >= 99.9 ? "bg-emerald-500" : (stat.UptimePercentage >= 99 ? "bg-emerald-400" : "bg-amber-500"))"></div>
-                                <span class="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">@stat.Month</span>
-                             </div>
-                             <div class="flex items-center gap-4">
-                                <span class="text-[9px] font-mono text-white/40 group-hover:text-white/60 transition-colors">@stat.DowntimeDuration</span>
-                                <span class="text-[10px] font-mono font-bold @(stat.UptimePercentage >= 99.9 ? "text-emerald-500" : (stat.UptimePercentage >= 99 ? "text-emerald-400" : "text-amber-500"))">@stat.UptimePercentage%</span>
-                             </div>
-                        </div>
-                    }
-                    @if (!monthlyStats.Any())
-                    {
-                        <div class="text-center py-4 text-[10px] text-text-secondary italic opacity-50">No data available yet.</div>
-                    }
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[9px] uppercase font-black text-text-secondary border-b border-white/5">
+                                <th class="px-2 py-2">Month</th>
+                                <th class="px-2 py-2 text-right">Downtime</th>
+                                <th class="px-2 py-2 text-right">Uptime</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            @foreach (var stat in monthlyStats.Take(5)) 
+                            {
+                                <tr class="group hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-2 py-2">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full @(stat.UptimePercentage >= 99.9 ? "bg-emerald-500" : (stat.UptimePercentage >= 99 ? "bg-emerald-400" : "bg-amber-500"))"></div>
+                                            <span class="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">@stat.Month</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-2 py-2 text-right">
+                                        <span class="text-[10px] font-mono text-white/40 group-hover:text-white/60 transition-colors">@stat.DowntimeDuration</span>
+                                    </td>
+                                    <td class="px-2 py-2 text-right">
+                                        <span class="text-[10px] font-mono font-bold @(stat.UptimePercentage >= 99.9 ? "text-emerald-500" : (stat.UptimePercentage >= 99 ? "text-emerald-400" : "text-amber-500"))">@stat.UptimePercentage%</span>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!monthlyStats.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-[10px] text-text-secondary italic opacity-50">No data available yet.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- Scheduling Rules -->
-            <!-- Scheduling Rules (Simplified) -->
-            <section class="glass-card rounded-2xl p-5 border border-white/5">
+            <!-- Scheduling Rules Table -->
+            <section class="glass-card rounded-2xl p-5 border border-white/5 h-full">
                  <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
                     <i data-lucide="timer" class="w-3.5 h-3.5 text-blue"></i>
-                    Scheduling
+                    Scheduling Rules
                 </h3>
                 
-                <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 group hover:bg-white/[0.04] transition-all cursor-pointer" onclick="openScheduleModal()">
-                    <div class="space-y-1 min-w-0">
-                        <div class="text-[11px] font-bold text-white truncate">@scheduleDisplay</div>
-                         <div class="flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue"></span>
-                            <p class="text-[10px] text-text-secondary truncate">Grace: <span class="text-white/80">@FormatMinutes(Model.GraceSeconds)</span></p>
-                        </div>
-                    </div>
-                    <div class="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-blue/10 group-hover:text-blue transition-colors">
-                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <tbody class="divide-y divide-white/5">
+                             <tr class="group hover:bg-white/[0.02] transition-colors">
+                                <td class="px-2 py-3 w-1/3">
+                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Schedule</span>
+                                </td>
+                                <td class="px-2 py-3 text-right">
+                                    <span class="text-[11px] font-bold text-white">@scheduleDisplay</span>
+                                </td>
+                            </tr>
+                            <tr class="group hover:bg-white/[0.02] transition-colors">
+                                <td class="px-2 py-3">
+                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Grace Period</span>
+                                </td>
+                                <td class="px-2 py-3 text-right">
+                                    <span class="text-[11px] font-bold text-white">@FormatMinutes(Model.GraceSeconds)</span>
+                                </td>
+                            </tr>
+                            <tr class="group hover:bg-white/[0.02] transition-colors">
+                                <td class="px-2 py-3">
+                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Next Run</span>
+                                </td>
+                                <td class="px-2 py-3 text-right">
+                                    <!-- Placeholder, not passed in Model yet, showing generic info or removing -->
+                                    <span class="text-[10px] font-mono text-white/50">Calculating...</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-4 flex justify-end">
+                     <button onclick="openScheduleModal()" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-blue/10 border border-white/10 hover:border-blue/20 text-text-secondary hover:text-blue transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                        <i data-lucide="edit-2" class="w-3 h-3"></i>
+                        Edit Rules
+                    </button>
                 </div>
             </section>
         </div>
 
-        <!-- Notification Column -->
-        <section class="lg:col-span-8 order-1 lg:order-2">
+        <!-- Notification Section (Full Width Table) -->
+        <section class="glass-card rounded-2xl p-5 border border-white/5">
              <h3 class="font-black text-white uppercase tracking-widest text-[10px] mb-4 flex items-center gap-2 opacity-50 px-1">
                 <i data-lucide="bell" class="w-3.5 h-3.5 text-blue"></i>
                 Active Notifications
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 @if (monitorIntegrations.Any())
-                {
-                    foreach (var item in monitorIntegrations)
-                    {
-                        <div class="glass-card rounded-2xl p-4 border border-white/5 hover:border-blue-500/20 transition-all flex items-center justify-between group">
-                            <div class="flex items-center gap-3 min-w-0 flex-1">
-                                <div class="w-10 h-10 rounded-xl bg-navy-light border border-white/5 flex items-center justify-center shrink-0">
-                                    @if (item.Integration.Type == HealthyCron.Enums.IntegrationType.Slack)
-                                    {
-                                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
-                                        </svg>
-                                    }
-                                    else
-                                    {
-                                        <i data-lucide="bell" class="w-5 h-5 text-blue"></i>
-                                    }
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h4 class="text-xs font-bold text-white truncate pr-2">@item.Integration.Name</h4>
-                                    <p class="text-[9px] text-text-secondary uppercase tracking-widest leading-none mt-1">@item.Integration.Type</p>
-                                </div>
-                            </div>
-                            <button onclick="toggleMonitorIntegration('@item.Integration.Id', this)" 
-                                    data-enabled="@(item.IsEnabledForMonitor ? "true" : "false")"
-                                    class="flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[10px] font-black uppercase tracking-widest @(item.IsEnabledForMonitor ? "bg-blue/10 border-blue/20 text-blue hover:bg-blue hover:text-white" : "bg-white/5 border-white/10 text-text-secondary hover:border-white")">
-                                <i data-lucide="@(item.IsEnabledForMonitor ? "bell" : "bell-off")" class="w-3.5 h-3.5"></i>
-                                <span>@(item.IsEnabledForMonitor ? "Enabled" : "Disabled")</span>
-                            </button>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <div class="col-span-full py-10 text-center glass-card rounded-2xl border-dashed border border-white/10">
-                        <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">No integrations assigned</p>
-                        <a href="/project/@project?.Slug/integrations" class="text-blue text-[10px] font-bold mt-2 inline-block hover:underline">Manage Project Integrations</a>
-                    </div>
-                }
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[9px] uppercase font-black text-text-secondary border-b border-white/5">
+                            <th class="px-4 py-3">Integration</th>
+                            <th class="px-4 py-3">Type</th>
+                            <th class="px-4 py-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                         @if (monitorIntegrations.Any(x => x.IsEnabledForMonitor))
+                        {
+                            foreach (var item in monitorIntegrations.Where(x => x.IsEnabledForMonitor))
+                            {
+                                <tr class="group hover:bg-white/[0.02] transition-colors">
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-navy-light border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                                                @switch(item.Integration.Type)
+                                                {
+                                                    case HealthyCron.Enums.IntegrationType.Slack:
+                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#E01E5A"/>
+                                                        </svg>
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.PagerDuty:
+                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#06AC38" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M16.667 0H11.4L9.733 9.667h4.6c2.467 0 4.2-.4 5.4-1.333C21 7.333 21.667 5.8 21.667 3.8c0-1.267-.4-2.2-1.133-2.8C19.8.333 18.467 0 16.667 0zM9.333 11.733 8.267 18H3.733L6.667 0H2.333L0 14.933 1.333 24h6.8L9.8 18h4.2l1.667-6.267H9.333z"/>
+                                                        </svg>
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.Email:
+                                                        <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                        </svg>
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.Discord:
+                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#5865F2" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.014.043.031.057a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+                                                        </svg>
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.Teams:
+                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#6264A7" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm-5.27 12.02h-1.44v-4.3h-.04l-1.74 4.3h-.96l-1.76-4.3h-.04v4.3H8.31V8.98h1.96l1.64 4.13h.04l1.67-4.13h2.11v6.04z"/>
+                                                        </svg>
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.GoogleChat:
+                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M2 12c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10H2v-10z" fill="#00897B"/>
+                                                            <path d="M12 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" fill="white"/>
+                                                        </svg>
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.Opsgenie:
+                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#0052cc" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm-1.2-14.4h2.4v7.2h-2.4V7.2zm0 8.4h2.4v2.4h-2.4V15.6z"/>
+                                                        </svg>
+                                                        break;
+                                                    default:
+                                                        <i data-lucide="bell" class="w-4 h-4 text-blue"></i>
+                                                        break;
+                                                }
+                                            </div>
+
+                                            <span class="text-xs font-bold text-white truncate">@item.Integration.Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="text-[10px] text-text-secondary uppercase tracking-widest font-bold">@item.Integration.Type</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <button onclick="toggleMonitorIntegration('@item.Integration.Id', this)" 
+                                                data-enabled="true"
+                                                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 group-hover/btn:content-['Disable']">
+                                            <i data-lucide="bell" class="w-3 h-3"></i>
+                                            <span>Enabled</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" class="px-6 py-8 text-center text-text-secondary font-medium text-xs opacity-50 border-dashed border border-white/5 rounded-xl block m-4 bg-white/[0.01]">
+                                    No active integrations. 
+                                    <a href="/project/@project?.Slug/integrations" class="text-blue hover:underline ml-1">Manage Integrations</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>
 
     <!-- Logs -->
     <section class="glass-card rounded-2xl overflow-hidden w-full bg-navy/10">
-        <div class="px-6 py-3 border-b border-white/5 flex items-center justify-between">
-            <h3 class="font-black text-white uppercase tracking-widest text-[10px] opacity-40">Recent Activity Logs</h3>
+        <div class="px-6 py-4 flex items-center justify-between mb-0 border-b border-white/5 bg-navy/20">
+            <h3 class="font-bold text-white text-sm">Recent Activity Log</h3>
+            <a href="/monitor/@Model.Slug/logs" class="text-[10px] uppercase font-bold text-blue hover:text-blue-400 transition-colors">View all</a>
         </div>
+
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="w-full">
                 <thead>
-                    <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-navy/20">
-                        <th class="px-4 py-2 w-12 text-center">#</th>
-                        <th class="px-4 py-2 w-24">Status</th>
-                        <th class="px-4 py-2 w-24">Date</th>
-                        <th class="px-4 py-2 w-24">Time</th>
-                        <th class="px-4 py-2">Source</th>
-                        <th class="px-4 py-2 text-right"></th>
+                    <tr class="text-[9px] uppercase font-black text-text-secondary border-b border-white/5 bg-navy/20">
+                        <th class="py-3 px-4 pl-6 w-10">#</th>
+                        <th class="py-3 px-4 w-24">Date</th>
+                        <th class="py-3 px-4 w-24">Time</th>
+                        <th class="py-3 px-4 w-20">Status</th>
+                        <th class="py-3 px-4">User Agent</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5">
-                    @for (int i = 0; i < Math.Min(pings.Count, 20); i++)
+                <tbody class="text-sm text-text-secondary">
+                    @{
+                        var userTz = ViewBag.UserTimezone as string ?? "UTC";
+                        var pingList = pings?.OrderByDescending(p => p.ReceivedAt).Take(5).ToList();
+                        int rowNum = pingList?.Count ?? 0;
+                    }
+                    @if (pingList != null && pingList.Any())
                     {
-                        var ping = pings[i];
-                        var nextPing = i + 1 < pings.Count ? pings[i + 1] : null;
-                        
-                        var currentStatus = ping.Status == HealthyCron.Models.PingType.Success ? "Success" : (ping.Status == HealthyCron.Models.PingType.Start ? "Starting" : "Failed");
-                        var nextStatus = nextPing != null ? (nextPing.Status == HealthyCron.Models.PingType.Success ? "Success" : (nextPing.Status == HealthyCron.Models.PingType.Start ? "Starting" : "Failed")) : null;
-
-                        <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group" onclick="showPingDetails(this)" 
-                            data-id="@ping.Id" data-time="@ping.ReceivedAt.ToString("MMM dd, yyyy HH:mm:ss")" 
-                            data-status="@currentStatus" data-message="@ping.Message" 
-                            data-ip="@ping.IpAddress" data-ua="@ping.UserAgent" 
-                            data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
-                            <td class="px-4 py-3 text-center">
-                                <span class="text-[10px] text-text-secondary font-black opacity-30">@((pings.Count - i))</span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest @(currentStatus == "Success" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : (currentStatus == "Starting" ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"))">
-                                    @currentStatus.Substring(0, Math.Min(3, currentStatus.Length))
-                                </span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span class="text-xs text-white font-bold whitespace-nowrap">@ping.ReceivedAt.ToString("MMM dd")</span>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span class="text-[10px] text-text-secondary font-mono whitespace-nowrap">@ping.ReceivedAt.ToString("HH:mm:ss")</span>
-                            </td>
-                            <td class="px-4 py-3 max-w-[150px] sm:max-w-xs">
-                                <div class="flex flex-col gap-0.5">
-                                    <div class="flex items-center gap-1.5 opacity-60">
-                                        <span class="text-[10px] text-white font-mono truncate">@ping.HttpMethod @ping.IpAddress</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5 opacity-40 overflow-hidden">
-                                        <span class="text-[9px] text-text-secondary font-mono truncate" title="@ping.UserAgent">@ping.UserAgent</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3 text-right">
-                                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-text-secondary group-hover:text-blue transition-all ml-auto opacity-50 group-hover:opacity-100"></i>
-                            </td>
-                        </tr>
-
-                        @if (nextPing != null && currentStatus != nextStatus)
+                        @foreach (var ping in pingList)
                         {
-                            <tr class="bg-blue/5 border-y border-white/5">
-                                <td colspan="6" class="px-4 py-2">
-                                    <div class="flex items-center justify-center gap-3">
-                                        <div class="w-1.5 h-1.5 rounded-full @(currentStatus == "Success" ? "bg-emerald-500" : "bg-rose-500") animate-pulse"></div>
-                                        <div class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest">
-                                            <span class="@(nextStatus == "Success" ? "text-emerald-500/50" : (nextStatus == "Starting" ? "text-blue-500/50" : "text-rose-500/50"))">@nextStatus</span>
-                                            <i data-lucide="arrow-right" class="w-3 h-3 text-text-secondary opacity-30"></i>
-                                            <span class="@(currentStatus == "Success" ? "text-emerald-500" : (currentStatus == "Starting" ? "text-blue-500" : "text-rose-500"))">@currentStatus</span>
-                                        </div>
-                                    </div>
+                            var statusClass = ping.Status == HealthyCron.Models.PingType.Success ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" :
+                            (ping.Status == HealthyCron.Models.PingType.Start ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20");
+                            var statusText = ping.Status == HealthyCron.Models.PingType.Success ? "OK" : (ping.Status == HealthyCron.Models.PingType.Start ? "Start" : "Fail");
+                            var localTime = TimezoneHelper.ToUserTime(ping.ReceivedAt, userTz);
+
+                            <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group border-b border-white/5 last:border-0" onclick="showPingDetails(this)"
+                                data-ping="@System.Text.Json.JsonSerializer.Serialize(new {
+                                        id = ping.Id,
+                                        receivedAt = ping.ReceivedAt,
+                                        timeStr = localTime.ToString("MMM dd, yyyy HH:mm:ss") + " (" + userTz + ")",
+                                        dateDisplay = localTime.ToString("MMM dd"),
+                                        timeDisplay = localTime.ToString("HH:mm:ss"),
+                                        status = ping.Status.ToString(),
+                                        message = ping.Message,
+                                        ipAddress = ping.IpAddress,
+                                        userAgent = ping.UserAgent,
+                                        method = ping.HttpMethod,
+                                        headers = ping.RequestHeaders,
+                                        duration = ping.DurationMs
+                                    })">
+                                <td class="py-3 px-4 pl-6">
+                                    <span class="text-[10px] font-mono text-text-secondary/40">@rowNum</span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="text-xs text-white font-bold">@localTime.ToString("MMM dd")</span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="text-[10px] text-text-secondary font-mono">@localTime.ToString("HH:mm:ss")</span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="@statusClass px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">@statusText</span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="text-[10px] text-text-secondary font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
                                 </td>
                             </tr>
+                            rowNum--;
                         }
                     }
-                    @if (!pings.Any())
+                    else
                     {
                         <tr>
-                            <td colspan="6" class="px-6 py-10 text-center text-text-secondary font-medium text-xs opacity-50">No activity recorded yet.</td>
+                            <td colspan="5" class="py-8 text-center text-text-secondary italic">
+                                No activity recorded yet.
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
-        <div class="px-6 py-4 bg-white/[0.01] border-t border-white/5 text-center">
-            <a href="/monitor/@Model.Slug/logs" class="inline-flex items-center gap-2 px-6 py-2 rounded-xl bg-blue/5 hover:bg-blue/10 text-blue font-bold uppercase tracking-widest text-[10px] transition-all border border-blue/10 group">
-                View Full History
-                <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
-            </a>
         </div>
     </section>
 
@@ -750,47 +820,6 @@
         }
     }
 
-    function toggleFiltering() {
-        const isEnabled = document.getElementById('enable-filtering').checked;
-        const uuidDiv = document.getElementById('endpoint-uuid');
-        const slugDiv = document.getElementById('endpoint-slug');
-        const divs = [uuidDiv, slugDiv];
-
-        divs.forEach(container => {
-            if (!container) return;
-            // First child is success, second is start, third is fail
-            // Actually, in the new HTML, they are just divs inside the container.
-            // We need to show/hide the start/fail ones based on checkbox.
-            // The structure is: Container -> [SuccessDiv, StartDiv, FailDiv]
-            
-            const children = Array.from(container.children);
-            if (children.length >= 3) {
-                // Keep only success visible if disabled
-                // Show all if enabled
-                // But wait, the user said "show headers for start fail and success".
-                // My HTML for endpoint-uuid has 3 divs.
-                // I should toggle visibility of the 2nd and 3rd divs?
-                // Or maybe the user wants them ALL shown when enabled?
-                // "checkbox enable filtering rules and below that show the apis for start fail and success"
-                // This implies that normally only one (the main/success/ping) is shown?
-                // Yes, historically only one was shown.
-                
-                if (isEnabled) {
-                    children[1].classList.remove('hidden'); // Start
-                    children[2].classList.remove('hidden'); // Fail
-                } else {
-                    children[1].classList.add('hidden');
-                    children[2].classList.add('hidden');
-                }
-            }
-        });
-    }
-
-    // Initialize state
-    document.addEventListener('DOMContentLoaded', () => {
-        toggleFiltering();
-    });
-
     function addLogRow(data) {
         const tbody = document.querySelector('table tbody');
         if (!tbody) return;
@@ -883,19 +912,15 @@
 
             if (response.ok) {
                 btn.dataset.enabled = newStatus.toString();
-                const icon = btn.querySelector('i');
-                const text = btn.querySelector('span');
                 
                 if (newStatus) {
                     btn.classList.remove('bg-white/5', 'border-white/10', 'text-text-secondary');
-                    btn.classList.add('bg-blue/10', 'border-blue/20', 'text-blue');
-                    text.innerText = 'Enabled';
-                    icon.setAttribute('data-lucide', 'bell');
+                    btn.classList.add('bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-500');
+                    btn.innerHTML = `<i data-lucide="bell" class="w-3 h-3"></i><span>Enabled</span>`;
                 } else {
-                    btn.classList.remove('bg-blue/10', 'border-blue/20', 'text-blue');
+                    btn.classList.remove('bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-500');
                     btn.classList.add('bg-white/5', 'border-white/10', 'text-text-secondary');
-                    text.innerText = 'Disabled';
-                    icon.setAttribute('data-lucide', 'bell-off');
+                    btn.innerHTML = `<i data-lucide="bell-off" class="w-3 h-3"></i><span>Disabled</span>`;
                 }
                 lucide.createIcons();
             } else {

@@ -26,6 +26,7 @@ namespace HealthyCron.Controllers
         private readonly ICacheService _cacheService;
         private readonly IConfiguration _configuration;
         private readonly AxiomLogger _axiomLogger;
+        private readonly IProjectAuthService _projectAuth;
 
         public IntegrationsController(
             IProjectRepository projectRepository,
@@ -36,7 +37,8 @@ namespace HealthyCron.Controllers
             IEncryptionService encryptionService,
             ICacheService cacheService,
             IConfiguration configuration,
-            AxiomLogger axiomLogger)
+            AxiomLogger axiomLogger,
+            IProjectAuthService projectAuth)
         {
             _projectRepository = projectRepository;
             _integrationRepository = integrationRepository;
@@ -47,6 +49,7 @@ namespace HealthyCron.Controllers
             _cacheService = cacheService;
             _configuration = configuration;
             _axiomLogger = axiomLogger;
+            _projectAuth = projectAuth;
         }
 
         [HttpGet("project/{slug}/integrations")]
@@ -55,10 +58,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
 
@@ -143,10 +145,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             var authUrl = _slackOAuthService.GenerateAuthorizationUrl(project.Id);
             return Redirect(authUrl);
@@ -247,10 +248,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             ViewBag.Project = project;
             ViewBag.User = user;
@@ -264,10 +264,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             // Validate webhook URL
             if (string.IsNullOrWhiteSpace(webhookUrl))
@@ -350,10 +349,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             ViewBag.Project = project;
             ViewBag.User = user;
@@ -367,10 +365,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             // Validate webhook URL
             if (string.IsNullOrWhiteSpace(webhookUrl))
@@ -442,10 +439,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
                 return NotFound();
-            }
 
             ViewBag.Project = project;
             ViewBag.User = user;
@@ -459,10 +455,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             // Validate webhook URL
             if (string.IsNullOrWhiteSpace(webhookUrl))
@@ -532,10 +527,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             ViewBag.Project = project;
             ViewBag.User = user;
@@ -549,10 +543,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
-                return NotFound();
-            }
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
 
             // Validate email
             if (string.IsNullOrWhiteSpace(email))
@@ -613,10 +606,9 @@ namespace HealthyCron.Controllers
             var user = HttpContext.Items["User"] as User;
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
-            if (project == null || project.UserId != user!.Id)
-            {
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
                 return NotFound();
-            }
 
             // Generate cryptographically secure state parameter
             var state = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "_").Replace("+", "-");
@@ -842,10 +834,9 @@ namespace HealthyCron.Controllers
             }
 
             var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
-            if (project == null || project.UserId != user!.Id)
-            {
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
                 return Forbid();
-            }
 
             await _integrationRepository.UpdateIntegrationStatusAsync(id, false);
 
@@ -864,10 +855,9 @@ namespace HealthyCron.Controllers
             }
 
             var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
-            if (project == null || project.UserId != user!.Id)
-            {
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
                 return Forbid();
-            }
 
             await _integrationRepository.DeleteIntegrationAsync(id);
 
@@ -885,10 +875,9 @@ namespace HealthyCron.Controllers
             }
 
             var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
-            if (project == null || project.UserId != user!.Id)
-            {
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
                 return Forbid();
-            }
 
             var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
             var mappedMonitorIds = await _integrationRepository.GetMappedMonitorIdsAsync(id);
@@ -915,10 +904,9 @@ namespace HealthyCron.Controllers
             }
 
             var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
-            if (project == null || project.UserId != user!.Id)
-            {
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
                 return Forbid();
-            }
 
             await _integrationRepository.SyncMonitorIntegrationsAsync(id, monitorIds);
 

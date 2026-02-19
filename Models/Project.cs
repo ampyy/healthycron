@@ -10,5 +10,8 @@ namespace HealthyCron.Models
         public DateTime CreatedAt { get; set; }
         public int MonitorCount { get; set; }
         public int InteractionsCount { get; set; }
+
+        // Populated by join on users table when listing projects
+        public string? OwnerEmail { get; set; }
     }
 }

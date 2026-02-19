@@ -8,6 +8,7 @@ namespace HealthyCron.Data.Interfaces
         Task<User?> GetUserByIdAsync(Guid id);
         Task<Guid> CreateUserAsync(string email, string? passwordHash = null);
         Task UpdateUserPasswordAsync(Guid userId, string passwordHash);
+        Task UpdateUserAsync(User user);
 
         Task CreateMagicTokenAsync(Guid userId, string tokenHash, DateTime expiresAt);
         Task<MagicToken?> GetMagicTokenByHashAsync(string tokenHash);

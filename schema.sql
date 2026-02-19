@@ -7,6 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     email_verified_at TIMESTAMP WITH TIME ZONE,
     password_hash VARCHAR(255),
+    timezone VARCHAR(50),
+    receive_weekly_reports BOOLEAN DEFAULT TRUE,
+    receive_monthly_reports BOOLEAN DEFAULT TRUE,
+    receive_incident_reminders BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

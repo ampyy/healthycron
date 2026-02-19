@@ -4,10 +4,18 @@ using System.Threading.Tasks;
 
 namespace HealthyCron.Logic.Interfaces
 {
+    public enum PingResult
+    {
+        Processed,
+        MonitorNotFound,
+        MonitorPaused,
+        InvalidKey
+    }
+
     public interface IPingService
     {
-        Task ProcessPingAsync(Guid monitorId, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata);
-        Task ProcessPingBySlugAsync(string pingKey, string slug, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata);
+        Task<PingResult> ProcessPingAsync(Guid monitorId, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata);
+        Task<PingResult> ProcessPingBySlugAsync(string pingKey, string slug, string statusFromUrl, string? statusHeader, string? bodyJson, PingMetadata metadata);
     }
 
     public class PingMetadata

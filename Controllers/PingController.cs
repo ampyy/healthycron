@@ -42,7 +42,11 @@ namespace HealthyCron.Controllers
                 // Process ping synchronously to ensure reliability
                 try
                 {
-                    await _pingService.ProcessPingAsync(id, status ?? "success", headerStatus, body, metadata);
+                    var result = await _pingService.ProcessPingAsync(id, status ?? "success", headerStatus, body, metadata);
+                    if (result == PingResult.MonitorPaused)
+                    {
+                        return Ok(new { message = "Monitor is paused" });
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -92,7 +96,11 @@ namespace HealthyCron.Controllers
                 // Process ping synchronously
                 try
                 {
-                    await _pingService.ProcessPingBySlugAsync(pingKey, slug, status ?? "success", headerStatus, body, metadata);
+                    var result = await _pingService.ProcessPingBySlugAsync(pingKey, slug, status ?? "success", headerStatus, body, metadata);
+                    if (result == PingResult.MonitorPaused)
+                    {
+                        return Ok(new { message = "Monitor is paused" });
+                    }
                 }
                 catch (Exception ex)
                 {

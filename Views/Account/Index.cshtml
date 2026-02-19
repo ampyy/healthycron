@@ -1,0 +1,230 @@
+@model HealthyCron.Models.User
+@{
+    ViewData["Title"] = "Account Settings";
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+
+    var ianaTimezones = ViewBag.IanaTimezones as IReadOnlyList<string> ?? new List<string>();
+    var currentTz = !string.IsNullOrWhiteSpace(Model.Timezone) ? Model.Timezone : "UTC";
+    var successMessage = TempData["SuccessMessage"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string;
+}
+
+<div class="space-y-6 animate-fade-in max-w-4xl mx-auto pb-20">
+    <div class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold text-white tracking-tight">Account Settings</h1>
+        <p class="text-text-secondary">Manage your profile, preferences, and security settings.</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-3">
+            <i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
+            <span class="font-medium text-sm">@successMessage</span>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3">
+            <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
+            <span class="font-medium text-sm">@errorMessage</span>
+        </div>
+    }
+
+    <!-- Timezone Settings -->
+    <div class="glass-card rounded-2xl p-6 border border-white/5">
+        <div class="flex items-start gap-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-blue/10 border border-blue/20 flex items-center justify-center shrink-0">
+                <i data-lucide="clock" class="text-blue w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-white mb-1">Preferred Time Zone</h2>
+                <p class="text-sm text-text-secondary">All timestamps in the UI will be converted to this timezone. Stored data remains in UTC.</p>
+            </div>
+        </div>
+
+        <div class="bg-blue/10 border border-blue/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <i data-lucide="info" class="text-blue w-5 h-5 shrink-0 mt-0.5"></i>
+            <div class="text-sm text-blue/90 space-y-1">
+                <p class="font-bold">Your browser's timezone is <span id="browser-timezone" class="font-mono bg-white/10 px-1 rounded">detecting…</span></p>
+                <p class="opacity-80">HealthyCron uses your timezone to display dates and times across the dashboard.</p>
+                <button type="button" onclick="useBrowserTimezone()"
+                    class="mt-2 text-white bg-blue/20 hover:bg-blue/30 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-colors">
+                    Use Browser Timezone
+                </button>
+            </div>
+        </div>
+
+        <form asp-action="UpdateTimezone" method="post" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-text-secondary mb-2">
+                    IANA Timezone
+                    <span class="ml-2 normal-case font-normal text-text-secondary/70">(e.g. UTC, Asia/Kolkata, America/New_York)</span>
+                </label>
+
+                <!-- Search + select combo -->
+                <div class="relative">
+                    <input id="tz-search" type="text" placeholder="Search timezone…"
+                        class="w-full bg-navy border border-white/10 rounded-t-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none"
+                        oninput="filterTimezones(this.value)">
+                    <i data-lucide="search" class="absolute right-4 top-3 w-5 h-5 text-text-secondary pointer-events-none"></i>
+                </div>
+                <select name="timezone" id="timezone-select"
+                    class="w-full bg-navy border border-white/10 border-t-0 rounded-b-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none" size="6">
+                    @foreach (var tz in ianaTimezones)
+                    {
+                        if (currentTz == tz)
+                        {
+                            <option value="@tz" selected="selected">@tz</option>
+                        }
+                        else
+                        {
+                            <option value="@tz">@tz</option>
+                        }
+                    }
+                </select>
+                <p class="text-xs text-text-secondary mt-1.5">
+                    Current: <span class="text-blue font-mono font-bold">@currentTz</span>
+                    &nbsp;·&nbsp; Current time: <span class="font-mono" id="current-local-time">–</span>
+                </p>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit"
+                    class="bg-blue hover:bg-blue/80 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue/20 active:scale-95 text-sm">
+                    Save Timezone
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Password Reset -->
+    <div class="glass-card rounded-2xl p-6 border border-white/5">
+        <div class="flex items-start gap-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-purple/10 border border-purple/20 flex items-center justify-center shrink-0">
+                <i data-lucide="lock" class="text-purple w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-white mb-1">Password</h2>
+                <p class="text-sm text-text-secondary">Update your account password.</p>
+            </div>
+        </div>
+        <p class="text-xs text-center text-text-secondary italic">Password updates coming soon.</p>
+    </div>
+
+    <!-- Email Reports -->
+    <div class="glass-card rounded-2xl p-6 border border-white/5">
+        <div class="flex items-start gap-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <i data-lucide="mail" class="text-emerald-500 w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-white mb-1">Email Reports</h2>
+                <p class="text-sm text-text-secondary">Configure your periodic email reports and reminders.</p>
+            </div>
+        </div>
+
+        <form asp-action="UpdateReports" method="post" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Weekly Reports</h3>
+                    <p class="text-xs text-text-secondary">Receive a weekly summary of your monitor activity.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="receiveWeeklyReports" value="true" class="sr-only peer" @(Model.ReceiveWeeklyReports ? "checked" : "")>
+                    <div class="w-11 h-6 bg-navy border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
+                </label>
+            </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Monthly Reports</h3>
+                    <p class="text-xs text-text-secondary">Receive a monthly summary of your monitor activity.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="receiveMonthlyReports" value="true" class="sr-only peer" @(Model.ReceiveMonthlyReports ? "checked" : "")>
+                    <div class="w-11 h-6 bg-navy border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
+                </label>
+            </div>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-1">Ongoing Reminders</h3>
+                    <p class="text-xs text-text-secondary">Receive ongoing reminders while any monitor is down.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="receiveIncidentReminders" value="true" class="sr-only peer" @(Model.ReceiveIncidentReminders ? "checked" : "")>
+                    <div class="w-11 h-6 bg-navy border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
+                </label>
+            </div>
+            <div class="flex justify-end pt-4 border-t border-white/5">
+                <button type="submit"
+                    class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20 active:scale-95 text-sm">
+                    Save Preferences
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Delete Account -->
+    <div class="glass-card rounded-2xl p-6 border border-rose-500/20 bg-rose-500/5">
+        <div class="flex items-start gap-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+                <i data-lucide="trash-2" class="text-rose-500 w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-bold text-white mb-1">Delete Account</h2>
+                <p class="text-sm text-text-secondary">Permanently delete your account and all associated data. This cannot be undone.</p>
+            </div>
+        </div>
+        <form asp-action="DeleteAccount" method="post"
+            onsubmit="return confirm('Are you absolutely sure? This will permanently delete your account.');">
+            <div class="flex justify-end">
+                <button type="submit"
+                    class="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-rose-500/20 active:scale-95 text-sm">
+                    Delete Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Show browser timezone
+    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    document.getElementById('browser-timezone').textContent = browserTz;
+
+    // Show current time in the SELECTED timezone (updates every second)
+    function updateLocalTime() {
+        const select = document.getElementById('timezone-select');
+        const tz = (select && select.value) ? select.value : browserTz;
+        const el = document.getElementById('current-local-time');
+        if (!el) return;
+        try {
+            el.textContent = new Date().toLocaleString('en-US', { timeZone: tz, hour12: false });
+        } catch {
+            el.textContent = new Date().toLocaleString('en-US', { timeZone: browserTz, hour12: false });
+        }
+    }
+    updateLocalTime();
+    setInterval(updateLocalTime, 1000);
+
+    // Also update the time preview when the user picks a different timezone
+    const _tzSelect = document.getElementById('timezone-select');
+    if (_tzSelect) _tzSelect.addEventListener('change', updateLocalTime);
+
+    function useBrowserTimezone() {
+        const select = document.getElementById('timezone-select');
+        const search = document.getElementById('tz-search');
+        select.value = browserTz;
+        if (search) search.value = browserTz;
+        const opt = select.querySelector(`option[value="${browserTz}"]`);
+        if (opt) opt.scrollIntoView({ block: 'nearest' });
+        updateLocalTime();
+    }
+
+    // Filter timezone list
+    function filterTimezones(query) {
+        const select = document.getElementById('timezone-select');
+        const lcq = query.toLowerCase();
+        Array.from(select.options).forEach(opt => {
+            opt.style.display = opt.value.toLowerCase().includes(lcq) ? '' : 'none';
+        });
+    }
+</script>
