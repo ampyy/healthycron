@@ -27,6 +27,7 @@ namespace HealthyCron.Controllers
         private readonly IConfiguration _configuration;
         private readonly AxiomLogger _axiomLogger;
         private readonly IProjectAuthService _projectAuth;
+        private readonly IQueueService _queueService;
 
         public IntegrationsController(
             IProjectRepository projectRepository,
@@ -38,7 +39,8 @@ namespace HealthyCron.Controllers
             ICacheService cacheService,
             IConfiguration configuration,
             AxiomLogger axiomLogger,
-            IProjectAuthService projectAuth)
+            IProjectAuthService projectAuth,
+            IQueueService queueService)
         {
             _projectRepository = projectRepository;
             _integrationRepository = integrationRepository;
@@ -50,6 +52,7 @@ namespace HealthyCron.Controllers
             _configuration = configuration;
             _axiomLogger = axiomLogger;
             _projectAuth = projectAuth;
+            _queueService = queueService;
         }
 
         [HttpGet("project/{slug}/integrations")]
@@ -59,8 +62,10 @@ namespace HealthyCron.Controllers
             var project = await _projectRepository.GetProjectBySlugAsync(slug);
 
             if (project == null) return NotFound();
-            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user!.Id))
                 return Forbid();
+
+            var canManage = await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id);
 
             var integrations = await _integrationRepository.GetIntegrationsByProjectIdAsync(project.Id);
 
@@ -135,6 +140,7 @@ namespace HealthyCron.Controllers
             ViewBag.Project = project;
             ViewBag.User = user;
             ViewBag.Integrations = integrationsWithDetails;
+            ViewBag.CanManage = canManage;
 
             return View();
         }
@@ -911,6 +917,36 @@ namespace HealthyCron.Controllers
             await _integrationRepository.SyncMonitorIntegrationsAsync(id, monitorIds);
 
             return Ok();
+        }
+
+        [HttpPost("{id}/test")]
+        public async Task<IActionResult> TestIntegration(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            
+            if (integration == null) return NotFound();
+            
+            var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
+            if (project == null) return NotFound();
+
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            // Create notification job for testing
+            // We use -1 as a dummy monitor ping ID for test pings
+            var jobId = await _integrationRepository.CreateNotificationJobAsync(-1, integration.Id);
+
+            // Send to SQS
+            var sqsPayload = new HealthyCron.Models.DTOs.SqsMessagePayload
+            {
+                JobId = jobId,
+                MonitorId = Guid.Empty, // Dummy
+                IntegrationId = integration.Id
+            };
+            await _queueService.SendMessageAsync(sqsPayload);
+
+            return Ok(new { message = "Test ping sent. Please check your integration." });
         }
     }
 }

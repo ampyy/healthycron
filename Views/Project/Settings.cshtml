@@ -99,10 +99,20 @@
                                         @if (activeKey != null)
                                         {
                                             <div class="flex items-center gap-2">
-                                                <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-text-secondary font-mono">@activeKey.KeyPrefix...</code>
-                                                <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Prefix">
-                                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                                                </button>
+                                                @if (kt.Type == HealthyCron.Models.ApiKeyType.Ping && !string.IsNullOrEmpty(activeKey.PlaintextKey))
+                                                {
+                                                    <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-blue-400 font-mono">@activeKey.PlaintextKey</code>
+                                                    <button onclick="copyText('@activeKey.PlaintextKey')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Key">
+                                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-text-secondary font-mono">@activeKey.KeyPrefix...</code>
+                                                    <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Prefix">
+                                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                                    </button>
+                                                }
                                             </div>
                                         }
                                         else

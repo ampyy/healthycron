@@ -8,6 +8,7 @@ namespace HealthyCron.Enums
         Discord = 4,
         Email = 5,
         PagerDuty = 6,
-        Opsgenie = 7
+        WhatsApp = 7,
+        Call = 8
     }
 }

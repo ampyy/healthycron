@@ -241,6 +241,7 @@ namespace HealthyCron.Controllers
             ViewBag.UserTimezone = string.IsNullOrWhiteSpace(user.Timezone) ? "UTC" : user.Timezone;
             ViewBag.CanManage = canManage;
             ViewBag.IsOwner = _projectAuth.IsOwner(project.UserId, user.Id);
+            ViewBag.ProjectRole = await _projectAuth.GetMemberRoleAsync(project.Id, user.Id);
 
             var pings = await _monitorRepository.GetPingsByMonitorIdAsync(monitor.Id, 100);
             ViewBag.RecentPings = pings;

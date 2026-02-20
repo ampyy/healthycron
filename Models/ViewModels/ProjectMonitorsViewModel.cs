@@ -9,6 +9,7 @@ namespace HealthyCron.Models.ViewModels
     {
         public Project Project { get; set; } = null!;
         public List<MonitorWithIntegrations> Monitors { get; set; } = new();
+        public bool CanManage { get; set; }
     }
 
     public class MonitorWithIntegrations

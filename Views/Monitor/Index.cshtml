@@ -48,8 +48,15 @@
             <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
             <span class="text-white">@Model.Name</span>
         </div>
-        <div class="flex items-center gap-4">
-        </div>
+        @if (ViewBag.IsOwner == true || (ViewBag.ProjectRole != null && (HealthyCron.Enums.ProjectRole)ViewBag.ProjectRole == HealthyCron.Enums.ProjectRole.Manager))
+        {
+            <div class="flex items-center gap-4">
+                <a href="/project/@project?.Slug/settings" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-text-secondary hover:text-white transition-all text-[10px] font-black uppercase tracking-widest">
+                    <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                    Project Settings
+                </a>
+            </div>
+        }
     </div>
 
     <!-- Simple Header -->
@@ -57,51 +64,73 @@
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div class="flex items-start gap-4 sm:gap-5">
                 <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-blue/10 border border-blue/20 flex items-center justify-center shrink-0">
-                    <i data-lucide="activity" class="w-7 h-7 sm:w-8 sm:h-8 text-blue"></i>
+                    <i data-lucide="monitor" class="w-7 h-7 sm:w-8 sm:h-8 text-blue"></i>
                 </div>
                 <div class="min-w-0 flex-1">
                     <h1 class="text-xl sm:text-2xl font-black text-white mb-2 break-words">@Model.Name</h1>
                     <div class="flex flex-wrap items-center gap-2 mb-3">
-                        @if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused)
+                        @{
+                            var isNew = Model.LastPingAt == null;
+                            var isLate = Model.LastPingAt != null && Model.NextExpectedAt.HasValue && DateTime.UtcNow > Model.NextExpectedAt.Value;
+                        }
+
+                        @if (isNew)
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-500/10 text-slate-400 shrink-0 w-fit">
+                                <i data-lucide="plus-circle" class="w-3 h-3"></i>
+                                New
+                            </span>
+                        }
+                        else if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused)
                         {
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 shrink-0 w-fit">
                                 <i data-lucide="pause-circle" class="w-3 h-3"></i>
                                 Paused
                             </span>
                         }
-                        else if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Success)
-                        {
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500 shrink-0 w-fit">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                Healthy
-                            </span>
-                        }
-                        else
+                        else if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Failed)
                         {
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 shrink-0 w-fit">
                                 <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                                 Down
                             </span>
                         }
+                        else if (isLate)
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-orange-500/10 text-orange-500 shrink-0 w-fit">
+                                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                                Late
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500 shrink-0 w-fit">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Healthy
+                            </span>
+                        }
                     </div>
                 </div>
             </div>
 
-            <!-- Action Buttons - Stack on mobile -->
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-                <button onclick="openEditModal()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-blue transition-all text-xs font-bold w-full sm:w-auto">
-                    <i data-lucide="edit-3" class="w-4 h-4 text-blue"></i>
-                    <span class="inline">Edit</span>
-                </button>
-                <button onclick="togglePause()" id="pause-btn" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-amber-500 transition-all text-xs font-bold w-full sm:w-auto">
-                    <i data-lucide="@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "play" : "pause")" class="w-4 h-4 text-amber-500"></i>
-                    <span>@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Resume" : "Pause")</span>
-                </button>
-                <button onclick="deleteMonitor()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-rose-500 transition-all text-xs font-bold w-full sm:w-auto">
-                    <i data-lucide="trash-2" class="w-4 h-4 text-rose-500"></i>
-                    <span class="inline">Delete</span>
-                </button>
-            </div>
+            @if (ViewBag.CanManage != false)
+            {
+                <!-- Action Buttons - Stack on mobile -->
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+                    <button onclick="openEditModal()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-blue transition-all text-xs font-bold w-full sm:w-auto">
+                        <i data-lucide="edit-3" class="w-4 h-4 text-blue"></i>
+                        <span class="inline">Edit</span>
+                    </button>
+                    <button onclick="togglePause()" id="pause-btn" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-amber-500 transition-all text-xs font-bold w-full sm:w-auto">
+                        <i data-lucide="@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "play" : "pause")" class="w-4 h-4 text-amber-500"></i>
+                        <span>@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Resume" : "Pause")</span>
+                    </button>
+                    <button onclick="deleteMonitor()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-navy border border-white/10 text-white hover:border-rose-500 transition-all text-xs font-bold w-full sm:w-auto">
+                        <i data-lucide="trash-2" class="w-4 h-4 text-rose-500"></i>
+                        <span class="inline">Delete</span>
+                    </button>
+                </div>
+            }
         </div>
 
         <!-- How To Ping Section -->
@@ -123,7 +152,7 @@
                         <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-emerald-500/20 transition-all">
                             <div class="bg-emerald-500/10 px-2 py-1.5 rounded-lg border border-emerald-500/20 shrink-0 text-[10px] font-black text-emerald-500 uppercase w-16 text-center">Success</div>
                             <div class="flex-1 overflow-hidden px-2 min-w-0">
-                                <div id="url-uuid-success" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                <div id="url-uuid-success" class="text-white/80 font-mono text-[10px] break-all select-all">
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id
                                 </div>
                             </div>
@@ -135,7 +164,7 @@
                         <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-blue/20 transition-all">
                             <div class="bg-blue/10 px-2 py-1.5 rounded-lg border border-blue/20 shrink-0 text-[10px] font-black text-blue uppercase w-16 text-center">Start</div>
                             <div class="flex-1 overflow-hidden px-2 min-w-0">
-                                <div id="url-uuid-start" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                <div id="url-uuid-start" class="text-white/80 font-mono text-[10px] break-all select-all">
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id/start
                                 </div>
                             </div>
@@ -147,7 +176,7 @@
                         <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-rose-500/20 transition-all">
                             <div class="bg-rose-500/10 px-2 py-1.5 rounded-lg border border-rose-500/20 shrink-0 text-[10px] font-black text-rose-500 uppercase w-16 text-center">Fail</div>
                             <div class="flex-1 overflow-hidden px-2 min-w-0">
-                                <div id="url-uuid-fail" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                <div id="url-uuid-fail" class="text-white/80 font-mono text-[10px] break-all select-all">
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id/fail
                                 </div>
                             </div>
@@ -163,7 +192,7 @@
                         <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-purple/20 transition-all">
                             <div class="bg-purple/10 px-2 py-1.5 rounded-lg border border-purple/20 shrink-0 text-[10px] font-black text-purple uppercase w-16 text-center">Success</div>
                             <div class="flex-1 overflow-hidden px-2 min-w-0">
-                                <div id="url-slug-success" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                <div id="url-slug-success" class="text-white/80 font-mono text-[10px] break-all select-all">
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug
                                 </div>
                             </div>
@@ -175,7 +204,7 @@
                         <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-blue/20 transition-all">
                             <div class="bg-blue/10 px-2 py-1.5 rounded-lg border border-blue/20 shrink-0 text-[10px] font-black text-blue uppercase w-16 text-center">Start</div>
                             <div class="flex-1 overflow-hidden px-2 min-w-0">
-                                <div id="url-slug-start" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                <div id="url-slug-start" class="text-white/80 font-mono text-[10px] break-all select-all">
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug/start
                                 </div>
                             </div>
@@ -187,7 +216,7 @@
                         <div class="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl p-1 pr-2 group hover:border-rose-500/20 transition-all">
                             <div class="bg-rose-500/10 px-2 py-1.5 rounded-lg border border-rose-500/20 shrink-0 text-[10px] font-black text-rose-500 uppercase w-16 text-center">Fail</div>
                             <div class="flex-1 overflow-hidden px-2 min-w-0">
-                                <div id="url-slug-fail" class="text-white/80 font-mono text-[10px] truncate select-all">
+                                <div id="url-slug-fail" class="text-white/80 font-mono text-[10px] break-all select-all">
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug/fail
                                 </div>
                             </div>
@@ -311,25 +340,19 @@
                                     <span class="text-[11px] font-bold text-white">@FormatMinutes(Model.GraceSeconds)</span>
                                 </td>
                             </tr>
-                            <tr class="group hover:bg-white/[0.02] transition-colors">
-                                <td class="px-2 py-3">
-                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Next Run</span>
-                                </td>
-                                <td class="px-2 py-3 text-right">
-                                    <!-- Placeholder, not passed in Model yet, showing generic info or removing -->
-                                    <span class="text-[10px] font-mono text-white/50">Calculating...</span>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="mt-4 flex justify-end">
-                     <button onclick="openScheduleModal()" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-blue/10 border border-white/10 hover:border-blue/20 text-text-secondary hover:text-blue transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                        <i data-lucide="edit-2" class="w-3 h-3"></i>
-                        Edit Rules
-                    </button>
-                </div>
+                @if (ViewBag.CanManage != false)
+                {
+                    <div class="mt-4 flex justify-end">
+                         <button onclick="openScheduleModal()" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-blue/10 border border-white/10 hover:border-blue/20 text-text-secondary hover:text-blue transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                            <i data-lucide="edit-2" class="w-3 h-3"></i>
+                            Edit Rules
+                        </button>
+                    </div>
+                }
             </section>
         </div>
 
@@ -360,40 +383,28 @@
                                                 @switch(item.Integration.Type)
                                                 {
                                                     case HealthyCron.Enums.IntegrationType.Slack:
-                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#E01E5A"/>
-                                                        </svg>
+                                                        <img src="/images/slack.png" class="w-4 h-4 object-contain" alt="Slack" />
                                                         break;
                                                     case HealthyCron.Enums.IntegrationType.PagerDuty:
-                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#06AC38" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M16.667 0H11.4L9.733 9.667h4.6c2.467 0 4.2-.4 5.4-1.333C21 7.333 21.667 5.8 21.667 3.8c0-1.267-.4-2.2-1.133-2.8C19.8.333 18.467 0 16.667 0zM9.333 11.733 8.267 18H3.733L6.667 0H2.333L0 14.933 1.333 24h6.8L9.8 18h4.2l1.667-6.267H9.333z"/>
-                                                        </svg>
+                                                        <img src="/images/pagerduty.png" class="w-4 h-4 object-contain" alt="PagerDuty" />
                                                         break;
                                                     case HealthyCron.Enums.IntegrationType.Email:
-                                                        <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                                        </svg>
+                                                        <img src="/images/gmail.png" class="w-4 h-4 object-contain" alt="Email" />
                                                         break;
                                                     case HealthyCron.Enums.IntegrationType.Discord:
-                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#5865F2" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.014.043.031.057a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-                                                        </svg>
+                                                        <img src="/images/discord.png" class="w-4 h-4 object-contain" alt="Discord" />
                                                         break;
                                                     case HealthyCron.Enums.IntegrationType.Teams:
-                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#6264A7" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zm-5.27 12.02h-1.44v-4.3h-.04l-1.74 4.3h-.96l-1.76-4.3h-.04v4.3H8.31V8.98h1.96l1.64 4.13h.04l1.67-4.13h2.11v6.04z"/>
-                                                        </svg>
+                                                        <img src="/images/teams.png" class="w-4 h-4 object-contain" alt="Teams" />
                                                         break;
                                                     case HealthyCron.Enums.IntegrationType.GoogleChat:
-                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M2 12c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10H2v-10z" fill="#00897B"/>
-                                                            <path d="M12 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" fill="white"/>
-                                                        </svg>
+                                                        <i data-lucide="message-square" class="w-3.5 h-3.5 text-[#00897B]"></i>
                                                         break;
-                                                    case HealthyCron.Enums.IntegrationType.Opsgenie:
-                                                        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="#0052cc" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21.6c-5.302 0-9.6-4.298-9.6-9.6S6.698 2.4 12 2.4s9.6 4.298 9.6 9.6-4.298 9.6-9.6 9.6zm-1.2-14.4h2.4v7.2h-2.4V7.2zm0 8.4h2.4v2.4h-2.4V15.6z"/>
-                                                        </svg>
+                                                    case HealthyCron.Enums.IntegrationType.WhatsApp:
+                                                        <img src="/images/whatsapp.png" class="w-4 h-4 object-contain" alt="WhatsApp" />
+                                                        break;
+                                                    case HealthyCron.Enums.IntegrationType.Call:
+                                                        <img src="/images/telephone.png" class="w-4 h-4 object-contain" alt="Call" />
                                                         break;
                                                     default:
                                                         <i data-lucide="bell" class="w-4 h-4 text-blue"></i>
@@ -957,14 +968,16 @@
     }
 
     function copyUrl(id) {
-        const text = document.getElementById(id).innerText;
+        const text = document.getElementById(id).innerText.trim();
         navigator.clipboard.writeText(text).then(() => {
             const btn = document.querySelector(`button[onclick="copyUrl('${id}')"]`);
-            const originalIcon = btn.innerHTML;
+            const originalInner = btn.innerHTML;
+            
             btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-500"></i>';
             lucide.createIcons();
+            
             setTimeout(() => {
-                btn.innerHTML = originalIcon;
+                btn.innerHTML = originalInner;
                 lucide.createIcons();
             }, 2000);
         });

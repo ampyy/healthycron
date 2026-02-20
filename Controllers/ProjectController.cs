@@ -61,10 +61,12 @@ namespace HealthyCron.Controllers
                 : (await _projectAuth.GetMemberRoleAsync(project.Id, user.Id))?.ToString() ?? "ReadOnly";
 
             var monitorsList = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            var canManage = await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user.Id);
             var viewModel = new HealthyCron.Models.ViewModels.ProjectMonitorsViewModel
             {
                 Project = project,
-                Monitors = new List<HealthyCron.Models.ViewModels.MonitorWithIntegrations>()
+                Monitors = new List<HealthyCron.Models.ViewModels.MonitorWithIntegrations>(),
+                CanManage = canManage
             };
 
             foreach (var monitor in monitorsList)
