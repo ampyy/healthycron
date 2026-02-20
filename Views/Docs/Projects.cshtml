@@ -1,0 +1,96 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "Projects & Teams - HealthyCron Documentation";
+}
+
+<div class="space-y-12">
+    <header>
+        <h1 class="text-4xl font-black text-white mb-6">Projects & Teams</h1>
+        <p class="text-lg text-text-secondary leading-relaxed">
+            Organize your monitors and collaborate with your team using HealthyCron Projects.
+        </p>
+    </header>
+
+    <section class="space-y-6">
+        <h2 class="text-2xl font-black text-white">Projects</h2>
+        <p class="text-text-secondary leading-relaxed">
+            Projects are the highest level of organization in HealthyCron. Each project acts as a completely isolated container for your monitors and integrations.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div class="bg-navy-light border border-white/5 p-6 rounded-2xl">
+                <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+                    <i data-lucide="key" class="w-4 h-4 text-blue"></i>
+                    Isolation
+                </h3>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    Each project has its own unique <strong>Ping Keys</strong> and <strong>API Keys</strong>. Moving a monitor between projects will change its slug-based Ping URL.
+                </p>
+            </div>
+            <div class="bg-navy-light border border-white/5 p-6 rounded-2xl">
+                <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4 text-blue"></i>
+                    Scoped Access
+                </h3>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    Team members invited to one project cannot see monitors or configurations in other projects unless explicitly invited to those as well.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="space-y-6">
+        <h2 class="text-2xl font-black text-white">Role-Based Access (RBAC)</h2>
+        <p class="text-text-secondary leading-relaxed">
+            Collaborate effectively by assigning specific roles to your team members. HealthyCron supports three distinct roles:
+        </p>
+
+        <div class="space-y-4 shadow-2xl">
+            <div class="glass-card border border-white/5 p-6 rounded-2xl hover:border-blue/30 transition-colors">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-white">Project Owner</h3>
+                    <span class="px-2 py-1 rounded bg-blue/10 text-blue text-[10px] uppercase font-black tracking-widest">Full Access</span>
+                </div>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    The user who created the project. Can delete the project, manage billings, and invite other Managers or Team Members.
+                </p>
+            </div>
+
+            <div class="glass-card border border-white/5 p-6 rounded-2xl hover:border-blue/30 transition-colors">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-white">Project Manager</h3>
+                    <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-[10px] uppercase font-black tracking-widest">Administrative</span>
+                </div>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    Can create, edit, and delete monitors and integrations. Can also invite other Team Members but cannot delete the project or manage the Owner's access.
+                </p>
+            </div>
+
+            <div class="glass-card border border-white/5 p-6 rounded-2xl hover:border-blue/30 transition-colors">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-white">Team Member</h3>
+                    <span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[10px] uppercase font-black tracking-widest">Collaborative</span>
+                </div>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    Can view all monitors and configurations. Can perform pings and see logs but has limited administrative permissions.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="space-y-6">
+        <h2 class="text-2xl font-black text-white">Inviting Team Members</h2>
+        <div class="bg-navy-light border border-white/10 rounded-2xl p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-5">
+                <i data-lucide="send" class="w-32 h-32"></i>
+            </div>
+            <p class="text-text-secondary leading-relaxed mb-6">
+                To invite someone to your project, navigate to <strong>Project Settings → Team</strong>. You can send invitations via email. The recipient will receive a unique link to join the project.
+            </p>
+            <div class="flex gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
+                <i data-lucide="mail-plus" class="w-6 h-6 text-blue shrink-0"></i>
+                <p class="text-sm text-text-secondary">Invitations expire after 7 days for security. You can revoke pending invitations at any time from the Team management page.</p>
+            </div>
+        </div>
+    </section>
+</div>

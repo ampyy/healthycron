@@ -16,6 +16,7 @@ namespace HealthyCron.Models
         public ApiKeyType KeyType { get; set; }
         public string KeyHash { get; set; } = string.Empty;
         public string KeyPrefix { get; set; } = string.Empty;
+        public string? PlaintextKey { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? RevokedAt { get; set; }
     }

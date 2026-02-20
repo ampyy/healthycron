@@ -1,0 +1,127 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "Notifications - HealthyCron Documentation";
+}
+
+<div class="space-y-12">
+    <header>
+        <h1 class="text-4xl font-black text-white mb-6">Notifications</h1>
+        <p class="text-lg text-text-secondary leading-relaxed">
+            HealthyCron connects with your existing workflow to alert you the moment a monitor goes down. Configure various integrations to ensure your team stays informed.
+        </p>
+    </header>
+
+    <section class="space-y-6">
+        <h2 class="text-2xl font-black text-white">Supported Integrations</h2>
+        <p class="text-text-secondary leading-relaxed">
+            Assign one or more integrations to your monitors. We support everything from simple emails to enterprise incident management tools.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Slack -->
+            <div class="bg-navy-light border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-[#E01E5A]/10 border border-[#E01E5A]/20 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#E01E5A"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"></path></svg>
+                        </div>
+                        <h3 class="text-white font-bold">Slack</h3>
+                    </div>
+                    <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                        Instant messages to your team's channels. Supports OAuth for easy setup and rich message formatting.
+                    </p>
+                </div>
+                <span class="text-[10px] font-black uppercase text-blue-400 tracking-widest bg-blue/5 self-start px-2 py-1 rounded">Interactive</span>
+            </div>
+
+            <!-- PagerDuty -->
+            <div class="bg-navy-light border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-[#06AC38]/10 border border-[#06AC38]/20 rounded-xl flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" class="w-6 h-6" fill="#06AC38"><path d="M16.667 0H11.4L9.733 9.667h4.6c2.467 0 4.2-.4 5.4-1.333C21 7.333 21.667 5.8 21.667 3.8c0-1.267-.4-2.2-1.133-2.8C19.8.333 18.467 0 16.667 0zM9.333 11.733 8.267 18H3.733L6.667 0H2.333L0 14.933 1.333 24h6.8L9.8 18h4.2l1.667-6.267H9.333z"/></svg>
+                        </div>
+                        <h3 class="text-white font-bold">PagerDuty</h3>
+                    </div>
+                    <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                        Trigger incidents automatically. Perfect for critical production cron jobs that need professional on-call handling.
+                    </p>
+                </div>
+                <span class="text-[10px] font-black uppercase text-blue-400 tracking-widest bg-blue/5 self-start px-2 py-1 rounded">On-Call</span>
+            </div>
+
+            <!-- Discord -->
+            <div class="bg-navy-light border border-white/5 rounded-2xl p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-[#5865F2]/10 border border-[#5865F2]/20 rounded-xl flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" class="w-6 h-6" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                    </div>
+                    <h3 class="text-white font-bold">Discord</h3>
+                </div>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    Simple Webhook integration for Discord channels. Stay updated without leaving your community server.
+                </p>
+            </div>
+
+            <!-- Email -->
+            <div class="bg-navy-light border border-white/5 rounded-2xl p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
+                        <i data-lucide="mail" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-white font-bold">Email</h3>
+                </div>
+                <p class="text-sm text-text-secondary leading-relaxed">
+                    Reliable email alerts delivered to one or many addresses. Customize the subject and body for specific workflows.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="space-y-6">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center">
+                <i data-lucide="settings-2" class="w-5 h-5 text-blue"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white">Alert Logic</h2>
+        </div>
+        <div class="glass-card border border-white/5 p-8 rounded-2xl space-y-6">
+            <p class="text-text-secondary leading-relaxed">
+                HealthyCron sends notifications during the following state transitions:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                        <span class="text-white font-bold text-sm">UP → DOWN</span>
+                    </div>
+                    <p class="text-xs text-text-secondary">Sent immediately when a monitor exceeds its Grace Time.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                        <span class="text-white font-bold text-sm">DOWN → UP</span>
+                    </div>
+                    <p class="text-xs text-text-secondary">A "Recovery" notification when the job checks in correctly after being down.</p>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+                        <span class="text-white font-bold text-sm">START FAIL</span>
+                    </div>
+                    <p class="text-xs text-text-secondary">If a job starts but never finishes within its expected duration (Grace Time).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-blue/5 border border-blue-500/20 rounded-2xl p-8 flex gap-6 items-center">
+        <i data-lucide="webhook" class="w-10 h-10 text-blue shrink-0"></i>
+        <div>
+            <h3 class="text-xl font-bold text-white mb-1">Custom Webhooks</h3>
+            <p class="text-text-secondary leading-relaxed">
+                Need to trigger a custom script or an unsupported service? Use our flexible Webhook integration to send <code>POST</code> requests with a customizable JSON payload to any URL.
+            </p>
+        </div>
+    </section>
+</div>

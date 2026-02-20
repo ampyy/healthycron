@@ -32,8 +32,8 @@ namespace HealthyCron.Data.Repository
             }
 
             const string sql = @"
-                INSERT INTO project_api_keys (id, project_id, key_type, key_hash, key_prefix, created_at) 
-                VALUES (@Id, @ProjectId, @KeyType, @KeyHash, @KeyPrefix, @CreatedAt) 
+                INSERT INTO project_api_keys (id, project_id, key_type, key_hash, key_prefix, plaintext_key, created_at) 
+                VALUES (@Id, @ProjectId, @KeyType, @KeyHash, @KeyPrefix, @PlaintextKey, @CreatedAt) 
                 RETURNING id";
             return await ExecuteScalarAsync<Guid>(sql, key);
         }

@@ -14,25 +14,25 @@ namespace HealthyCron.Controllers
         [HttpGet("pinging-api")]
         public IActionResult PingingApi()
         {
-            return View("Index");
+            return View();
         }
 
         [HttpGet("configuring-checks")]
         public IActionResult ConfiguringChecks()
         {
-            return View("Index");
+            return View();
         }
 
         [HttpGet("notifications")]
         public IActionResult Notifications()
         {
-            return View("Index");
+            return View();
         }
 
         [HttpGet("projects")]
         public IActionResult Projects()
         {
-            return View("Index");
+            return View();
         }
     }
 }

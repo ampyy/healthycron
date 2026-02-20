@@ -246,8 +246,8 @@ namespace HealthyCron.Controllers
             ViewBag.RecentPings = pings;
 
             var keys = await _accessKeyService.GetKeysByProjectIdAsync(project.Id);
-            var pingKey = keys.FirstOrDefault(k => k.KeyType == ApiKeyType.Ping && k.RevokedAt == null);
-            ViewBag.PingKey = pingKey?.KeyPrefix ?? "PING_KEY";
+            var pingKey = keys.OrderByDescending(k => k.CreatedAt).FirstOrDefault(k => k.KeyType == ApiKeyType.Ping && k.RevokedAt == null);
+            ViewBag.PingKey = pingKey?.PlaintextKey ?? pingKey?.KeyPrefix ?? "PING_KEY";
 
             var now = DateTime.UtcNow;
             var hourlyData = new int[24];
@@ -296,7 +296,7 @@ namespace HealthyCron.Controllers
             var ping = new MonitorPing
             {
                 MonitorId = monitor.Id,
-                Status = isPausing ? PingType.Fail : PingType.Success, // Best fit for pause/resume
+                Status = isPausing ? PingType.Paused : PingType.Resumed,
                 Message = isPausing ? "Monitor paused manually" : "Monitor resumed manually",
                 ReceivedAt = now,
                 HttpMethod = "INTERNAL",

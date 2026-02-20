@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS project_api_keys (
     key_type SMALLINT NOT NULL,       -- 0: Ping, 1: FullAccess, 2: ReadAccess
     key_hash TEXT NOT NULL,           -- hashed full key
     key_prefix TEXT NOT NULL,         -- first 8 chars for display
+    plaintext_key TEXT,               -- only for Ping keys
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
     revoked_at TIMESTAMP WITH TIME ZONE
 );

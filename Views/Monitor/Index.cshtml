@@ -462,8 +462,16 @@
                         @foreach (var ping in pingList)
                         {
                             var statusClass = ping.Status == HealthyCron.Models.PingType.Success ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" :
-                            (ping.Status == HealthyCron.Models.PingType.Start ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20");
-                            var statusText = ping.Status == HealthyCron.Models.PingType.Success ? "OK" : (ping.Status == HealthyCron.Models.PingType.Start ? "Start" : "Fail");
+                            (ping.Status == HealthyCron.Models.PingType.Start ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : 
+                            (ping.Status == HealthyCron.Models.PingType.Paused || ping.Status == HealthyCron.Models.PingType.Resumed ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : "bg-rose-500/10 text-rose-500 border border-rose-500/20"));
+                            
+                            var statusText = ping.Status switch {
+                                HealthyCron.Models.PingType.Success => "OK",
+                                HealthyCron.Models.PingType.Start => "Start",
+                                HealthyCron.Models.PingType.Paused => "Paused",
+                                HealthyCron.Models.PingType.Resumed => "Resumed",
+                                _ => "Fail"
+                            };
                             var localTime = TimezoneHelper.ToUserTime(ping.ReceivedAt, userTz);
 
                             <tr class="hover:bg-white/[0.04] transition-all cursor-pointer group border-b border-white/5 last:border-0" onclick="showPingDetails(this)"

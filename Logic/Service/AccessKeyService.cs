@@ -47,6 +47,7 @@ namespace HealthyCron.Logic.Service
                 KeyType = type,
                 KeyPrefix = fullKey.Substring(0, 8),
                 KeyHash = keyHash,
+                PlaintextKey = type == ApiKeyType.Ping ? fullKey : null,
                 CreatedAt = DateTime.UtcNow
             };
 
