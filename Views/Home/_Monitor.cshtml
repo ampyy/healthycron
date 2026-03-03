@@ -1,0 +1,147 @@
+@* What Can You Monitor — card-grid style with image cards *@
+<section id="monitor" class="py-24 relative overflow-hidden bg-black">
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="mb-12 fade-in">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+                What You Can Monitor
+            </h2>
+            <p class="mt-3 text-[#737373] max-w-lg">
+                From cron jobs to database tasks — every type of scheduled work, covered.
+            </p>
+        </div>
+
+        <!-- Card Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
+
+            <!-- Cron Jobs -->
+            <a href="#" class="group block overflow-hidden rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-[#333333] transition-all duration-300">
+                <div class="overflow-hidden bg-[#0a0a0a] h-44 flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&auto=format&fit=crop&q=60"
+                        alt="Cron Jobs"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-white"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#525252]">Scheduled</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-white mb-2">Cron Jobs</h3>
+                    <p class="text-sm text-[#737373] leading-relaxed">Auto-monitor any cron expression — daily reports, cleanups, or data syncs.</p>
+                    <div class="flex items-center text-sm font-medium text-white mt-4">
+                        Learn more
+                        <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Heartbeats -->
+            <a href="#" class="group block overflow-hidden rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-[#333333] transition-all duration-300">
+                <div class="overflow-hidden bg-[#0a0a0a] h-44 flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop&q=60"
+                        alt="Heartbeats"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-white"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#525252]">Health</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-white mb-2">Heartbeats</h3>
+                    <p class="text-sm text-[#737373] leading-relaxed">Ping us on a schedule. If we stop hearing from you, we alert your team immediately.</p>
+                    <div class="flex items-center text-sm font-medium text-white mt-4">
+                        Learn more
+                        <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Queue Workers -->
+            <a href="#" class="group block overflow-hidden rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-[#333333] transition-all duration-300">
+                <div class="overflow-hidden bg-[#0a0a0a] h-44 flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=60"
+                        alt="Queue Workers"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-white"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#525252]">Workers</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-white mb-2">Queue Workers</h3>
+                    <p class="text-sm text-[#737373] leading-relaxed">Know when your background processors stall, fall behind, or stop processing.</p>
+                    <div class="flex items-center text-sm font-medium text-white mt-4">
+                        Learn more
+                        <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Background Jobs -->
+            <a href="#" class="group block overflow-hidden rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-[#333333] transition-all duration-300">
+                <div class="overflow-hidden bg-[#0a0a0a] h-44 flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1640158615573-cd28feb1bf4e?w=600&auto=format&fit=crop&q=60"
+                        alt="Background Jobs"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-white"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#525252]">Background</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-white mb-2">Background Jobs</h3>
+                    <p class="text-sm text-[#737373] leading-relaxed">Track long-running processes across distributed systems with start/finish signals.</p>
+                    <div class="flex items-center text-sm font-medium text-white mt-4">
+                        Learn more
+                        <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Scheduled APIs -->
+            <a href="#" class="group block overflow-hidden rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-[#333333] transition-all duration-300">
+                <div class="overflow-hidden bg-[#0a0a0a] h-44 flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1600267185393-1b4b8d4b4c64?w=600&auto=format&fit=crop&q=60"
+                        alt="Scheduled APIs"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-white"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#525252]">API</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-white mb-2">Scheduled APIs</h3>
+                    <p class="text-sm text-[#737373] leading-relaxed">Ensure your webhook triggers, polling jobs, and API callers run on time, every time.</p>
+                    <div class="flex items-center text-sm font-medium text-white mt-4">
+                        Learn more
+                        <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Database Tasks -->
+            <a href="#" class="group block overflow-hidden rounded-2xl bg-[#111111] border border-[#1a1a1a] hover:border-[#333333] transition-all duration-300">
+                <div class="overflow-hidden bg-[#0a0a0a] h-44 flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&auto=format&fit=crop&q=60"
+                        alt="Database Tasks"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-white"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#525252]">Database</span>
+                    </div>
+                    <h3 class="text-base font-semibold text-white mb-2">Database Tasks</h3>
+                    <p class="text-sm text-[#737373] leading-relaxed">Monitor backups, vacuum runs, index rebuilds and other scheduled database maintenance.</p>
+                    <div class="flex items-center text-sm font-medium text-white mt-4">
+                        Learn more
+                        <svg class="ml-2 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>

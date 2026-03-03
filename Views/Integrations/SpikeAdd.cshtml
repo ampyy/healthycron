@@ -1,0 +1,90 @@
+@{
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    ViewData["Title"] = "Add Spike.sh Integration";
+    Layout = "_DashboardLayout";
+}
+
+<div class="max-w-xl mx-auto pb-20">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-white transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Spike.sh</span>
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-8">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+            <i data-lucide="zap" class="w-7 h-7 text-emerald-400"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Add Spike.sh Integration</h1>
+            <p class="text-text-secondary text-sm mt-0.5">Trigger on-call alerts and escalations via Spike.sh</p>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">
+            <i data-lucide="alert-circle" class="w-4 h-4 inline mr-2"></i>@TempData["Error"]
+        </div>
+    }
+
+    <div class="glass-card rounded-2xl p-8 border border-white/5">
+        <form method="POST" action="/project/@project.Slug/integrations/spike" id="spikeForm">
+            @Html.AntiForgeryToken()
+
+            <!-- Integration Name -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-white mb-2">Integration Name</label>
+                <input type="text" name="name" placeholder="e.g. Backend On-call"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all">
+            </div>
+
+            <!-- Webhook URL -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-white mb-2">Webhook URL <span class="text-rose-400">*</span></label>
+                <input type="url" name="webhookUrl" id="webhookUrlInput" required
+                    placeholder="https://hooks.spike.sh/..."
+                    oninput="validateSpikeUrl(this)"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-mono">
+                <div id="urlError" class="hidden mt-1.5 text-xs text-rose-400 flex items-center gap-1">
+                    <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                    URL must start with https://hooks.spike.sh/
+                </div>
+                <p class="text-xs text-text-secondary mt-1.5">
+                    Get this from
+                    <a href="https://spike.sh" target="_blank" class="text-emerald-400 hover:underline">Spike.sh</a>
+                    → Integrations → Add Integration → Incoming Webhook
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="/project/@project.Slug/integrations"
+                    class="flex-1 text-center px-6 py-3 rounded-xl border border-white/10 text-text-secondary hover:text-white hover:bg-white/5 transition-all font-bold">
+                    Cancel
+                </a>
+                <button type="submit" id="submitBtn"
+                    class="flex-1 bg-emerald-600 hover:bg-emerald-600/80 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20">
+                    Connect Spike.sh
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function validateSpikeUrl(input) {
+        const isValid = input.value === '' || input.value.startsWith('https://hooks.spike.sh/');
+        document.getElementById('urlError').classList.toggle('hidden', isValid);
+        document.getElementById('submitBtn').disabled = !isValid && input.value !== '';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+    document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+</script>

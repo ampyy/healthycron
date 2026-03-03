@@ -8,14 +8,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        navy: '#0D1117',
-        'navy-light': '#161B22',
-        'navy-lighter': '#1C2128',
-        blue: '#4F94FF',
-        purple: '#9B5DE5',
-        'text-primary': '#FFFFFF',
-        'text-secondary': '#8B949E',
-        'border-color': '#30363D'
+        navy:         '#080B10',
+        'navy-light': '#0E1420',
+        'navy-lighter':'#141B27',
+        blue:          '#5B8EFF',
+        purple:        '#A78BFA',
+        'text-primary':'#FFFFFF',
+        'text-secondary':'#94A3B8',
+        'border-color': '#1E293B',
+        cyan:          '#22D3EE',
+        emerald:       '#34D399',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif']

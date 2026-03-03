@@ -48,6 +48,9 @@
                     var discordDetails = item.DiscordDetails;
                     var emailDetails = item.EmailDetails;
                     var pagerDutyDetails = item.PagerDutyDetails;
+                    var telegramDetails = item.TelegramDetails;
+                    var pushoverDetails = item.PushoverDetails;
+                    var spikeDetails = item.SpikeDetails;
                     var isSlack = integration.Type == HealthyCron.Enums.IntegrationType.Slack;
                     var isTeams = integration.Type == HealthyCron.Enums.IntegrationType.Teams;
                     var isGoogleChat = integration.Type == HealthyCron.Enums.IntegrationType.GoogleChat;
@@ -56,6 +59,9 @@
                     var isPagerDuty = integration.Type == HealthyCron.Enums.IntegrationType.PagerDuty;
                     var isWhatsApp = integration.Type == HealthyCron.Enums.IntegrationType.WhatsApp;
                     var isCall = integration.Type == HealthyCron.Enums.IntegrationType.Call;
+                    var isTelegram = integration.Type == HealthyCron.Enums.IntegrationType.Telegram;
+                    var isPushover = integration.Type == HealthyCron.Enums.IntegrationType.Pushover;
+                    var isSpike = integration.Type == HealthyCron.Enums.IntegrationType.Spike;
 
                     <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-blue-500/20 transition-all group">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -106,6 +112,24 @@
                                 {
                                     <div class="w-12 h-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
                                         <img src="/images/telephone.png" class="w-7 h-7 object-contain" alt="Phone Call" />
+                                    </div>
+                                }
+                                else if (isTelegram)
+                                {
+                                    <div class="w-12 h-12 bg-[#26A5E4]/10 border border-[#26A5E4]/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <svg class="w-7 h-7 text-[#26A5E4]" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                                    </div>
+                                }
+                                else if (isPushover)
+                                {
+                                    <div class="w-12 h-12 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <i data-lucide="bell" class="w-7 h-7 text-orange-400"></i>
+                                    </div>
+                                }
+                                else if (isSpike)
+                                {
+                                    <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <i data-lucide="zap" class="w-7 h-7 text-emerald-400"></i>
                                     </div>
                                 }
                                 else
@@ -163,6 +187,24 @@
                                     else if (isPagerDuty && pagerDutyDetails != null)
                                     {
                                         <p class="text-xs text-text-secondary">Account ID: @pagerDutyDetails.AccountId</p>
+                                    }
+                                    else if (isTelegram && telegramDetails != null)
+                                    {
+                                        var maskedChat = telegramDetails.ChatId.Length > 6 
+                                            ? telegramDetails.ChatId.Substring(0, 3) + "***" + telegramDetails.ChatId.Substring(telegramDetails.ChatId.Length - 3)
+                                            : telegramDetails.ChatId;
+                                        <p class="text-xs text-text-secondary">Chat: @(string.IsNullOrEmpty(telegramDetails.ChatName) ? maskedChat : $"{telegramDetails.ChatName} ({maskedChat})")</p>
+                                    }
+                                    else if (isPushover && pushoverDetails != null)
+                                    {
+                                        var maskedKey = pushoverDetails.UserKey.Length >= 6 ? pushoverDetails.UserKey.Substring(0, 6) + "****" : "****";
+                                        var priorityLabel = pushoverDetails.Priority switch { -2 => "Lowest", -1 => "Low", 0 => "Normal", 1 => "High", 2 => "Emergency", _ => "Normal" };
+                                        <p class="text-xs text-text-secondary">Key: @maskedKey | Device: @(string.IsNullOrEmpty(pushoverDetails.Device) ? "All devices" : pushoverDetails.Device) | Priority: @priorityLabel</p>
+                                    }
+                                    else if (isSpike && spikeDetails != null)
+                                    {
+                                        var maskedUrl = "hooks.spike.sh/" + (spikeDetails.WebhookUrl.Length > 40 ? spikeDetails.WebhookUrl.Substring(22, Math.Min(8, spikeDetails.WebhookUrl.Length - 22)) + "****" : "****");
+                                        <p class="text-xs text-text-secondary font-mono">@maskedUrl</p>
                                     }
                                 </div>
                             </div>
@@ -332,42 +374,57 @@
                 </a>
             </div>
 
-            <!-- WhatsApp -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 flex items-center justify-between group">
+
+
+            <!-- Telegram -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-[#26A5E4]/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
-                        <img src="/images/whatsapp.png" class="w-6 h-6 object-contain" alt="WhatsApp" />
+                    <div class="w-10 h-10 bg-[#26A5E4]/10 border border-[#26A5E4]/20 rounded-xl flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6 text-[#26A5E4]" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                     </div>
                     <div>
-                        <h3 class="font-bold text-white">WhatsApp</h3>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Direct alerts</p>
+                        <h3 class="font-bold text-white">Telegram</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Chat &amp; channel alerts</p>
                     </div>
                 </div>
-                <div class="flex flex-col items-end">
-                    <span class="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-1 opacity-50">Coming Soon</span>
-                    <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/20">
-                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                    </div>
-                </div>
+                <a href="/project/@project.Slug/integrations/telegram/add"
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-[#26A5E4]/10 group-hover:border-[#26A5E4]/20 group-hover:text-[#26A5E4] transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
             </div>
 
-            <!-- Call -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 flex items-center justify-between group">
+            <!-- Pushover -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-orange-500/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
-                        <img src="/images/telephone.png" class="w-6 h-6 object-contain" alt="Call" />
+                    <div class="w-10 h-10 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="bell" class="w-6 h-6 text-orange-400"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-white">Phone Call</h3>
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Voice alerts</p>
+                        <h3 class="font-bold text-white">Pushover</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">Push notifications</p>
                     </div>
                 </div>
-                <div class="flex flex-col items-end">
-                    <span class="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-1 opacity-50">Coming Soon</span>
-                    <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/20">
-                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                <a href="/project/@project.Slug/integrations/pushover/add"
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-orange-500/10 group-hover:border-orange-500/20 group-hover:text-orange-400 transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+            </div>
+
+            <!-- Spike.sh -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-emerald-500/20 transition-all flex items-center justify-between group">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="zap" class="w-6 h-6 text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white">Spike.sh</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">On-call &amp; escalations</p>
                     </div>
                 </div>
+                <a href="/project/@project.Slug/integrations/spike/add"
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 group-hover:text-emerald-400 transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
             </div>
         </div>
     </section>

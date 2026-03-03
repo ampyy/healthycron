@@ -127,6 +127,33 @@ namespace HealthyCron.Controllers
                         PagerDutyDetails = pagerDutyDetails
                     });
                 }
+                else if (integration.Type == IntegrationType.Telegram)
+                {
+                    var telegramDetails = await _integrationRepository.GetTelegramIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        TelegramDetails = telegramDetails
+                    });
+                }
+                else if (integration.Type == IntegrationType.Pushover)
+                {
+                    var pushoverDetails = await _integrationRepository.GetPushoverIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        PushoverDetails = pushoverDetails
+                    });
+                }
+                else if (integration.Type == IntegrationType.Spike)
+                {
+                    var spikeDetails = await _integrationRepository.GetSpikeIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        SpikeDetails = spikeDetails
+                    });
+                }
                 else
                 {
                     integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
@@ -144,6 +171,255 @@ namespace HealthyCron.Controllers
 
             return View();
         }
+
+        // ─── TELEGRAM ──────────────────────────────────────────────────────────
+
+        [HttpGet("project/{slug}/integrations/telegram/add")]
+        public async Task<IActionResult> TelegramAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+            ViewBag.Project = project;
+            ViewBag.User = user;
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/telegram")]
+        public async Task<IActionResult> TelegramCreate(string slug,
+            [FromForm] string chatId,
+            [FromForm] string? chatName,
+            [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            if (string.IsNullOrWhiteSpace(chatId))
+            {
+                TempData["Error"] = "Chat ID is required";
+                return RedirectToAction("TelegramAdd", new { slug });
+            }
+
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Telegram,
+                Name = string.IsNullOrWhiteSpace(name) ? $"Telegram{(string.IsNullOrWhiteSpace(chatName) ? "" : $" – {chatName}")}" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            var botToken = _configuration["TELEGRAM_BOT_TOKEN"] ?? _configuration["Telegram:BotToken"];
+
+            await _integrationRepository.CreateTelegramIntegrationAsync(new HealthyCron.Models.TelegramIntegration
+            {
+                IntegrationId = integrationId,
+                ChatId = chatId.Trim(),
+                ChatName = chatName?.Trim(),
+                BotUsername = "@healthycron_bot"
+            });
+
+            // Send welcome message (best-effort)
+            if (!string.IsNullOrEmpty(botToken))
+            {
+                try
+                {
+                    using var http = new System.Net.Http.HttpClient();
+                    var payload = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        chat_id = chatId.Trim(),
+                        text = "✅ Healthycron connected! You'll receive monitor alerts here."
+                    });
+                    await http.PostAsync(
+                        $"https://api.telegram.org/bot{botToken}/sendMessage",
+                        new System.Net.Http.StringContent(payload, System.Text.Encoding.UTF8, "application/json"));
+                }
+                catch { /* non-fatal */ }
+            }
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpGet("api/v1/integrations/telegram/resolve-chat-id")]
+        public async Task<IActionResult> TelegramResolveChatId()
+        {
+            var botToken = _configuration["TELEGRAM_BOT_TOKEN"] ?? _configuration["Telegram:BotToken"];
+            if (string.IsNullOrEmpty(botToken))
+                return BadRequest(new { error = "Telegram bot token not configured." });
+
+            try
+            {
+                using var http = new System.Net.Http.HttpClient();
+                var resp = await http.GetAsync($"https://api.telegram.org/bot{botToken}/getUpdates");
+                var body = await resp.Content.ReadAsStringAsync();
+                var json = System.Text.Json.JsonDocument.Parse(body).RootElement;
+
+                if (!json.GetProperty("ok").GetBoolean())
+                    return BadRequest(new { error = "Telegram API error." });
+
+                var results = json.GetProperty("result");
+                if (results.GetArrayLength() == 0)
+                    return BadRequest(new { error = "No messages found. Please send a message to the bot first." });
+
+                // Get most recent
+                var last = results[results.GetArrayLength() - 1];
+                var chat = last.TryGetProperty("message", out var msg)
+                    ? msg.GetProperty("chat")
+                    : last.GetProperty("channel_post").GetProperty("chat");
+
+                var chatId = chat.GetProperty("id").ToString();
+                var chatTitle = chat.TryGetProperty("title", out var t) ? t.GetString()
+                    : chat.TryGetProperty("first_name", out var fn) ? fn.GetString()
+                    : "";
+
+                return Ok(new { chat_id = chatId, chat_name = chatTitle });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        // ─── PUSHOVER ──────────────────────────────────────────────────────────
+
+        [HttpGet("project/{slug}/integrations/pushover/add")]
+        public async Task<IActionResult> PushoverAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+            ViewBag.Project = project;
+            ViewBag.User = user;
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/pushover")]
+        public async Task<IActionResult> PushoverCreate(string slug,
+            [FromForm] string userKey,
+            [FromForm] string? device,
+            [FromForm] string? name,
+            [FromForm] short priority = 0)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            if (string.IsNullOrWhiteSpace(userKey))
+            {
+                TempData["Error"] = "User Key is required";
+                return RedirectToAction("PushoverAdd", new { slug });
+            }
+
+            if (userKey.Trim().Length < 30)
+            {
+                TempData["Error"] = "Invalid Pushover User Key (must be 30+ characters)";
+                return RedirectToAction("PushoverAdd", new { slug });
+            }
+
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Pushover,
+                Name = string.IsNullOrWhiteSpace(name) ? "Pushover" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            await _integrationRepository.CreatePushoverIntegrationAsync(new HealthyCron.Models.PushoverIntegration
+            {
+                IntegrationId = integrationId,
+                UserKey = userKey.Trim(),
+                Device = string.IsNullOrWhiteSpace(device) ? null : device.Trim(),
+                Priority = priority
+            });
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        // ─── SPIKE.SH ──────────────────────────────────────────────────────────
+
+        [HttpGet("project/{slug}/integrations/spike/add")]
+        public async Task<IActionResult> SpikeAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+            ViewBag.Project = project;
+            ViewBag.User = user;
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/spike")]
+        public async Task<IActionResult> SpikeCreate(string slug,
+            [FromForm] string webhookUrl,
+            [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            if (string.IsNullOrWhiteSpace(webhookUrl))
+            {
+                TempData["Error"] = "Webhook URL is required";
+                return RedirectToAction("SpikeAdd", new { slug });
+            }
+
+            if (!webhookUrl.StartsWith("https://hooks.spike.sh/", StringComparison.OrdinalIgnoreCase))
+            {
+                TempData["Error"] = "Webhook URL must start with https://hooks.spike.sh/";
+                return RedirectToAction("SpikeAdd", new { slug });
+            }
+
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Spike,
+                Name = string.IsNullOrWhiteSpace(name) ? "Spike.sh" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            await _integrationRepository.CreateSpikeIntegrationAsync(new HealthyCron.Models.SpikeIntegration
+            {
+                IntegrationId = integrationId,
+                WebhookUrl = webhookUrl.Trim()
+            });
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+
 
         [HttpGet("project/{slug}/integrations/slack/authorize")]
         public async Task<IActionResult> SlackAuthorize(string slug)

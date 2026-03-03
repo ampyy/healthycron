@@ -9,6 +9,9 @@ namespace HealthyCron.Enums
         Email = 5,
         PagerDuty = 6,
         WhatsApp = 7,
-        Call = 8
+        Call = 8,
+        Telegram = 10,
+        Pushover = 11,
+        Spike = 12
     }
 }

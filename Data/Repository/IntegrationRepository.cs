@@ -210,8 +210,56 @@ namespace HealthyCron.Data.Repository
             });
         }
 
+        public async Task CreateTelegramIntegrationAsync(TelegramIntegration telegramIntegration)
+        {
+            const string sql = @"
+                INSERT INTO telegram_integrations (integration_id, chat_id, chat_name, bot_username)
+                VALUES (@IntegrationId, @ChatId, @ChatName, @BotUsername)";
+            await ExecuteAsync(sql, telegramIntegration);
+        }
 
+        public async Task<TelegramIntegration?> GetTelegramIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, chat_id, chat_name, bot_username, created_at
+                FROM telegram_integrations
+                WHERE integration_id = @IntegrationId";
+            return await QueryFirstOrDefaultAsync<TelegramIntegration>(sql, new { IntegrationId = integrationId });
+        }
 
+        public async Task CreatePushoverIntegrationAsync(PushoverIntegration pushoverIntegration)
+        {
+            const string sql = @"
+                INSERT INTO pushover_integrations (integration_id, user_key, device, priority)
+                VALUES (@IntegrationId, @UserKey, @Device, @Priority)";
+            await ExecuteAsync(sql, pushoverIntegration);
+        }
+
+        public async Task<PushoverIntegration?> GetPushoverIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, user_key, device, priority, created_at
+                FROM pushover_integrations
+                WHERE integration_id = @IntegrationId";
+            return await QueryFirstOrDefaultAsync<PushoverIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task CreateSpikeIntegrationAsync(SpikeIntegration spikeIntegration)
+        {
+            const string sql = @"
+                INSERT INTO spike_integrations (integration_id, webhook_url)
+                VALUES (@IntegrationId, @WebhookUrl)";
+            await ExecuteAsync(sql, spikeIntegration);
+        }
+
+        public async Task<SpikeIntegration?> GetSpikeIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, webhook_url, created_at
+                FROM spike_integrations
+                WHERE integration_id = @IntegrationId";
+            return await QueryFirstOrDefaultAsync<SpikeIntegration>(sql, new { IntegrationId = integrationId });
+        }
 
         public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)
         {

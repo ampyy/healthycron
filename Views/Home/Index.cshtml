@@ -3,82 +3,283 @@
 }
 
 @* Hero Section *@
-<section class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-gradient-animated">
-    <div class="absolute top-1/4 left-10 w-72 h-72 bg-blue/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-1/4 right-10 w-96 h-96 bg-purple/10 rounded-full blur-3xl"></div>
+<section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-gradient-animated px-4 sm:px-6 lg:px-8">
+    <!-- Subtle top vignette -->
+    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div class="text-center lg:text-left">
-                <div
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-navy-light border border-border-color mb-6">
-                    <span class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></span>
-                    <span class="text-sm text-text-secondary">99.99% Uptime Guaranteed</span>
-                </div>
+    <div class="w-full max-w-6xl flex flex-col md:flex-row min-h-[520px] items-center relative">
 
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                    <span class="text-white">Cron & Background Job</span><br>
-                    <span class="gradient-text">Monitoring. Simplified.</span>
-                </h1>
+        <!-- Left: Text Content -->
+        <div class="flex-1 flex flex-col justify-center py-16 md:py-20 relative z-10">
 
-                <p class="text-lg text-text-secondary mb-8 max-w-xl mx-auto lg:mx-0">
-                    Never miss a job run. Monitor cron, heartbeats, queues, and background workers in real-time — with logs, alerts, and performance insights built for engineering teams.
-                </p>
-
-                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a href="/signup" class="glow-btn px-8 py-4 rounded-xl text-base font-semibold text-white">
-                        Signup
-                    </a>
-                    <button disabled
-                        class="px-8 py-4 rounded-xl text-base font-medium text-white bg-navy-light border border-border-color cursor-not-allowed opacity-70 flex items-center justify-center gap-2">
-                        Talk to Sales
-                    </button>
-                </div>
+            <!-- Status badge -->
+            <div class="inline-flex items-center gap-2 rounded-full border border-[#30363D] bg-[#161B22]/70 px-3 py-1 text-xs text-[#8B949E] mb-6 w-fit">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+                All systems operational
             </div>
 
-            <!-- Dashboard Mockup with Image -->
-            <div class="relative">
-                <div class="glass-card rounded-2xl overflow-hidden">
-                    <img src="/images/dashboard.png"
-                        alt="HealthyCron Dashboard" class="w-full h-auto opacity-90">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-6">
-                        <div class="grid grid-cols-3 gap-3">
-                            <div class="bg-navy-light/80 backdrop-blur rounded-lg p-3">
-                                <p class="text-xs text-text-secondary">Active Jobs</p>
-                                <p class="text-xl font-bold text-white">247</p>
-                            </div>
-                            <div class="bg-navy-light/80 backdrop-blur rounded-lg p-3">
-                                <p class="text-xs text-text-secondary">Success Rate</p>
-                                <p class="text-xl font-bold text-green-400">99.8%</p>
-                            </div>
-                            <div class="bg-navy-light/80 backdrop-blur rounded-lg p-3">
-                                <p class="text-xs text-text-secondary">Alerts Today</p>
-                                <p class="text-xl font-bold text-blue">3</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-[1.1] mb-4">
+                Global Job<br>
+                <span class="gradient-text">Monitoring. Simplified.</span>
+            </h1>
 
-                <div class="absolute -bottom-4 -left-4 glass-card rounded-xl p-4 border-l-4 border-blue animate-bounce"
-                    style="animation-duration: 3s;">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-blue/20 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-white">Alert Sent</p>
-                            <p class="text-xs text-text-secondary">Slack + PagerDuty</p>
-                        </div>
-                    </div>
+            <p class="text-sm md:text-base text-[#8B949E] max-w-md leading-relaxed mb-8">
+                Never miss a job run. Monitor cron, heartbeats, queues, and background workers in real-time — with logs, alerts, and performance insights built for engineering teams worldwide.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-10">
+                <a href="/signup" class="px-7 py-3 rounded-xl text-sm font-semibold text-center bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-500 hover:to-indigo-500 shadow-lg shadow-violet-900/30 transition-all duration-200">
+                    Get Started Free
+                </a>
+                <a href="#contact"
+                    class="px-7 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/10 hover:border-white/30 hover:text-white transition-all flex items-center justify-center gap-2">
+                    Talk to Sales
+                </a>
+            </div>
+
+            <!-- Stats row -->
+            <div class="flex items-center gap-6">
+                <div>
+                    <p class="text-2xl font-bold text-white">150+</p>
+                    <p class="text-xs text-[#8B949E]">Edge Nodes</p>
+                </div>
+                <div class="w-px h-8 bg-[#30363D]"></div>
+                <div>
+                    <p class="text-2xl font-bold text-white">&lt;50ms</p>
+                    <p class="text-xs text-[#8B949E]">Avg Latency</p>
+                </div>
+                <div class="w-px h-8 bg-[#30363D]"></div>
+                <div>
+                    <p class="text-2xl font-bold text-white">99.99%</p>
+                    <p class="text-xs text-[#8B949E]">Uptime SLA</p>
                 </div>
             </div>
         </div>
+
+        <!-- Right: Interactive Globe -->
+        <div class="flex-1 flex items-center justify-center py-8 md:py-0 min-h-[400px] relative">
+            <canvas id="hero-globe"
+                style="width:460px;height:460px;cursor:grab;"
+                class="relative z-10 max-w-full">
+            </canvas>
+        </div>
+
     </div>
 </section>
+
+@* Interactive Globe Script *@
+<script>
+(function () {
+    const canvas = document.getElementById('hero-globe');
+    if (!canvas) return;
+
+    const MARKERS = [
+        { lat: 37.78, lng: -122.42, label: "San Francisco" },
+        { lat: 51.51, lng: -0.13,  label: "London" },
+        { lat: 35.68, lng: 139.69, label: "Tokyo" },
+        { lat: -33.87, lng: 151.21, label: "Sydney" },
+        { lat: 1.35,  lng: 103.82, label: "Singapore" },
+        { lat: 55.76, lng: 37.62,  label: "Moscow" },
+        { lat: -23.55, lng: -46.63, label: "São Paulo" },
+        { lat: 19.43, lng: -99.13, label: "Mexico City" },
+        { lat: 28.61, lng: 77.21,  label: "Delhi" },
+        { lat: 36.19, lng: 44.01,  label: "Erbil" },
+    ];
+
+    const CONNECTIONS = [
+        { from: [37.78, -122.42], to: [51.51, -0.13] },
+        { from: [51.51, -0.13],   to: [35.68, 139.69] },
+        { from: [35.68, 139.69],  to: [-33.87, 151.21] },
+        { from: [37.78, -122.42], to: [1.35, 103.82] },
+        { from: [51.51, -0.13],   to: [28.61, 77.21] },
+        { from: [37.78, -122.42], to: [-23.55, -46.63] },
+        { from: [1.35, 103.82],   to: [-33.87, 151.21] },
+        { from: [28.61, 77.21],   to: [36.19, 44.01] },
+        { from: [51.51, -0.13],   to: [36.19, 44.01] },
+    ];
+
+    // Pre-generate fibonacci sphere dots
+    const DOTS = [];
+    const numDots = 1200;
+    const goldenRatio = (1 + Math.sqrt(5)) / 2;
+    for (let i = 0; i < numDots; i++) {
+        const theta = (2 * Math.PI * i) / goldenRatio;
+        const phi   = Math.acos(1 - (2 * (i + 0.5)) / numDots);
+        DOTS.push([
+            Math.cos(theta) * Math.sin(phi),
+            Math.cos(phi),
+            Math.sin(theta) * Math.sin(phi),
+        ]);
+    }
+
+    function latLngToXYZ(lat, lng, r) {
+        const phi   = ((90 - lat) * Math.PI) / 180;
+        const theta = ((lng + 180) * Math.PI) / 180;
+        return [
+            -(r * Math.sin(phi) * Math.cos(theta)),
+             r * Math.cos(phi),
+             r * Math.sin(phi) * Math.sin(theta),
+        ];
+    }
+
+    function rotY(x, y, z, a) {
+        const c = Math.cos(a), s = Math.sin(a);
+        return [x * c + z * s, y, -x * s + z * c];
+    }
+
+    function rotX(x, y, z, a) {
+        const c = Math.cos(a), s = Math.sin(a);
+        return [x, y * c - z * s, y * s + z * c];
+    }
+
+    function project(x, y, z, cx, cy, fov) {
+        const scale = fov / (fov + z);
+        return [x * scale + cx, y * scale + cy];
+    }
+
+    let rotYAngle = 0.4;
+    let rotXAngle = 0.3;
+    let drag = { active: false, startX: 0, startY: 0, startRotY: 0, startRotX: 0 };
+    let animId;
+    let time = 0;
+    const AUTO_SPEED = 0.002;
+    const DOT_COLOR  = 'rgba(79,148,255,ALPHA)';   // matches #4F94FF brand blue
+    const ARC_COLOR  = 'rgba(79,148,255,0.45)';
+    const MKR_COLOR  = 'rgba(100,220,255,1)';
+
+    function draw() {
+        const dpr = window.devicePixelRatio || 1;
+        const w   = canvas.clientWidth;
+        const h   = canvas.clientHeight;
+        canvas.width  = w * dpr;
+        canvas.height = h * dpr;
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        const cx     = w / 2;
+        const cy     = h / 2;
+        const radius = Math.min(w, h) * 0.38;
+        const fov    = 600;
+
+        if (!drag.active) rotYAngle += AUTO_SPEED;
+        time += 0.015;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Outer glow
+        const glow = ctx.createRadialGradient(cx, cy, radius * 0.8, cx, cy, radius * 1.5);
+        glow.addColorStop(0, 'rgba(79,148,255,0.04)');
+        glow.addColorStop(1, 'rgba(79,148,255,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, w, h);
+
+        // Globe outline
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(79,148,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        const ry = rotYAngle;
+        const rx = rotXAngle;
+
+        // Dots
+        for (let i = 0; i < DOTS.length; i++) {
+            let [x, y, z] = DOTS[i];
+            x *= radius; y *= radius; z *= radius;
+            [x, y, z] = rotX(x, y, z, rx);
+            [x, y, z] = rotY(x, y, z, ry);
+            if (z > 0) continue;
+            const [sx, sy] = project(x, y, z, cx, cy, fov);
+            const a = Math.max(0.08, 1 - (z + radius) / (2 * radius));
+            const ds = 1 + a * 0.8;
+            ctx.beginPath();
+            ctx.arc(sx, sy, ds, 0, Math.PI * 2);
+            ctx.fillStyle = DOT_COLOR.replace('ALPHA', a.toFixed(2));
+            ctx.fill();
+        }
+
+        // Connections / arcs
+        for (const conn of CONNECTIONS) {
+            let [x1,y1,z1] = latLngToXYZ(conn.from[0], conn.from[1], radius);
+            let [x2,y2,z2] = latLngToXYZ(conn.to[0],   conn.to[1],   radius);
+            [x1,y1,z1] = rotX(x1,y1,z1,rx); [x1,y1,z1] = rotY(x1,y1,z1,ry);
+            [x2,y2,z2] = rotX(x2,y2,z2,rx); [x2,y2,z2] = rotY(x2,y2,z2,ry);
+            if (z1 > radius * 0.3 && z2 > radius * 0.3) continue;
+            const [sx1,sy1] = project(x1,y1,z1,cx,cy,fov);
+            const [sx2,sy2] = project(x2,y2,z2,cx,cy,fov);
+            // Elevated midpoint
+            const mX = (x1+x2)/2, mY = (y1+y2)/2, mZ = (z1+z2)/2;
+            const mL = Math.sqrt(mX*mX+mY*mY+mZ*mZ);
+            const ah = radius * 1.25;
+            const [scx,scy] = project((mX/mL)*ah,(mY/mL)*ah,(mZ/mL)*ah,cx,cy,fov);
+            ctx.beginPath();
+            ctx.moveTo(sx1, sy1);
+            ctx.quadraticCurveTo(scx, scy, sx2, sy2);
+            ctx.strokeStyle = ARC_COLOR;
+            ctx.lineWidth   = 1.2;
+            ctx.stroke();
+            // Traveling dot
+            const t  = (Math.sin(time * 1.2 + conn.from[0] * 0.1) + 1) / 2;
+            const tx = (1-t)*(1-t)*sx1 + 2*(1-t)*t*scx + t*t*sx2;
+            const ty = (1-t)*(1-t)*sy1 + 2*(1-t)*t*scy + t*t*sy2;
+            ctx.beginPath();
+            ctx.arc(tx, ty, 2, 0, Math.PI * 2);
+            ctx.fillStyle = MKR_COLOR;
+            ctx.fill();
+        }
+
+        // Markers
+        for (const m of MARKERS) {
+            let [x,y,z] = latLngToXYZ(m.lat, m.lng, radius);
+            [x,y,z] = rotX(x,y,z,rx);
+            [x,y,z] = rotY(x,y,z,ry);
+            if (z > radius * 0.1) continue;
+            const [sx,sy] = project(x,y,z,cx,cy,fov);
+            const pulse = Math.sin(time * 2 + m.lat) * 0.5 + 0.5;
+            // Pulse ring
+            ctx.beginPath();
+            ctx.arc(sx, sy, 4 + pulse * 4, 0, Math.PI * 2);
+            ctx.strokeStyle = MKR_COLOR.replace('1)', `${(0.2 + pulse * 0.15).toFixed(2)})`);
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            // Core dot
+            ctx.beginPath();
+            ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = MKR_COLOR;
+            ctx.fill();
+            // Label
+            if (m.label) {
+                ctx.font = '10px Inter, system-ui, sans-serif';
+                ctx.fillStyle = MKR_COLOR.replace('1)', '0.6)');
+                ctx.fillText(m.label, sx + 8, sy + 3);
+            }
+        }
+
+        animId = requestAnimationFrame(draw);
+    }
+
+    // Drag / rotate
+    canvas.addEventListener('pointerdown', function (e) {
+        drag = { active: true, startX: e.clientX, startY: e.clientY, startRotY: rotYAngle, startRotX: rotXAngle };
+        canvas.setPointerCapture(e.pointerId);
+        canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (!drag.active) return;
+        const dx = e.clientX - drag.startX;
+        const dy = e.clientY - drag.startY;
+        rotYAngle = drag.startRotY + dx * 0.005;
+        rotXAngle = Math.max(-1, Math.min(1, drag.startRotX + dy * 0.005));
+    });
+    canvas.addEventListener('pointerup',   function () { drag.active = false; canvas.style.cursor = 'grab'; });
+    canvas.addEventListener('pointerleave', function () { drag.active = false; canvas.style.cursor = 'grab'; });
+
+    animId = requestAnimationFrame(draw);
+})();
+</script>
 
 <!-- Trusted By Section -->
 <section class="py-16 border-y border-border-color bg-navy-light/50">
@@ -264,352 +465,177 @@
     </div>
 </section>
 
-<!-- What You Can Monitor -->
-<section id="monitor" class="py-24 bg-navy-light/30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 fade-in">
-            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">What You Can Monitor</h2>
-            <p class="text-text-secondary max-w-2xl mx-auto">From simple cron jobs to complex distributed systems.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 fade-in">
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=400&q=80" alt="Cron Jobs"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-blue/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">Cron Jobs</h3>
-                    <p class="text-sm text-text-secondary">Linux, K8s, Node scheduled tasks</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&q=80" alt="Heartbeats"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">Heartbeats</h3>
-                    <p class="text-sm text-text-secondary">Ping endpoints & health checks</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&q=80" alt="Backups"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-blue/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">Backups</h3>
-                    <p class="text-sm text-text-secondary">Database & file backups</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=400&q=80"
-                        alt="ETL Pipelines"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">ETL Pipelines</h3>
-                    <p class="text-sm text-text-secondary">Data workflows & transforms</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80" alt="Reports"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-blue/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">Reports</h3>
-                    <p class="text-sm text-text-secondary">Automated report generation</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=80" alt="API Triggers"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">API Triggers</h3>
-                    <p class="text-sm text-text-secondary">Webhook & API workflows</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=400&q=80" alt="Database"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-blue/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">Database</h3>
-                    <p class="text-sm text-text-secondary">Maintenance & cleanup tasks</p>
-                </div>
-            </div>
-
-            <div class="glass-card rounded-2xl overflow-hidden group cursor-pointer">
-                <div class="relative h-40 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=400&q=80"
-                        alt="Background Jobs"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-navy via-navy/50 to-transparent"></div>
-                </div>
-                <div class="p-5">
-                    <div class="w-12 h-12 rounded-xl bg-purple/10 flex items-center justify-center mb-3">
-                        <svg class="w-6 h-6 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-white mb-1">Background Jobs</h3>
-                    <p class="text-sm text-text-secondary">Python, Ruby, Go workers</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Integrations -->
 <section id="integrations" class="py-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16 fade-in">
-            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Integrations</h2>
-            <p class="text-text-secondary max-w-2xl mx-auto">Connect to the tools you already use. Instant setup.</p>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Integrate with your favorite tools</h2>
+            <p class="text-[#737373] max-w-2xl mx-auto mt-4">Get alerted via every channel you use — from messaging apps to incident management platforms.</p>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-4 lg:gap-6 fade-in mb-12">
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slack/slack-original.svg" alt="Slack"
-                    class="w-8 h-8">
-                <span class="text-sm text-white font-medium">Slack</span>
-            </div>
-            
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <svg class="w-8 h-8 text-[#5059C9]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.5 2.75a1.75 1.75 0 100 3.5 1.75 1.75 0 000-3.5zM9 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM7.5 14a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM12 17.75a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5z" />
-                </svg>
-                <span class="text-sm text-white font-medium">Teams</span>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 fade-in">
+
+            <!-- Email -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-violet-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Email</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Receive formatted job failure reports directly in your inbox. Works with any email provider.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Available now
+                    </span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <svg class="w-8 h-8 text-[#06AC38]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12s12-5.383 12-12S18.617 0 12 0zm5.64 16.56h-2.88c-.96 0-1.44-.48-1.44-1.44V8.88c0-.96.48-1.44 1.44-1.44h2.88c.96 0 1.44.48 1.44 1.44v6.24c0 .96-.48 1.44-1.44 1.44zm-7.2 0H7.56c-.96 0-1.44-.48-1.44-1.44V8.88c0-.96.48-1.44 1.44-1.44h2.88c.96 0 1.44.48 1.44 1.44v6.24c0 .96-.48 1.44-1.44 1.44z" />
-                </svg>
-                <span class="text-sm text-white font-medium">PagerDuty</span>
+
+
+            <!-- Telegram -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-sky-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-[#26A5E4]" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Telegram</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Send job failure alerts to Telegram bots or channels. Perfect for developer-first teams.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Available now
+                    </span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <svg class="w-8 h-8 text-[#00AC47]" fill="currentColor" viewBox="0 0 24 24">
-                     <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/>
-                </svg>
-                <span class="text-sm text-white font-medium">Google Chat</span>
+            <!-- Pushover -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-orange-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <i data-lucide="bell" class="w-8 h-8 text-orange-400"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Pushover</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Send job failure alerts to your mobile device via push notification instantly.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Available now
+                    </span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <svg class="w-8 h-8 text-[#5865F2]" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
-                </svg>
-                <span class="text-sm text-white font-medium">Discord</span>
+            <!-- Spike.sh -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-emerald-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <i data-lucide="zap" class="w-8 h-8 text-emerald-400"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Spike.sh</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Trigger on-call alerts and escalations seamlessly integrating with your incident workflow.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Available now
+                    </span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <svg class="w-8 h-8 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-                <span class="text-sm text-white font-medium">Webhooks</span>
+            <!-- Slack -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-yellow-500/30 transition-all">
+                <div class="w-10 h-10">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slack/slack-original.svg" alt="Slack" class="w-10 h-10">
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Slack</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Get instant job failure alerts in your Slack channels. Rich message formatting with job context.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 rounded-lg text-[11px]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Coming Soon
+                    </span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl px-6 py-4 flex items-center gap-3 hover:border-blue/50 transition-all">
-                <svg class="w-8 h-8 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <span class="text-sm text-white font-medium">Email</span>
-            </div>
-        </div>
-
-        <div class="text-center mb-6">
-            <span class="text-xs font-bold uppercase tracking-widest text-text-secondary">Coming Soon</span>
-        </div>
-
-        <div class="flex flex-wrap justify-center gap-4 lg:gap-6 fade-in opacity-60">
-            <!-- GitHub Issues -->
-            <div class="glass-card rounded-xl px-5 py-3 flex items-center gap-3 border border-dashed border-white/5">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="w-6 h-6 invert">
-                <span class="text-sm text-text-secondary font-medium">GitHub Issues</span>
-            </div>
-
-            <!-- Jira -->
-            <div class="glass-card rounded-xl px-5 py-3 flex items-center gap-3 border border-dashed border-white/5">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg" alt="Jira" class="w-6 h-6">
-                <span class="text-sm text-text-secondary font-medium">Jira</span>
+            <!-- Discord -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-indigo-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-[#5865F2]" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Discord</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Send job alerts directly to your Discord server channels with rich embed messages.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 rounded-lg text-[11px]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Coming Soon
+                    </span>
+                </div>
             </div>
 
-            <!-- WhatsApp -->
-            <div class="glass-card rounded-xl px-5 py-3 flex items-center gap-3 border border-dashed border-white/5">
-                <svg class="w-6 h-6 text-[#25D366]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                </svg>
-                <span class="text-sm text-text-secondary font-medium">WhatsApp</span>
+            <!-- Webhooks -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-violet-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">Webhooks</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">POST job events to any endpoint — build your own alerting pipeline or connect to any service.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 rounded-lg text-[11px]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Coming Soon
+                    </span>
+                </div>
             </div>
-            
-            <!-- PagerTree -->
-            <div class="glass-card rounded-xl px-5 py-3 flex items-center gap-3 border border-dashed border-white/5">
-                 <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21h18M5 21V7l8-4 8 4v14" />
-                </svg>
-                <span class="text-sm text-text-secondary font-medium">PagerTree</span>
+
+            <!-- PagerDuty -->
+            <div class="glass-card rounded-xl p-6 flex flex-col gap-4 border border-[#1a1a1a] hover:border-green-500/30 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-[#06AC38]" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm5.64 16.56h-2.88c-.96 0-1.44-.48-1.44-1.44V8.88c0-.96.48-1.44 1.44-1.44h2.88c.96 0 1.44.48 1.44 1.44v6.24c0 .96-.48 1.44-1.44 1.44zm-7.2 0H7.56c-.96 0-1.44-.48-1.44-1.44V8.88c0-.96.48-1.44 1.44-1.44h2.88c.96 0 1.44.48 1.44 1.44v6.24c0 .96-.48 1.44-1.44 1.44z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-base font-semibold text-white mb-1">PagerDuty</h3>
+                    <p class="text-sm text-[#737373] line-clamp-2">Escalate critical job failures to your on-call engineers with full incident management workflow.</p>
+                </div>
+                <div class="border-t border-[#1a1a1a] pt-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 rounded-lg text-[11px]">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Coming Soon
+                    </span>
+                </div>
             </div>
+
         </div>
     </div>
 </section>
 
-<!-- Why Different -->
-<section class="py-24 bg-navy-light/30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16 fade-in">
-            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Why We're Different</h2>
-            <p class="text-text-secondary max-w-2xl mx-auto">Built specifically for cron monitoring, not just simple
-                pings.</p>
-        </div>
+<partial name="_Monitor" />
 
-        <div class="grid md:grid-cols-2 gap-6 fade-in">
-            <div class="glass-card rounded-2xl p-8 flex gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-blue/10 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-8 h-8 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Deep Cron Awareness</h3>
-                    <p class="text-text-secondary">Understands cron syntax, schedules, and grace periods. Not just
-                        simple uptime pings.</p>
-                </div>
-            </div>
+<partial name="_WhyDifferent" />
 
-            <div class="glass-card rounded-2xl p-8 flex gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-purple/10 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-8 h-8 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Minimal False Positives</h3>
-                    <p class="text-text-secondary">Verification checks before alerts. No more alert fatigue from noisy
-                        monitoring.</p>
-                </div>
-            </div>
 
-            <div class="glass-card rounded-2xl p-8 flex gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-purple/10 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-8 h-8 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Faster Delivery</h3>
-                    <p class="text-text-secondary">Alerts delivered in seconds, not minutes. When your job fails, you
-                        know immediately.</p>
-                </div>
-            </div>
+<partial name="_Stats" />
 
-            <div class="glass-card rounded-2xl p-8 flex gap-6">
-                <div class="w-16 h-16 rounded-2xl bg-blue/10 flex items-center justify-center flex-shrink-0">
-                    <svg class="w-8 h-8 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold text-white mb-2">Built for Dev Teams</h3>
-                    <p class="text-text-secondary">API-first design, public status pages, detailed logs, and environment
-                        tags.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- Stats Bar -->
-<section class="py-16 border-y border-border-color">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 fade-in">
-            <div class="text-center">
-                <p class="text-3xl sm:text-4xl font-bold gradient-text">10M+</p>
-                <p class="text-sm text-text-secondary mt-2">Checks per week</p>
-            </div>
-            <div class="text-center">
-                <p class="text-3xl sm:text-4xl font-bold gradient-text">99.99%</p>
-                <p class="text-sm text-text-secondary mt-2">Alert delivery rate</p>
-            </div>
-            <div class="text-center">
-                <p class="text-3xl sm:text-4xl font-bold gradient-text">2,500+</p>
-                <p class="text-sm text-text-secondary mt-2">Dev teams</p>
-            </div>
-            <div class="text-center">
-                <p class="text-3xl sm:text-4xl font-bold gradient-text">99.999%</p>
-                <p class="text-sm text-text-secondary mt-2">Uptime SLA</p>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Testimonials -->
 <section id="testimonials" class="py-24 overflow-hidden">
@@ -702,3 +728,4 @@
 @* <partial name="_Blog" /> *@
 <partial name="_Pricing" />
 <partial name="_FAQ" />
+<partial name="_Contact" />

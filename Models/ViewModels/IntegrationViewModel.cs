@@ -11,6 +11,9 @@ namespace HealthyCron.Models.ViewModels
         public DiscordIntegration? DiscordDetails { get; set; }
         public EmailIntegration? EmailDetails { get; set; }
         public PagerDutyIntegration? PagerDutyDetails { get; set; }
+        public TelegramIntegration? TelegramDetails { get; set; }
+        public PushoverIntegration? PushoverDetails { get; set; }
+        public SpikeIntegration? SpikeDetails { get; set; }
         public bool IsEnabledForMonitor { get; set; }
     }
 }

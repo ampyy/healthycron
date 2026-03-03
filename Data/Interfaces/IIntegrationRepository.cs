@@ -40,6 +40,19 @@ namespace HealthyCron.Data.Interfaces
         // Opsgenie Integration
 
 
+        // Telegram Integration
+        Task CreateTelegramIntegrationAsync(TelegramIntegration telegramIntegration);
+        Task<TelegramIntegration?> GetTelegramIntegrationByIntegrationIdAsync(Guid integrationId);
+
+        // Pushover Integration
+        Task CreatePushoverIntegrationAsync(PushoverIntegration pushoverIntegration);
+        Task<PushoverIntegration?> GetPushoverIntegrationByIntegrationIdAsync(Guid integrationId);
+
+        // Spike.sh Integration
+        Task CreateSpikeIntegrationAsync(SpikeIntegration spikeIntegration);
+        Task<SpikeIntegration?> GetSpikeIntegrationByIntegrationIdAsync(Guid integrationId);
+
+
         // Monitor Integration Mapping
         Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId);
         Task<IEnumerable<Guid>> GetMappedMonitorIdsAsync(Guid integrationId);

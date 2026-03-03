@@ -1,0 +1,115 @@
+@{
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    ViewData["Title"] = "Add Pushover Integration";
+    Layout = "_DashboardLayout";
+}
+
+<div class="max-w-xl mx-auto pb-20">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-white transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Pushover</span>
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-8">
+        <div class="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
+            <i data-lucide="bell" class="w-7 h-7 text-orange-400"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-white">Add Pushover Integration</h1>
+            <p class="text-text-secondary text-sm mt-0.5">Push notifications to your phone or desktop via Pushover</p>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">
+            <i data-lucide="alert-circle" class="w-4 h-4 inline mr-2"></i>@TempData["Error"]
+        </div>
+    }
+
+    <div class="glass-card rounded-2xl p-8 border border-white/5">
+        <form method="POST" action="/project/@project.Slug/integrations/pushover">
+            @Html.AntiForgeryToken()
+
+            <!-- Integration Name -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-white mb-2">Integration Name</label>
+                <input type="text" name="name" placeholder="e.g. My iPhone"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all">
+            </div>
+
+            <!-- User Key -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-white mb-2">User Key <span class="text-rose-400">*</span></label>
+                <input type="text" name="userKey" required placeholder="uQiRzpo4DXghDmr9QzzfQu..."
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all font-mono">
+                <p class="text-xs text-text-secondary mt-1.5">
+                    Find your User Key at
+                    <a href="https://pushover.net/dashboard" target="_blank" class="text-orange-400 hover:underline">pushover.net/dashboard</a>
+                </p>
+            </div>
+
+            <!-- Device (optional) -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-white mb-2">
+                    Device <span class="text-text-secondary font-normal">(optional)</span>
+                </label>
+                <input type="text" name="device" placeholder="iphone"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all font-mono">
+                <p class="text-xs text-text-secondary mt-1.5">Leave blank to send to all your devices.</p>
+            </div>
+
+            <!-- Priority -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-white mb-2">Priority</label>
+                <select name="priority" id="prioritySelect" onchange="onPriorityChange(this.value)"
+                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all">
+                    <option value="-2">Lowest — Silent, no notification sound</option>
+                    <option value="-1">Low — Quiet notification</option>
+                    <option value="0" selected>Normal (recommended)</option>
+                    <option value="1">High — Bypasses quiet hours</option>
+                    <option value="2">Emergency — Requires acknowledgement</option>
+                </select>
+
+                <!-- Emergency warning -->
+                <div id="emergencyWarning" class="hidden mt-3 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-400">
+                    <div class="flex items-start gap-2">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold text-rose-300 mb-1">Emergency Priority</p>
+                            <p>Emergency alerts require the user to acknowledge them. They will retry every 30 seconds for up to 1 hour until acknowledged. Use sparingly for truly critical failures.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="/project/@project.Slug/integrations"
+                    class="flex-1 text-center px-6 py-3 rounded-xl border border-white/10 text-text-secondary hover:text-white hover:bg-white/5 transition-all font-bold">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="flex-1 bg-orange-500 hover:bg-orange-500/80 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/20">
+                    Connect Pushover
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function onPriorityChange(val) {
+        document.getElementById('emergencyWarning').classList.toggle('hidden', val !== '2');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+    document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+</script>
