@@ -1,14 +1,11 @@
 @{
     var project = (ViewBag.Project as HealthyCron.Models.Project)!;
-    ViewData["Title"] = "Add Spike.sh Integration";
+    ViewData["Title"] = $"{project?.Name} - Add Spike.sh Integration";
     Layout = "_DashboardLayout";
 }
 
-<div class="max-w-xl mx-auto pb-20">
+<div class="max-w-2xl mx-auto pb-20 mt-8">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
-        <a href="/dashboard" class="hover:text-white transition-colors flex items-center gap-1">
-            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Projects
     <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
         <a href="/dashboard" class="hover:text-amber-500 transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
@@ -40,16 +37,16 @@
         <!-- Subtle Glow -->
         <div class="absolute -top-32 -left-32 w-64 h-64 bg-amber-500/5 blur-[80px] rounded-full pointer-events-none opacity-50"></div>
 
-        <form id="spike-form" class="space-y-6 relative z-10">
+        <form id="spike-form" method="post" action="/project/@project?.Slug/integrations/spike" class="space-y-6 relative z-10">
             <div>
                 <label class="block text-sm font-bold text-white mb-2">Integration Name <span class="text-amber-500">*</span></label>
-                <input type="text" id="integration-name" required value="Spike.sh"
+                <input type="text" id="integration-name" name="name" required value="Spike.sh"
                        class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-amber-500 hover:border-[#404040] focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-inner" />
             </div>
             
             <div>
                 <label class="block text-sm font-bold text-white mb-2">Webhook URL <span class="text-amber-500">*</span></label>
-                <input type="url" id="webhook-url" required placeholder="https://hooks.spike.sh/..."
+                <input type="url" id="webhook-url" name="webhookUrl" required placeholder="https://hooks.spike.sh/..."
                        class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-amber-500 hover:border-[#404040] focus:ring-1 focus:ring-amber-500 outline-none transition-all font-mono shadow-inner" />
                 <div class="mt-2 flex items-center justify-between">
                     <span class="text-xs text-[#737373]">Get this from your Spike.sh Integrations.</span>
@@ -82,56 +79,23 @@
         if (typeof lucide !== 'undefined') lucide.createIcons();
     });
 
-    document.getElementById('spike-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submit-btn');
+    document.getElementById('spike-form').addEventListener('submit', function(e) {
+        const url = document.getElementById('webhook-url').value;
         const err = document.getElementById('error-message');
         const errText = document.getElementById('error-text');
-        const url = document.getElementById('webhook-url').value;
-        const name = document.getElementById('integration-name').value;
-        
+        const btn = document.getElementById('submit-btn');
+
         err.classList.add('hidden');
-        
+
         if (!url.startsWith('https://hooks.spike.sh/')) {
+            e.preventDefault();
             errText.textContent = "Webhook URL must start with https://hooks.spike.sh/";
             err.classList.remove('hidden');
             return;
         }
 
+        // Show loading state, then let the native form POST happen
         btn.disabled = true;
         btn.innerHTML = '<div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent mr-2"></div> Connecting...';
-        btn.classList.add('opacity-50', 'cursor-not-allowed'); // Added these classes based on the new button style
-
-        try {
-            const res = await fetch('/api/v1/integrations/spike', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    project_id: '@project?.Id',
-                    webhook_url: url,
-                    name: name
-                })
-            });
-
-            if (res.ok) {
-                window.location.href = `/project/@project?.Slug/integrations`;
-            } else {
-                const data = await res.json();
-                errText.textContent = data.error || 'Failed to connect integration.';
-                err.classList.remove('hidden');
-                resetBtn();
-            }
-        } catch (error) {
-            errText.textContent = 'A network error occurred. Please try again.';
-            err.classList.remove('hidden');
-            resetBtn();
-        }
-
-        function resetBtn() {
-            btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="plus" class="w-4 h-4 mr-2"></i> Connect Spike';
-            btn.classList.remove('opacity-50', 'cursor-not-allowed'); // Removed these classes
-            lucide.createIcons();
-        }
     });
 </script>

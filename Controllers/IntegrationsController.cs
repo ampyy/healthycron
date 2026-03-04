@@ -336,35 +336,43 @@ namespace HealthyCron.Controllers
             var requestScheme = Request.Headers["X-Forwarded-Proto"].FirstOrDefault() ?? Request.Scheme;
             string baseUrl = $"{requestScheme}://{requestHost}";
 
-            // Encode our token into the success redirect URL as `state` so Pushover echoes it back
-            string successUrl = $"{baseUrl}/integrations/pushover/callback?state={randomToken}";
-            string failureUrl = $"{baseUrl}/integrations/pushover/failed?state={randomToken}";
+            // The user has "Expect OAuth2 parameters" checked, so we use `redirect_uri` and `state`
+            string redirectUrl = $"{baseUrl}/integrations/pushover/callback";
+            string subscriptionCode = _configuration["PUSHOVER_SUBSCRIPTION_CODE"];
 
-            Console.WriteLine($"[PushoverConfig] Generated success URL: {successUrl}");
+            Console.WriteLine($"[PushoverConfig] Generated redirect URL: {redirectUrl}");
 
-            string appName = _configuration["PUSHOVER_APP_NAME"];
-            
-            // For Web-based subscriptions, use the main application name
-            string url = $"https://pushover.net/subscribe/{appName}" +
-                         $"?success={HttpUtility.UrlEncode(successUrl)}" +
-                         $"&failure={HttpUtility.UrlEncode(failureUrl)}";
+            // For Web-based subscriptions with OAuth2 params enabled
+            string url = $"https://pushover.net/subscribe/{subscriptionCode}" +
+                         $"?redirect_uri={HttpUtility.UrlEncode(redirectUrl)}" +
+                         $"&state={randomToken}";
 
             return Ok(new { url = url });
         }
 
         [HttpGet("integrations/pushover/callback")]
         public async Task<IActionResult> PushoverCallback(
-            [FromQuery] string pushover_user_key, 
+            [FromQuery] string? pushover_user_key, 
+            [FromQuery] string? code,
             [FromQuery] string? device, 
             [FromQuery] string? sound,
             [FromQuery] string? state)
         {
-            Console.WriteLine($"[PushoverCallback] Hit with key={pushover_user_key}, state={state}, device={device}");
-            
+            var rawQuery = string.Join("&", HttpContext.Request.Query.Select(q => $"{q.Key}={q.Value}"));
+            Console.WriteLine($"[PushoverCallback] Raw Query received: {rawQuery}");
+
+            // Pushover sends 'code' instead of 'pushover_user_key' when "Expect OAuth2 parameters" is checked.
+            var subscriptionKey = pushover_user_key ?? code;
+
             var user = HttpContext.Items["User"] as User;
             if (user == null) {
                 Console.WriteLine("[PushoverCallback] User is null, redirecting to login.");
                 return Redirect("/login");
+            }
+
+            if (string.IsNullOrEmpty(subscriptionKey)) {
+                Console.WriteLine("[PushoverCallback] Missing subscription key.");
+                return BadRequest($"Missing user key or code parameter from Pushover callback. Received: {rawQuery}");
             }
 
             if (string.IsNullOrEmpty(state)) {
@@ -408,7 +416,7 @@ namespace HealthyCron.Controllers
             await _integrationRepository.CreatePushoverIntegrationAsync(new PushoverIntegration
             {
                 IntegrationId = integrationId,
-                SubscriptionKey = pushover_user_key,
+                SubscriptionKey = subscriptionKey,
                 Device = device,
                 Sound = sound
             });
