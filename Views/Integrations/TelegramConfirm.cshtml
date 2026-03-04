@@ -1,0 +1,176 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Connect Telegram";
+    var user = ViewBag.User as HealthyCron.Models.User;
+    var projects = ViewBag.Projects as IEnumerable<HealthyCron.Models.Project>;
+    string token = ViewBag.Token ?? "";
+}
+
+<div class="min-h-screen bg-[#000000] pt-24 pb-12 flex flex-col items-center justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Ambient Glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 blur-[100px] rounded-full pointer-events-none opacity-50"></div>
+
+    <div class="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center mb-8">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 shadow-2xl shadow-amber-500/20 mb-6 backdrop-blur-sm">
+            <i data-lucide="send" class="h-8 w-8 text-amber-500"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2">Connect Telegram</h2>
+        <p class="text-[16px] text-[#A3A3A3]">
+            Link this Telegram chat to a project to start receiving alerts.
+        </p>
+    </div>
+
+    <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-md relative z-10" id="app-container">
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12 bg-[#0a0a0a] rounded-3xl border border-[#262626] shadow-2xl backdrop-blur-md">
+            <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-amber-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+            <p class="mt-4 text-[15px] font-medium text-amber-500 animate-pulse">Loading chat details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden rounded-3xl border border-rose-500/20 bg-[#0a0a0a] p-8 text-center shadow-2xl shadow-rose-500/5 backdrop-blur-md">
+            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/10 border border-rose-500/20 mb-6">
+                <i data-lucide="alert-circle" class="h-8 w-8 text-rose-500"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Link Expired or Invalid</h3>
+            <p class="text-[15px] text-[#A3A3A3] mb-8" id="error-message">This connection link has expired, is invalid, or has already been used.</p>
+            <a href="/dashboard" class="inline-flex w-full items-center justify-center rounded-xl text-[15px] font-medium border border-transparent bg-white text-black hover:bg-gray-100 h-12 px-6 transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                Return to Dashboard
+            </a>
+        </div>
+
+        <!-- Success/Confirm State -->
+        <div id="confirm-state" class="hidden">
+            <div class="bg-[#0a0a0a] border border-[#262626] p-8 shadow-2xl shadow-amber-500/5 rounded-3xl backdrop-blur-md">
+                <form id="confirm-form" class="space-y-6">
+                    <input type="hidden" id="Token" name="Token" value="@token" />
+
+                    <div class="mb-8 pb-8 border-b border-[#262626]">
+                        <label class="block text-[13px] font-bold uppercase tracking-wider text-[#737373] mb-3">Discovered Chat</label>
+                        <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-500 shadow-lg shadow-amber-500/10">
+                                <i data-lucide="message-circle" class="h-6 w-6"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[15px] font-bold text-white truncate" id="display-chat-name">...</p>
+                                <p class="text-[13px] font-medium text-amber-500 truncate mt-0.5 uppercase tracking-wide" id="display-chat-type">...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="ProjectId" class="block text-sm font-medium text-white mb-2">Select Project</label>
+                        <select id="ProjectId" name="ProjectId" required class="block w-full rounded-xl border border-[#262626] bg-black text-white shadow-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-[15px] py-3 px-4 outline-none transition-all cursor-pointer">
+                            <option value="" disabled selected>-- Choose a project --</option>
+                            @if (projects != null)
+                            {
+                                foreach (var p in projects)
+                                {
+                                    <option value="@p.Id">@p.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="Name" class="block text-sm font-medium text-white mb-2">Integration Name <span class="text-[#737373] font-normal">(Optional)</span></label>
+                        <input type="text" id="Name" name="Name" class="block w-full rounded-xl border border-[#262626] bg-black text-white shadow-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-[15px] placeholder-[#737373] py-3 px-4 outline-none transition-all" placeholder="e.g. Dev Team Telegram">
+                    </div>
+
+                    <div class="pt-4 flex items-center gap-3">
+                        <button type="submit" id="submit-btn" class="flex w-full items-center justify-center rounded-xl text-[15px] font-semibold border border-transparent bg-amber-500 text-black hover:bg-amber-400 h-12 px-8 transition-all hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed">
+                            Connect Telegram
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Toast -->
+        <div id="success-state" class="hidden text-center rounded-3xl border border-[#262626] bg-[#0a0a0a] p-10 shadow-2xl backdrop-blur-md">
+            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-500/20 border border-amber-500/30 mb-6 shadow-xl shadow-amber-500/10">
+                <i data-lucide="check" class="h-10 w-10 text-amber-500"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-white mb-3">Telegram Connected!</h3>
+            <p class="text-[15px] text-[#A3A3A3] mb-8 leading-relaxed">Your chat has been successfully linked to <strong id="success-project-name" class="text-white font-semibold"></strong>. We sent a welcome message instantly to your Telegram chat to verify the connection.</p>
+            <a href="/dashboard" class="inline-flex w-full sm:w-auto items-center justify-center rounded-xl text-[15px] font-medium border border-transparent bg-white text-black hover:bg-gray-100 h-12 px-8 transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none focus:ring-offset-2 focus:ring-offset-black">
+                Go back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = document.getElementById('Token').value;
+            const loadingState = document.getElementById('loading-state');
+            const errorState = document.getElementById('error-state');
+            const confirmState = document.getElementById('confirm-state');
+
+            // 1. Fetch info
+            try {
+                const res = await fetch(`/api/v1/integrations/telegram/confirm-info?token=${token}`);
+                const data = await res.json();
+                
+                loadingState.classList.add('hidden');
+
+                if (!res.ok) {
+                    document.getElementById('error-message').innerText = data.error || 'Failed to load chat details.';
+                    errorState.classList.remove('hidden');
+                    return;
+                }
+
+                // Populate UI
+                document.getElementById('display-chat-name').innerText = data.chat_name || data.chat_id;
+                document.getElementById('display-chat-type').innerText = (data.chat_type || 'Unknown').toUpperCase();
+                
+                confirmState.classList.remove('hidden');
+
+            } catch (err) {
+                loadingState.classList.add('hidden');
+                document.getElementById('error-message').innerText = 'Network error. Please try again.';
+                errorState.classList.remove('hidden');
+            }
+
+            // 2. Handle Submit
+            document.getElementById('confirm-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submit-btn');
+                const pSelect = document.getElementById('ProjectId');
+                
+                btn.disabled = true;
+                btn.innerHTML = '<div class="h-5 w-5 animate-spin rounded-full border-2 border-black border-r-transparent mr-2"></div> Connecting...';
+
+                const reqBody = {
+                    token: token,
+                    project_id: pSelect.value,
+                    name: document.getElementById('Name').value
+                };
+
+                try {
+                    const res = await fetch('/api/v1/integrations/telegram/confirm', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(reqBody)
+                    });
+                    
+                    if (res.ok) {
+                        confirmState.classList.add('hidden');
+                        document.getElementById('success-project-name').innerText = pSelect.options[pSelect.selectedIndex].text;
+                        document.getElementById('success-state').classList.remove('hidden');
+                    } else {
+                        const errText = await res.text();
+                        alert('Failed to connect: ' + errText);
+                        btn.disabled = false;
+                        btn.innerText = 'Connect Telegram';
+                    }
+                } catch (e) {
+                    alert('Network error submitting form.');
+                    btn.disabled = false;
+                    btn.innerText = 'Connect Telegram';
+                }
+            });
+        });
+    </script>
+}

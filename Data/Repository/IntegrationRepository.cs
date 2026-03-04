@@ -210,18 +210,47 @@ namespace HealthyCron.Data.Repository
             });
         }
 
+        public async Task CreateTempTelegramHandshakeAsync(TempTelegramHandshake handshake)
+        {
+            const string sql = @"
+                INSERT INTO temp_telegram_handshakes (token, chat_id, chat_name, chat_type, created_at, expires_at)
+                VALUES (@Token, @ChatId, @ChatName, @ChatType, @CreatedAt, @ExpiresAt)";
+            await ExecuteAsync(sql, handshake);
+        }
+
+        public async Task<TempTelegramHandshake?> GetTempTelegramHandshakeAsync(string token)
+        {
+            const string sql = @"
+                SELECT token, chat_id, chat_name, chat_type, created_at, expires_at
+                FROM temp_telegram_handshakes
+                WHERE token = @Token";
+            return await QueryFirstOrDefaultAsync<TempTelegramHandshake>(sql, new { Token = token });
+        }
+
+        public async Task MarkTempTelegramHandshakeUsedAsync(string token)
+        {
+            const string sql = @"UPDATE temp_telegram_handshakes SET used_at = now() WHERE token = @Token";
+            await ExecuteAsync(sql, new { Token = token });
+        }
+
+        public async Task DeleteTempTelegramHandshakeAsync(string token)
+        {
+            const string sql = @"DELETE FROM temp_telegram_handshakes WHERE token = @Token";
+            await ExecuteAsync(sql, new { Token = token });
+        }
+
         public async Task CreateTelegramIntegrationAsync(TelegramIntegration telegramIntegration)
         {
             const string sql = @"
-                INSERT INTO telegram_integrations (integration_id, chat_id, chat_name, bot_username)
-                VALUES (@IntegrationId, @ChatId, @ChatName, @BotUsername)";
+                INSERT INTO telegram_integrations (integration_id, chat_id, chat_name, chat_type, confirmed_at)
+                VALUES (@IntegrationId, @ChatId, @ChatName, @ChatType, @ConfirmedAt)";
             await ExecuteAsync(sql, telegramIntegration);
         }
 
         public async Task<TelegramIntegration?> GetTelegramIntegrationByIntegrationIdAsync(Guid integrationId)
         {
             const string sql = @"
-                SELECT integration_id, chat_id, chat_name, bot_username, created_at
+                SELECT integration_id, chat_id, chat_name, chat_type, confirmed_at, created_at
                 FROM telegram_integrations
                 WHERE integration_id = @IntegrationId";
             return await QueryFirstOrDefaultAsync<TelegramIntegration>(sql, new { IntegrationId = integrationId });
@@ -230,15 +259,15 @@ namespace HealthyCron.Data.Repository
         public async Task CreatePushoverIntegrationAsync(PushoverIntegration pushoverIntegration)
         {
             const string sql = @"
-                INSERT INTO pushover_integrations (integration_id, user_key, device, priority)
-                VALUES (@IntegrationId, @UserKey, @Device, @Priority)";
+                INSERT INTO pushover_integrations (integration_id, subscription_key, device, sound)
+                VALUES (@IntegrationId, @SubscriptionKey, @Device, @Sound)";
             await ExecuteAsync(sql, pushoverIntegration);
         }
 
         public async Task<PushoverIntegration?> GetPushoverIntegrationByIntegrationIdAsync(Guid integrationId)
         {
             const string sql = @"
-                SELECT integration_id, user_key, device, priority, created_at
+                SELECT integration_id, subscription_key, device, sound, created_at
                 FROM pushover_integrations
                 WHERE integration_id = @IntegrationId";
             return await QueryFirstOrDefaultAsync<PushoverIntegration>(sql, new { IntegrationId = integrationId });
@@ -259,6 +288,29 @@ namespace HealthyCron.Data.Repository
                 FROM spike_integrations
                 WHERE integration_id = @IntegrationId";
             return await QueryFirstOrDefaultAsync<SpikeIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task CreatePushoverPendingSubscriptionAsync(PushoverPendingSubscription subscription)
+        {
+            const string sql = @"
+                INSERT INTO pushover_pending_subscriptions (token, project_id, created_at, expires_at)
+                VALUES (@Token, @ProjectId, @CreatedAt, @ExpiresAt)";
+            await ExecuteAsync(sql, subscription);
+        }
+
+        public async Task<PushoverPendingSubscription?> GetPushoverPendingSubscriptionAsync(string token)
+        {
+            const string sql = @"
+                SELECT token, project_id, created_at, expires_at, used_at
+                FROM pushover_pending_subscriptions
+                WHERE token = @Token";
+            return await QueryFirstOrDefaultAsync<PushoverPendingSubscription>(sql, new { Token = token });
+        }
+
+        public async Task MarkPushoverPendingSubscriptionUsedAsync(string token)
+        {
+            const string sql = @"UPDATE pushover_pending_subscriptions SET used_at = now() WHERE token = @Token";
+            await ExecuteAsync(sql, new { Token = token });
         }
 
         public async Task<IEnumerable<HealthyCron.Models.ViewModels.IntegrationListItemViewModel>> GetMonitorIntegrationsAsync(Guid monitorId)

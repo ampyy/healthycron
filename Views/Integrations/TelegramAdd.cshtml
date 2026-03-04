@@ -1,138 +1,87 @@
 @{
-    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
-    ViewData["Title"] = "Add Telegram Integration";
+    var project = ViewBag.Project as HealthyCron.Models.Project;
+    var user = ViewBag.User as HealthyCron.Models.User;
+    ViewData["Title"] = $"{project?.Name} - Add Telegram Integration";
     Layout = "_DashboardLayout";
 }
 
-<div class="max-w-xl mx-auto pb-20">
+<div class="max-w-2xl mx-auto pb-20 mt-8">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
-        <a href="/dashboard" class="hover:text-white transition-colors flex items-center gap-1">
-            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Projects
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-amber-500 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
         </a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <a href="/project/@project?.Slug/monitors" class="hover:text-white transition-colors">@project?.Name</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <a href="/project/@project.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
+        <a href="/project/@project?.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <span class="text-white">Telegram</span>
+        <span class="text-white">Add Telegram</span>
     </div>
 
     <!-- Header -->
-    <div class="flex items-center gap-4 mb-8">
-        <div class="w-12 h-12 rounded-2xl bg-[#26A5E4]/10 border border-[#26A5E4]/20 flex items-center justify-center shrink-0">
-            <svg class="w-7 h-7 text-[#26A5E4]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-            </svg>
-        </div>
-        <div>
-            <h1 class="text-2xl font-bold text-white">Add Telegram Integration</h1>
-            <p class="text-text-secondary text-sm mt-0.5">Get instant alerts in any Telegram chat, group, or channel</p>
+    <div class="mb-8 border-b border-[#262626] pb-6">
+        <div class="flex items-center gap-4 mb-3">
+            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center shrink-0">
+                <i data-lucide="send" class="w-7 h-7 text-amber-500"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-white">Add Telegram Integration</h1>
+                <p class="text-[15px] text-[#A3A3A3] mt-1">Get instant alerts sent directly to your Telegram chat, group, or channel.</p>
+            </div>
         </div>
     </div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">
-            <i data-lucide="alert-circle" class="w-4 h-4 inline mr-2"></i>@TempData["Error"]
+    <!-- Instruction Steps -->
+    <div class="relative pt-2">
+        <div class="absolute left-6 top-8 bottom-8 w-px bg-[#262626]"></div>
+
+        <div class="space-y-6">
+            <!-- Step 1 -->
+            <div class="relative pl-16 group">
+                <div class="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#0a0a0a] border-2 border-[#262626] text-[#A3A3A3] font-bold text-sm z-10 transition-colors duration-300 group-hover:border-amber-500 group-hover:text-amber-500 bg-[#000000]">
+                    1
+                </div>
+                <div class="rounded-2xl border border-[#262626] bg-[#0a0a0a] p-6 transition-all duration-300">
+                    <h3 class="text-lg font-bold text-white mb-2">Add our bot to your chat</h3>
+                    <p class="text-[15px] text-[#A3A3A3]">Invite <span class="px-2 py-1 rounded bg-[#1A1A1A] border border-[#333333] text-white font-mono text-xs mx-1">@@healthycron_bot</span> to any Telegram chat to begin.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="relative pl-16 group">
+                <div class="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#0a0a0a] border-2 border-[#262626] text-[#A3A3A3] font-bold text-sm z-10 transition-colors duration-300 group-hover:border-amber-500 group-hover:text-amber-500 bg-[#000000]">
+                    2
+                </div>
+                <div class="rounded-2xl border border-[#262626] bg-[#0a0a0a] p-6 transition-all duration-300">
+                    <h3 class="text-lg font-bold text-white mb-2">Send the start command</h3>
+                    <p class="text-[15px] text-[#A3A3A3] mb-4">Send this command into the chat where the bot was added to initiate the handshake:</p>
+                    <div class="flex items-center justify-between p-1.5 pl-4 rounded-xl bg-black border border-[#262626]">
+                        <code class="text-amber-500 font-mono text-sm leading-none pt-0.5">/start@@healthycron_bot</code>
+                        <button type="button" onclick="navigator.clipboard.writeText('/start@@healthycron_bot')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1A1A1A] hover:bg-amber-500 hover:text-black text-white transition-all duration-200 text-xs font-semibold">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="relative pl-16 group">
+                <div class="absolute left-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#0a0a0a] border-2 border-[#262626] text-[#A3A3A3] font-bold text-sm z-10 transition-colors duration-300 group-hover:border-amber-500 group-hover:text-amber-500 bg-[#000000]">
+                    3
+                </div>
+                <div class="rounded-2xl border border-[#262626] bg-[#0a0a0a] p-6 transition-all duration-300">
+                    <h3 class="text-lg font-bold text-white mb-2">Click the confirmation link</h3>
+                    <p class="text-[15px] text-[#A3A3A3]">The bot will immediately reply with a secure link. Click it to finalize the setup.</p>
+                </div>
+            </div>
         </div>
-    }
-
-    <div class="glass-card rounded-2xl p-8 border border-white/5">
-        <form method="POST" action="/project/@project.Slug/integrations/telegram">
-            @Html.AntiForgeryToken()
-
-            <!-- Integration Name -->
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-white mb-2">Integration Name</label>
-                <input type="text" name="name" placeholder="e.g. Dev Team Telegram"
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-[#26A5E4]/50 transition-all">
-            </div>
-
-            <!-- Chat ID -->
-            <div class="mb-2">
-                <label class="block text-sm font-semibold text-white mb-2">Chat ID <span class="text-rose-400">*</span></label>
-                <div class="flex gap-2">
-                    <input type="text" name="chatId" id="chatIdInput" required placeholder="-1001234567890"
-                        class="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-[#26A5E4]/50 transition-all font-mono">
-                    <button type="button" onclick="resolveChatId()"
-                        class="px-4 py-3 rounded-xl bg-[#26A5E4]/10 border border-[#26A5E4]/20 text-[#26A5E4] hover:bg-[#26A5E4]/20 transition-all text-sm font-bold whitespace-nowrap flex items-center gap-2">
-                        <i data-lucide="search" class="w-4 h-4"></i>
-                        Find my Chat ID
-                    </button>
-                </div>
-            </div>
-
-            <!-- Chat ID Helper -->
-            <div class="mb-6">
-                <button type="button" onclick="toggleInstructions()"
-                    class="text-xs text-[#26A5E4] hover:underline flex items-center gap-1 mt-1">
-                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
-                    Don't know your Chat ID?
-                </button>
-                <div id="telegramInstructions" class="hidden mt-3 p-4 rounded-xl bg-[#26A5E4]/5 border border-[#26A5E4]/15 text-sm text-text-secondary space-y-1.5">
-                    <p class="font-semibold text-white text-xs uppercase tracking-widest mb-2">How to get your Chat ID</p>
-                    <p>1. Start a chat with our bot: <span class="font-mono text-[#26A5E4]">@@healthycron_bot</span></p>
-                    <p>2. Send any message to the bot (e.g. "hello")</p>
-                    <p>3. Click <strong class="text-white">Find my Chat ID</strong> above to auto-detect it</p>
-                    <p class="text-xs mt-2 opacity-60">For groups/channels, add the bot as an admin first.</p>
-                </div>
-                <p id="resolveStatus" class="text-xs mt-1 hidden"></p>
-            </div>
-
-            <!-- Chat Name (optional) -->
-            <div class="mb-8">
-                <label class="block text-sm font-semibold text-white mb-2">
-                    Chat Name <span class="text-text-secondary font-normal">(optional)</span>
-                </label>
-                <input type="text" name="chatName" id="chatNameInput" placeholder="e.g. Engineering Alerts"
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-[#26A5E4]/50 transition-all">
-                <p class="text-xs text-text-secondary mt-1">Just a label for your own reference.</p>
-            </div>
-
-            <div class="flex gap-3">
-                <a href="/project/@project.Slug/integrations"
-                    class="flex-1 text-center px-6 py-3 rounded-xl border border-white/10 text-text-secondary hover:text-white hover:bg-white/5 transition-all font-bold">
-                    Cancel
-                </a>
-                <button type="submit"
-                    class="flex-1 bg-[#26A5E4] hover:bg-[#26A5E4]/80 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-[#26A5E4]/20">
-                    Connect Telegram
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 
 <script>
-    function toggleInstructions() {
-        document.getElementById('telegramInstructions').classList.toggle('hidden');
-    }
-
-    async function resolveChatId() {
-        const status = document.getElementById('resolveStatus');
-        status.className = 'text-xs mt-1 text-[#26A5E4]';
-        status.textContent = 'Searching for recent messages…';
-        status.classList.remove('hidden');
-
-        try {
-            const resp = await fetch('/api/v1/integrations/telegram/resolve-chat-id');
-            const data = await resp.json();
-            if (resp.ok) {
-                document.getElementById('chatIdInput').value = data.chat_id;
-                if (data.chat_name) document.getElementById('chatNameInput').value = data.chat_name;
-                status.className = 'text-xs mt-1 text-emerald-400';
-                status.textContent = `✓ Found: ${data.chat_name || data.chat_id}`;
-            } else {
-                status.className = 'text-xs mt-1 text-rose-400';
-                status.textContent = data.error || 'Could not resolve Chat ID.';
-                document.getElementById('telegramInstructions').classList.remove('hidden');
-            }
-        } catch (e) {
-            status.className = 'text-xs mt-1 text-rose-400';
-            status.textContent = 'Failed to contact server.';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
 </script>

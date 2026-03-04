@@ -187,46 +187,92 @@ namespace HealthyCron.Controllers
             return View();
         }
 
-        [HttpPost("project/{slug}/integrations/telegram")]
-        public async Task<IActionResult> TelegramCreate(string slug,
-            [FromForm] string chatId,
-            [FromForm] string? chatName,
-            [FromForm] string? name)
+        [HttpGet("integrations/telegram/confirm")]
+        public async Task<IActionResult> TelegramConfirm([FromQuery] string token)
         {
             var user = HttpContext.Items["User"] as User;
-            var project = await _projectRepository.GetProjectBySlugAsync(slug);
-            if (project == null) return NotFound();
-            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+            if (user == null) return Redirect("/login");
+            
+            ViewBag.Token = token;
+            ViewBag.User = user;
+
+            // Get user's projects for the dropdown
+            var projects = await _projectRepository.GetProjectsByUserIdAsync(user.Id);
+            ViewBag.Projects = projects;
+            
+            return View();
+        }
+
+        [HttpGet("api/v1/integrations/telegram/confirm-info")]
+        public async Task<IActionResult> TelegramConfirmInfo([FromQuery] string token)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var handshake = await _integrationRepository.GetTempTelegramHandshakeAsync(token);
+            if (handshake == null || handshake.ExpiresAt < DateTime.UtcNow || handshake.UsedAt != null)
+                return NotFound(new { error = "Link expired. Please send /start to the bot again." });
+
+            return Ok(new
+            {
+                chat_id = handshake.ChatId,
+                chat_name = handshake.ChatName,
+                chat_type = handshake.ChatType,
+                token = handshake.Token
+            });
+        }
+
+        [HttpPost("api/v1/integrations/telegram/confirm")]
+        public async Task<IActionResult> TelegramConfirmSubmit([FromBody] System.Text.Json.JsonElement body)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            if (!body.TryGetProperty("token", out var tokenEl) || 
+                !body.TryGetProperty("project_id", out var projectIdEl) || 
+                !body.TryGetProperty("name", out var nameEl))
+                return BadRequest("Missing required fields");
+
+            string token = tokenEl.GetString() ?? "";
+            Guid projectId = Guid.Parse(projectIdEl.GetString() ?? "");
+            string name = nameEl.GetString() ?? "Telegram";
+
+            if (!await _projectAuth.CanManageMonitorsAsync(projectId, user.Id, user.Id))
                 return Forbid();
 
-            if (string.IsNullOrWhiteSpace(chatId))
-            {
-                TempData["Error"] = "Chat ID is required";
-                return RedirectToAction("TelegramAdd", new { slug });
-            }
+            var handshake = await _integrationRepository.GetTempTelegramHandshakeAsync(token);
+            if (handshake == null || handshake.ExpiresAt < DateTime.UtcNow || handshake.UsedAt != null)
+                return BadRequest("Token is invalid, expired, or already used.");
 
+            var project = await _projectRepository.GetProjectByIdAsync(projectId);
+            if (project == null) return NotFound("Project not found");
+
+            // Create Integration
             var integration = new Integration
             {
-                ProjectId = project.Id,
+                ProjectId = projectId,
                 Type = IntegrationType.Telegram,
-                Name = string.IsNullOrWhiteSpace(name) ? $"Telegram{(string.IsNullOrWhiteSpace(chatName) ? "" : $" – {chatName}")}" : name,
+                Name = string.IsNullOrWhiteSpace(name) ? $"Telegram - {handshake.ChatName}" : name,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
-
             var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
 
-            var botToken = _configuration["TELEGRAM_BOT_TOKEN"] ?? _configuration["Telegram:BotToken"];
-
-            await _integrationRepository.CreateTelegramIntegrationAsync(new HealthyCron.Models.TelegramIntegration
+            // Create TelegramIntegration
+            await _integrationRepository.CreateTelegramIntegrationAsync(new TelegramIntegration
             {
                 IntegrationId = integrationId,
-                ChatId = chatId.Trim(),
-                ChatName = chatName?.Trim(),
-                BotUsername = "@healthycron_bot"
+                ChatId = handshake.ChatId,
+                ChatName = handshake.ChatName,
+                ChatType = handshake.ChatType,
+                ConfirmedAt = DateTime.UtcNow
             });
 
-            // Send welcome message (best-effort)
+            // Mark handshake as used (audit trail)
+            await _integrationRepository.MarkTempTelegramHandshakeUsedAsync(token);
+
+            // Send Confirmation
+            var botToken = _configuration["TELEGRAM_BOT_TOKEN"] ?? _configuration["Telegram:BotToken"];
             if (!string.IsNullOrEmpty(botToken))
             {
                 try
@@ -234,61 +280,20 @@ namespace HealthyCron.Controllers
                     using var http = new System.Net.Http.HttpClient();
                     var payload = System.Text.Json.JsonSerializer.Serialize(new
                     {
-                        chat_id = chatId.Trim(),
-                        text = "✅ Healthycron connected! You'll receive monitor alerts here."
+                        chat_id = handshake.ChatId,
+                        text = $"✅ Connected to Healthycron project '{project.Name}'! You'll receive monitor alerts here."
                     });
-                    await http.PostAsync(
-                        $"https://api.telegram.org/bot{botToken}/sendMessage",
+                    await http.PostAsync($"https://api.telegram.org/bot{botToken}/sendMessage", 
                         new System.Net.Http.StringContent(payload, System.Text.Encoding.UTF8, "application/json"));
                 }
-                catch { /* non-fatal */ }
+                catch { }
             }
 
-            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(projectId);
             foreach (var monitor in monitors)
                 await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
 
-            return RedirectToAction("Index", new { slug = project.Slug });
-        }
-
-        [HttpGet("api/v1/integrations/telegram/resolve-chat-id")]
-        public async Task<IActionResult> TelegramResolveChatId()
-        {
-            var botToken = _configuration["TELEGRAM_BOT_TOKEN"] ?? _configuration["Telegram:BotToken"];
-            if (string.IsNullOrEmpty(botToken))
-                return BadRequest(new { error = "Telegram bot token not configured." });
-
-            try
-            {
-                using var http = new System.Net.Http.HttpClient();
-                var resp = await http.GetAsync($"https://api.telegram.org/bot{botToken}/getUpdates");
-                var body = await resp.Content.ReadAsStringAsync();
-                var json = System.Text.Json.JsonDocument.Parse(body).RootElement;
-
-                if (!json.GetProperty("ok").GetBoolean())
-                    return BadRequest(new { error = "Telegram API error." });
-
-                var results = json.GetProperty("result");
-                if (results.GetArrayLength() == 0)
-                    return BadRequest(new { error = "No messages found. Please send a message to the bot first." });
-
-                // Get most recent
-                var last = results[results.GetArrayLength() - 1];
-                var chat = last.TryGetProperty("message", out var msg)
-                    ? msg.GetProperty("chat")
-                    : last.GetProperty("channel_post").GetProperty("chat");
-
-                var chatId = chat.GetProperty("id").ToString();
-                var chatTitle = chat.TryGetProperty("title", out var t) ? t.GetString()
-                    : chat.TryGetProperty("first_name", out var fn) ? fn.GetString()
-                    : "";
-
-                return Ok(new { chat_id = chatId, chat_name = chatTitle });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            return Ok(new { integration_id = integrationId, chat_name = handshake.ChatName });
         }
 
         // ─── PUSHOVER ──────────────────────────────────────────────────────────
@@ -306,55 +311,135 @@ namespace HealthyCron.Controllers
             return View();
         }
 
-        [HttpPost("project/{slug}/integrations/pushover")]
-        public async Task<IActionResult> PushoverCreate(string slug,
-            [FromForm] string userKey,
-            [FromForm] string? device,
-            [FromForm] string? name,
-            [FromForm] short priority = 0)
+        [HttpGet("api/v1/integrations/pushover/subscribe-url")]
+        public async Task<IActionResult> PushoverSubscribeUrl([FromQuery] Guid project_id)
         {
             var user = HttpContext.Items["User"] as User;
-            var project = await _projectRepository.GetProjectBySlugAsync(slug);
-            if (project == null) return NotFound();
-            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+            if (user == null) return Unauthorized();
+
+            if (!await _projectAuth.CanManageMonitorsAsync(project_id, user.Id, user.Id))
                 return Forbid();
 
-            if (string.IsNullOrWhiteSpace(userKey))
+            string randomToken = Guid.NewGuid().ToString("N");
+            
+            // Store the token → projectId in the DB (not Redis) so it survives process restarts
+            await _integrationRepository.CreatePushoverPendingSubscriptionAsync(new PushoverPendingSubscription
             {
-                TempData["Error"] = "User Key is required";
-                return RedirectToAction("PushoverAdd", new { slug });
+                Token = randomToken,
+                ProjectId = project_id,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddHours(1)
+            });
+            
+            // Always use the inbound request's hostname so redirects work smoothly through ngrok tunnels
+            var requestHost = Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? Request.Host.Value;
+            var requestScheme = Request.Headers["X-Forwarded-Proto"].FirstOrDefault() ?? Request.Scheme;
+            string baseUrl = $"{requestScheme}://{requestHost}";
+
+            // Encode our token into the success redirect URL as `state` so Pushover echoes it back
+            string successUrl = $"{baseUrl}/integrations/pushover/callback?state={randomToken}";
+            string failureUrl = $"{baseUrl}/integrations/pushover/failed?state={randomToken}";
+
+            Console.WriteLine($"[PushoverConfig] Generated success URL: {successUrl}");
+
+            string appName = _configuration["PUSHOVER_APP_NAME"];
+            
+            // For Web-based subscriptions, use the main application name
+            string url = $"https://pushover.net/subscribe/{appName}" +
+                         $"?success={HttpUtility.UrlEncode(successUrl)}" +
+                         $"&failure={HttpUtility.UrlEncode(failureUrl)}";
+
+            return Ok(new { url = url });
+        }
+
+        [HttpGet("integrations/pushover/callback")]
+        public async Task<IActionResult> PushoverCallback(
+            [FromQuery] string pushover_user_key, 
+            [FromQuery] string? device, 
+            [FromQuery] string? sound,
+            [FromQuery] string? state)
+        {
+            Console.WriteLine($"[PushoverCallback] Hit with key={pushover_user_key}, state={state}, device={device}");
+            
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) {
+                Console.WriteLine("[PushoverCallback] User is null, redirecting to login.");
+                return Redirect("/login");
             }
 
-            if (userKey.Trim().Length < 30)
-            {
-                TempData["Error"] = "Invalid Pushover User Key (must be 30+ characters)";
-                return RedirectToAction("PushoverAdd", new { slug });
+            if (string.IsNullOrEmpty(state)) {
+                Console.WriteLine("[PushoverCallback] State is empty.");
+                return BadRequest("Missing state parameter from Pushover callback.");
             }
+
+            // Look up project via DB-backed pending subscription record
+            var pending = await _integrationRepository.GetPushoverPendingSubscriptionAsync(state);
+            if (pending == null) {
+                Console.WriteLine($"[PushoverCallback] Pending subscription not found for state: {state}");
+                return BadRequest("Pushover subscription session expired or already used. Please try again.");
+            }
+            if (pending.ExpiresAt < DateTime.UtcNow) {
+                Console.WriteLine($"[PushoverCallback] Pending subscription expired at {pending.ExpiresAt}");
+                return BadRequest("Pushover subscription session expired or already used. Please try again.");
+            }
+            if (pending.UsedAt != null) {
+                Console.WriteLine($"[PushoverCallback] Pending subscription already used at {pending.UsedAt}");
+                return BadRequest("Pushover subscription session expired or already used. Please try again.");
+            }
+
+            var project = await _projectRepository.GetProjectByIdAsync(pending.ProjectId);
+            if (project == null) {
+                Console.WriteLine($"[PushoverCallback] Project {pending.ProjectId} not found");
+                return NotFound("Project not found");
+            }
+
+            Console.WriteLine($"[PushoverCallback] Found pending subscription for project {project.Name}. Creating integration...");
 
             var integration = new Integration
             {
-                ProjectId = project.Id,
+                ProjectId = pending.ProjectId,
                 Type = IntegrationType.Pushover,
-                Name = string.IsNullOrWhiteSpace(name) ? "Pushover" : name,
+                Name = "Pushover",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
-
             var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
 
-            await _integrationRepository.CreatePushoverIntegrationAsync(new HealthyCron.Models.PushoverIntegration
+            await _integrationRepository.CreatePushoverIntegrationAsync(new PushoverIntegration
             {
                 IntegrationId = integrationId,
-                UserKey = userKey.Trim(),
-                Device = string.IsNullOrWhiteSpace(device) ? null : device.Trim(),
-                Priority = priority
+                SubscriptionKey = pushover_user_key,
+                Device = device,
+                Sound = sound
             });
 
-            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            // Mark subscription as used (prevents replay)
+            await _integrationRepository.MarkPushoverPendingSubscriptionUsedAsync(state);
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(pending.ProjectId);
             foreach (var monitor in monitors)
                 await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
 
-            return RedirectToAction("Index", new { slug = project.Slug });
+            return Redirect($"/project/{project.Slug}/integrations?success=pushover");
+        }
+
+        [HttpGet("integrations/pushover/failed")]
+        public async Task<IActionResult> PushoverFailed([FromQuery] string? state)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Redirect("/login");
+            
+            if (!string.IsNullOrEmpty(state))
+            {
+                var pending = await _integrationRepository.GetPushoverPendingSubscriptionAsync(state);
+                if (pending != null)
+                {
+                    var project = await _projectRepository.GetProjectByIdAsync(pending.ProjectId);
+                    if (project != null) return Redirect($"/project/{project.Slug}/integrations?error=pushover_cancelled");
+                }
+            }
+
+            return Redirect("/dashboard");
         }
 
         // ─── SPIKE.SH ──────────────────────────────────────────────────────────

@@ -112,20 +112,8 @@ namespace HealthyCron.Utilities.Service
                             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
                         var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-
-                        Console.WriteLine("=== AXIOM LOG ===");
-                        Console.WriteLine($"URL: {axiomUrl}");
-                        Console.WriteLine($"Dataset: {dataset}");
-                        Console.WriteLine($"Payload: {jsonPayload}");
-                        Console.WriteLine("=================");
-
                         var response = await httpClient.PostAsync(axiomUrl, content);
                         var responseBody = await response.Content.ReadAsStringAsync();
-
-                        Console.WriteLine("=== AXIOM RESPONSE ===");
-                        Console.WriteLine($"Status: {response.StatusCode}");
-                        Console.WriteLine($"Body: {responseBody}");
-                        Console.WriteLine("=====================");
 
                         if (!response.IsSuccessStatusCode)
                         {
@@ -135,10 +123,6 @@ namespace HealthyCron.Utilities.Service
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"=== AXIOM ERROR ===");
-                        Console.WriteLine($"Message: {ex.Message}");
-                        Console.WriteLine($"Stack: {ex.StackTrace}");
-                        Console.WriteLine("===================");
                         _logger.LogWarning(ex, "Failed to send log to Axiom");
                     }
                 });

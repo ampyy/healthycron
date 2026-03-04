@@ -9,70 +9,68 @@
     <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
         <a href="/dashboard" class="hover:text-white transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Projects
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-amber-500 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
         </a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <a href="/project/@project.Slug/monitors" class="hover:text-white transition-colors">@project.Name</a>
+        <a href="/project/@project?.Slug/monitors" class="hover:text-white transition-colors">@project?.Name</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <a href="/project/@project.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
+        <a href="/project/@project?.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-        <span class="text-white">Spike.sh</span>
+        <span class="text-white">Add Spike</span>
     </div>
 
     <!-- Header -->
-    <div class="flex items-center gap-4 mb-8">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-            <i data-lucide="zap" class="w-7 h-7 text-emerald-400"></i>
-        </div>
-        <div>
-            <h1 class="text-2xl font-bold text-white">Add Spike.sh Integration</h1>
-            <p class="text-text-secondary text-sm mt-0.5">Trigger on-call alerts and escalations via Spike.sh</p>
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-3">
+            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center shrink-0">
+                <i data-lucide="webhook" class="w-7 h-7 text-amber-500"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-white">Add Spike.sh Integration</h1>
+                <p class="text-[15px] text-[#A3A3A3] mt-1">Trigger incidents directly in Spike.sh when your monitors fail</p>
+            </div>
         </div>
     </div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">
-            <i data-lucide="alert-circle" class="w-4 h-4 inline mr-2"></i>@TempData["Error"]
-        </div>
-    }
+    <!-- Form container -->
+    <div class="glass-card rounded-2xl border border-[#262626] bg-[#0a0a0a] p-8 relative overflow-hidden group">
+        <!-- Subtle Glow -->
+        <div class="absolute -top-32 -left-32 w-64 h-64 bg-amber-500/5 blur-[80px] rounded-full pointer-events-none opacity-50"></div>
 
-    <div class="glass-card rounded-2xl p-8 border border-white/5">
-        <form method="POST" action="/project/@project.Slug/integrations/spike" id="spikeForm">
-            @Html.AntiForgeryToken()
-
-            <!-- Integration Name -->
-            <div class="mb-6">
-                <label class="block text-sm font-semibold text-white mb-2">Integration Name</label>
-                <input type="text" name="name" placeholder="e.g. Backend On-call"
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all">
+        <form id="spike-form" class="space-y-6 relative z-10">
+            <div>
+                <label class="block text-sm font-bold text-white mb-2">Integration Name <span class="text-amber-500">*</span></label>
+                <input type="text" id="integration-name" required value="Spike.sh"
+                       class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-amber-500 hover:border-[#404040] focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-inner" />
             </div>
-
-            <!-- Webhook URL -->
-            <div class="mb-8">
-                <label class="block text-sm font-semibold text-white mb-2">Webhook URL <span class="text-rose-400">*</span></label>
-                <input type="url" name="webhookUrl" id="webhookUrlInput" required
-                    placeholder="https://hooks.spike.sh/..."
-                    oninput="validateSpikeUrl(this)"
-                    class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all font-mono">
-                <div id="urlError" class="hidden mt-1.5 text-xs text-rose-400 flex items-center gap-1">
-                    <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
-                    URL must start with https://hooks.spike.sh/
+            
+            <div>
+                <label class="block text-sm font-bold text-white mb-2">Webhook URL <span class="text-amber-500">*</span></label>
+                <input type="url" id="webhook-url" required placeholder="https://hooks.spike.sh/..."
+                       class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-amber-500 hover:border-[#404040] focus:ring-1 focus:ring-amber-500 outline-none transition-all font-mono shadow-inner" />
+                <div class="mt-2 flex items-center justify-between">
+                    <span class="text-xs text-[#737373]">Get this from your Spike.sh Integrations.</span>
+                    <a href="https://spike.sh" target="_blank" class="text-amber-500 hover:text-amber-400 text-xs font-bold flex items-center gap-1 transition-colors">
+                        Open Spike.sh <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
                 </div>
-                <p class="text-xs text-text-secondary mt-1.5">
-                    Get this from
-                    <a href="https://spike.sh" target="_blank" class="text-emerald-400 hover:underline">Spike.sh</a>
-                    → Integrations → Add Integration → Incoming Webhook
-                </p>
             </div>
 
-            <div class="flex gap-3">
-                <a href="/project/@project.Slug/integrations"
-                    class="flex-1 text-center px-6 py-3 rounded-xl border border-white/10 text-text-secondary hover:text-white hover:bg-white/5 transition-all font-bold">
+            <div id="error-message" class="hidden rounded-xl bg-rose-500/10 border border-rose-500/20 p-4 text-[14px] text-rose-500 flex items-start gap-3">
+                <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                <span id="error-text" class="break-all whitespace-normal font-medium text-rose-400"></span>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-[#262626]">
+                <a href="/project/@project?.Slug/integrations" class="px-6 py-2.5 rounded-xl text-[#A3A3A3] hover:text-white font-bold text-sm transition-colors">
                     Cancel
                 </a>
-                <button type="submit" id="submitBtn"
-                    class="flex-1 bg-emerald-600 hover:bg-emerald-600/80 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20">
-                    Connect Spike.sh
+                <button type="submit" id="submit-btn" class="bg-amber-600 outline-none hover:bg-amber-500 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    Connect Spike
                 </button>
             </div>
         </form>
@@ -80,11 +78,60 @@
 </div>
 
 <script>
-    function validateSpikeUrl(input) {
-        const isValid = input.value === '' || input.value.startsWith('https://hooks.spike.sh/');
-        document.getElementById('urlError').classList.toggle('hidden', isValid);
-        document.getElementById('submitBtn').disabled = !isValid && input.value !== '';
+    document.addEventListener('DOMContentLoaded', () => {
         if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-    document.addEventListener('DOMContentLoaded', () => { if (typeof lucide !== 'undefined') lucide.createIcons(); });
+    });
+
+    document.getElementById('spike-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        const err = document.getElementById('error-message');
+        const errText = document.getElementById('error-text');
+        const url = document.getElementById('webhook-url').value;
+        const name = document.getElementById('integration-name').value;
+        
+        err.classList.add('hidden');
+        
+        if (!url.startsWith('https://hooks.spike.sh/')) {
+            errText.textContent = "Webhook URL must start with https://hooks.spike.sh/";
+            err.classList.remove('hidden');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent mr-2"></div> Connecting...';
+        btn.classList.add('opacity-50', 'cursor-not-allowed'); // Added these classes based on the new button style
+
+        try {
+            const res = await fetch('/api/v1/integrations/spike', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_id: '@project?.Id',
+                    webhook_url: url,
+                    name: name
+                })
+            });
+
+            if (res.ok) {
+                window.location.href = `/project/@project?.Slug/integrations`;
+            } else {
+                const data = await res.json();
+                errText.textContent = data.error || 'Failed to connect integration.';
+                err.classList.remove('hidden');
+                resetBtn();
+            }
+        } catch (error) {
+            errText.textContent = 'A network error occurred. Please try again.';
+            err.classList.remove('hidden');
+            resetBtn();
+        }
+
+        function resetBtn() {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="plus" class="w-4 h-4 mr-2"></i> Connect Spike';
+            btn.classList.remove('opacity-50', 'cursor-not-allowed'); // Removed these classes
+            lucide.createIcons();
+        }
+    });
 </script>

@@ -40,6 +40,12 @@ namespace HealthyCron.Data.Interfaces
         // Opsgenie Integration
 
 
+        // Telegram Temp Handshakes
+        Task CreateTempTelegramHandshakeAsync(TempTelegramHandshake handshake);
+        Task<TempTelegramHandshake?> GetTempTelegramHandshakeAsync(string token);
+        Task MarkTempTelegramHandshakeUsedAsync(string token);
+        Task DeleteTempTelegramHandshakeAsync(string token);
+
         // Telegram Integration
         Task CreateTelegramIntegrationAsync(TelegramIntegration telegramIntegration);
         Task<TelegramIntegration?> GetTelegramIntegrationByIntegrationIdAsync(Guid integrationId);
@@ -47,6 +53,11 @@ namespace HealthyCron.Data.Interfaces
         // Pushover Integration
         Task CreatePushoverIntegrationAsync(PushoverIntegration pushoverIntegration);
         Task<PushoverIntegration?> GetPushoverIntegrationByIntegrationIdAsync(Guid integrationId);
+
+        // Pushover Pending Subscriptions
+        Task CreatePushoverPendingSubscriptionAsync(PushoverPendingSubscription subscription);
+        Task<PushoverPendingSubscription?> GetPushoverPendingSubscriptionAsync(string token);
+        Task MarkPushoverPendingSubscriptionUsedAsync(string token);
 
         // Spike.sh Integration
         Task CreateSpikeIntegrationAsync(SpikeIntegration spikeIntegration);

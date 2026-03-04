@@ -203,6 +203,53 @@ using (var scope = app.Services.CreateScope())
             ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_weekly_reports BOOLEAN DEFAULT TRUE;
             ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_monthly_reports BOOLEAN DEFAULT TRUE;
             ALTER TABLE users ADD COLUMN IF NOT EXISTS receive_incident_reminders BOOLEAN DEFAULT TRUE;
+
+            CREATE TABLE IF NOT EXISTS telegram_integrations (
+                integration_id UUID PRIMARY KEY,
+                chat_id TEXT NOT NULL,
+                chat_name TEXT,
+                chat_type TEXT,
+                setup_token TEXT,
+                setup_token_expires_at TIMESTAMPTZ,
+                confirmed_at TIMESTAMPTZ,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                CONSTRAINT fk_telegram_integrations FOREIGN KEY (integration_id) REFERENCES integrations (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS pushover_integrations (
+                integration_id UUID PRIMARY KEY,
+                subscription_key TEXT NOT NULL,
+                device TEXT,
+                sound TEXT,         
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                CONSTRAINT fk_pushover_integrations FOREIGN KEY (integration_id) REFERENCES integrations (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS pushover_pending_subscriptions (
+                token TEXT PRIMARY KEY,
+                project_id UUID NOT NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                expires_at TIMESTAMPTZ NOT NULL,
+                used_at TIMESTAMPTZ,
+                CONSTRAINT fk_pushover_pending_project FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS spike_integrations (
+                integration_id UUID PRIMARY KEY,
+                webhook_url TEXT NOT NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                CONSTRAINT fk_spike_integrations FOREIGN KEY (integration_id) REFERENCES integrations (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS temp_telegram_handshakes (
+                token TEXT PRIMARY KEY,
+                chat_id TEXT NOT NULL,
+                chat_name TEXT,
+                chat_type TEXT,
+                expires_at TIMESTAMPTZ NOT NULL,
+                used_at TIMESTAMPTZ,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            );
         ");
         Console.WriteLine("✅ Database schema verified/updated.");
     }

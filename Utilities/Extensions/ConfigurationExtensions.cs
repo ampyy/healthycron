@@ -26,17 +26,8 @@ namespace HealthyCron.Utilities.Extensions
             var section = configuration.GetSection(sectionName);
 
             // DEBUG: Log configuration section existence and values
-            Console.WriteLine($"=== Configuration Debug for '{sectionName}' ===");
-            Console.WriteLine($"Section exists: {section.Exists()}");
-            Console.WriteLine($"Section path: {section.Path}");
-
-            // Log all children in the section
+            // (Removed to reduce console noise during startup)
             var children = section.GetChildren().ToList();
-            Console.WriteLine($"Number of children: {children.Count}");
-            foreach (var child in children)
-            {
-                Console.WriteLine($"  {child.Key} = {child.Value ?? "(null)"}");
-            }
 
             section.Bind(configObject);
             
@@ -44,13 +35,7 @@ namespace HealthyCron.Utilities.Extensions
             services.Configure<T>(section);
 
             // DEBUG: Log the bound object properties using reflection
-            Console.WriteLine($"Bound object properties:");
-            foreach (var prop in typeof(T).GetProperties())
-            {
-                var value = prop.GetValue(configObject);
-                Console.WriteLine($"  {prop.Name} = {value ?? "(null)"}");
-            }
-            Console.WriteLine($"=== End Configuration Debug ===\n");
+            // (Removed to reduce console noise during startup)
 
             // Validate the configuration
             ConfigurationValidator.ValidateAndThrow(configObject, sectionName);
