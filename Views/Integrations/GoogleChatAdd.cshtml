@@ -7,7 +7,7 @@
 
 <div class="max-w-5xl pb-20">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+    <div class="flex items-center gap-2 text-hc-muted text-sm mb-6 uppercase tracking-wider font-semibold">
         <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
             Projects
@@ -30,7 +30,7 @@
             </div>
             <div>
                 <h1 class="text-3xl font-bold text-white">Add Google Chat Integration</h1>
-                <p class="text-text-secondary mt-1">Connect your Google Chat space</p>
+                <p class="text-hc-muted mt-1">Connect your Google Chat space</p>
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
             <i data-lucide="info" class="w-5 h-5 text-green-500"></i>
             How to get your Google Chat Webhook URL
         </h2>
-        <ol class="space-y-2 text-sm text-text-secondary ml-7 list-decimal">
+        <ol class="space-y-2 text-sm text-hc-muted ml-7 list-decimal">
             <li>Open Google Chat and navigate to the space where you want to receive alerts</li>
             <li>Click the space name at the top to open the menu</li>
             <li>Select <strong class="text-white">Apps & integrations</strong></li>
@@ -58,7 +58,7 @@
             <li>Copy the webhook URL and paste it below</li>
         </ol>
         <div class="mt-3 pt-3 border-t border-green-500/20">
-            <p class="text-xs text-text-secondary">
+            <p class="text-xs text-hc-muted">
                 <strong class="text-white">URL format:</strong><br/>
                 <code class="text-xs bg-hc-black px-1.5 py-0.5 rounded">https://chat.googleapis.com/v1/spaces/.../messages?key=...&token=...</code>
             </p>
@@ -79,45 +79,45 @@
                     name="webhookUrl" 
                     required
                     placeholder="https://chat.googleapis.com/v1/spaces/..."
-                    class="w-full px-4 py-3 rounded-xl bg-hc-black border border-border-color text-white placeholder-text-secondary focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                    class="w-full px-4 py-3 rounded-xl bg-hc-black border border-hc-border text-white placeholder-hc-muted focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 />
-                <p class="mt-2 text-xs text-text-secondary">The Google Chat webhook URL from your space settings</p>
+                <p class="mt-2 text-xs text-hc-muted">The Google Chat webhook URL from your space settings</p>
             </div>
 
             <!-- Integration Name (Optional) -->
             <div>
                 <label for="name" class="block text-sm font-bold text-white mb-2">
-                    Integration Name <span class="text-text-secondary text-xs font-normal">(Optional)</span>
+                    Integration Name <span class="text-hc-muted text-xs font-normal">(Optional)</span>
                 </label>
                 <input 
                     type="text" 
                     id="name" 
                     name="name" 
                     placeholder="Google Chat - Alerts"
-                    class="w-full px-4 py-3 rounded-xl bg-hc-black border border-border-color text-white placeholder-text-secondary focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                    class="w-full px-4 py-3 rounded-xl bg-hc-black border border-hc-border text-white placeholder-hc-muted focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 />
-                <p class="mt-2 text-xs text-text-secondary">If left empty, will default to "Google Chat"</p>
+                <p class="mt-2 text-xs text-hc-muted">If left empty, will default to "Google Chat"</p>
             </div>
 
             <!-- Space Name (Optional) -->
             <div>
                 <label for="spaceName" class="block text-sm font-bold text-white mb-2">
-                    Space Name <span class="text-text-secondary text-xs font-normal">(Optional)</span>
+                    Space Name <span class="text-hc-muted text-xs font-normal">(Optional)</span>
                 </label>
                 <input 
                     type="text" 
                     id="spaceName" 
                     name="spaceName" 
                     placeholder="Alerts & Monitoring"
-                    class="w-full px-4 py-3 rounded-xl bg-hc-black border border-border-color text-white placeholder-text-secondary focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                    class="w-full px-4 py-3 rounded-xl bg-hc-black border border-hc-border text-white placeholder-hc-muted focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 />
-                <p class="mt-2 text-xs text-text-secondary">Optional space name for easier identification</p>
+                <p class="mt-2 text-xs text-hc-muted">Optional space name for easier identification</p>
             </div>
         </div>
 
         <!-- Actions -->
         <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-white/5">
-            <a href="/project/@project.Slug/integrations" class="px-6 py-2.5 rounded-xl text-text-secondary hover:text-white font-bold text-sm transition-colors">
+            <a href="/project/@project.Slug/integrations" class="px-6 py-2.5 rounded-xl text-hc-muted hover:text-white font-bold text-sm transition-colors">
                 Cancel
             </a>
             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-lg shadow-green-500/20 flex items-center gap-2">

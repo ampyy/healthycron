@@ -6,21 +6,21 @@
 <div class="space-y-12">
     <header>
         <h1 class="text-4xl font-black text-white mb-6">Configuring Checks</h1>
-        <p class="text-lg text-text-secondary leading-relaxed">
+        <p class="text-lg text-hc-muted leading-relaxed">
             Checks are the heart of HealthyCron. Learn how to configure schedules, grace times, and metadata to get the most out of your monitoring.
         </p>
     </header>
 
     <section class="space-y-6">
         <h2 class="text-2xl font-black text-white">Schedules</h2>
-        <p class="text-text-secondary leading-relaxed">
+        <p class="text-hc-muted leading-relaxed">
             HealthyCron supports two types of schedules to match how your periodic tasks run.
         </p>
 
         <div class="space-y-6">
             <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6">
                 <h3 class="text-lg font-bold text-white mb-2">Simple (Period-based)</h3>
-                <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                <p class="text-sm text-hc-muted leading-relaxed mb-4">
                     Best for tasks that run "every X minutes/hours". A simple schedule defines the expected interval between successful pings.
                 </p>
                 <div class="bg-black/30 p-4 rounded-xl border border-white/5">
@@ -31,13 +31,13 @@
 
             <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6">
                 <h3 class="text-lg font-bold text-white mb-2">Cron Expressions</h3>
-                <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                <p class="text-sm text-hc-muted leading-relaxed mb-4">
                     For tasks that run at specific wall-clock times (e.g., "10:00 AM every Sunday"). HealthyCron uses standard 5 or 6-field cron expressions.
                 </p>
                 <div class="bg-black/30 p-4 rounded-xl border border-white/5">
                     <p class="text-[10px] font-black uppercase text-blue-400 tracking-widest mb-1">Example Expression</p>
                     <code class="text-white font-mono text-sm">30 2 * * *</code>
-                    <p class="text-[9px] text-text-secondary mt-1 italic">"Run at 02:30 every day"</p>
+                    <p class="text-[9px] text-hc-muted mt-1 italic">"Run at 02:30 every day"</p>
                 </div>
             </div>
         </div>
@@ -45,14 +45,14 @@
 
     <section class="space-y-6">
         <h2 class="text-2xl font-black text-white">Grace Time</h2>
-        <p class="text-text-secondary leading-relaxed">
+        <p class="text-hc-muted leading-relaxed">
             Grace Time is the additional time to wait before sending an alert when a check is late. This prevents "flapping" alerts due to minor network delays or slight variations in script execution time.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-hc-black/30 border border-white/5 p-6 rounded-2xl">
                 <h4 class="text-white font-black uppercase text-[10px] tracking-widest mb-3 text-blue-400">Calculation</h4>
-                <p class="text-sm text-text-secondary leading-relaxed">
+                <p class="text-sm text-hc-muted leading-relaxed">
                     If your job is expected at 12:00 and you have a 5-minute Grace Time:
                     <ul class="mt-2 space-y-1">
                         <li class="flex gap-2"><span class="text-blue">•</span> 12:00: Monitor becomes <strong>Late</strong></li>
@@ -62,7 +62,7 @@
             </div>
             <div class="bg-hc-black/30 border border-white/5 p-6 rounded-2xl">
                 <h4 class="text-white font-black uppercase text-[10px] tracking-widest mb-3 text-blue-400">Pro Tip</h4>
-                <p class="text-sm text-text-secondary leading-relaxed italic">
+                <p class="text-sm text-hc-muted leading-relaxed italic">
                     "Set your Grace Time to at least double your script's average execution time to account for occasional system heavy-load or slow network pings."
                 </p>
             </div>
@@ -79,7 +79,7 @@
                 </div>
                 <div>
                     <h4 class="text-white font-bold mb-1">Tags & Categories</h4>
-                    <p class="text-sm text-text-secondary leading-relaxed">
+                    <p class="text-sm text-hc-muted leading-relaxed">
                         Organize your monitors by tagging them (e.g., <code>production</code>, <code>backup</code>, <code>api</code>). You can filter the dashboard by tags to quickly find what's broken.
                     </p>
                 </div>
@@ -91,7 +91,7 @@
                 </div>
                 <div>
                     <h4 class="text-white font-bold mb-1">Notes & Documentation</h4>
-                    <p class="text-sm text-text-secondary leading-relaxed">
+                    <p class="text-sm text-hc-muted leading-relaxed">
                         Add internal notes for your team. If a monitor fails, these notes are incredibly helpful for whoever is on-call to understand what the script does and how to fix it.
                     </p>
                 </div>

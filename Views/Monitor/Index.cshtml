@@ -37,7 +37,7 @@
 
 <div class="max-w-5xl ml-0 pb-20 px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0 mb-8">
-        <div class="flex flex-wrap items-center gap-2 text-text-secondary text-sm tracking-wider font-semibold">
+        <div class="flex flex-wrap items-center gap-2 text-hc-muted text-sm tracking-wider font-semibold">
             <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                 Projects
@@ -50,7 +50,7 @@
         @if (ViewBag.IsOwner == true || (ViewBag.ProjectRole != null && (HealthyCron.Enums.ProjectRole)ViewBag.ProjectRole == HealthyCron.Enums.ProjectRole.Manager))
         {
             <div class="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto">
-                <a href="/project/@project?.Slug/settings" class="flex items-center justify-center gap-2 px-3 py-2 sm:py-1.5 rounded-xl bg-white/5 border border-white/10 text-text-secondary hover:text-white transition-all text-[10px] font-black uppercase tracking-widest flex-1 sm:flex-none">
+                <a href="/project/@project?.Slug/settings" class="flex items-center justify-center gap-2 px-3 py-2 sm:py-1.5 rounded-xl bg-white/5 border border-white/10 text-hc-muted hover:text-white transition-all text-[10px] font-black uppercase tracking-widest flex-1 sm:flex-none">
                     <i data-lucide="settings" class="w-3.5 h-3.5"></i>
                     Settings
                 </a>
@@ -86,7 +86,7 @@
                         }
                         else if (Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused)
                         {
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500 shrink-0 w-fit">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-hc-amber/10 text-hc-amber shrink-0 w-fit">
                                 <i data-lucide="pause-circle" class="w-3 h-3"></i>
                                 Paused
                             </span>
@@ -100,8 +100,8 @@
                         }
                         else if (isLate)
                         {
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-orange-500/10 text-orange-500 shrink-0 w-fit">
-                                <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-hc-amber/10 text-hc-amber shrink-0 w-fit">
+                                <span class="w-2 h-2 rounded-full bg-hc-amber animate-pulse"></span>
                                 Late
                             </span>
                         }
@@ -124,8 +124,8 @@
                         <i data-lucide="edit-3" class="w-4 h-4 text-blue-500"></i>
                         <span class="inline">Edit</span>
                     </button>
-                    <button onclick="togglePause()" id="pause-btn" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-hc-black border border-white/10 text-white hover:border-yellow-500 transition-all text-xs font-bold w-full sm:w-auto">
-                        <i data-lucide="@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "play" : "pause")" class="w-4 h-4 text-yellow-500"></i>
+                    <button onclick="togglePause()" id="pause-btn" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-hc-black border border-white/10 text-white hover:border-hc-amber transition-all text-xs font-bold w-full sm:w-auto">
+                        <i data-lucide="@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "play" : "pause")" class="w-4 h-4 text-hc-amber"></i>
                         <span>@(Model.LastStatus == HealthyCron.Models.MonitorStatus.Paused ? "Resume" : "Pause")</span>
                     </button>
                     <button onclick="deleteMonitor()" class="flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl bg-hc-black border border-white/10 text-white hover:border-red-500 transition-all text-xs font-bold w-full sm:w-auto">
@@ -141,10 +141,10 @@
             <!-- URL Card -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between gap-4">
-                    <p class="text-[10px] font-black uppercase tracking-widest text-text-secondary">How To Ping</p>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-hc-muted">How To Ping</p>
                     <div class="flex items-center gap-1 p-0.5 bg-black/40 border border-white/10 rounded-lg">
                         <button onclick="switchEndpoint('uuid')" id="tab-uuid" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab active bg-blue-600/10 text-blue-500">UUID</button>
-                        <button onclick="switchEndpoint('slug')" id="tab-slug" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab text-text-secondary opacity-50">Slug</button>
+                        <button onclick="switchEndpoint('slug')" id="tab-slug" class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest transition-all endpoint-tab text-hc-muted opacity-50">Slug</button>
                     </div>
                 </div>
 
@@ -159,7 +159,7 @@
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id
                                 </div>
                             </div>
-                            <button onclick="copyUrl('url-uuid-success')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                            <button onclick="copyUrl('url-uuid-success')" class="p-1.5 hover:bg-white/5 rounded-lg text-hc-muted hover:text-white transition-all shrink-0">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -171,7 +171,7 @@
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id/start
                                 </div>
                             </div>
-                            <button onclick="copyUrl('url-uuid-start')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                            <button onclick="copyUrl('url-uuid-start')" class="p-1.5 hover:bg-white/5 rounded-lg text-hc-muted hover:text-white transition-all shrink-0">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -183,7 +183,7 @@
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@Model.Id/fail
                                 </div>
                             </div>
-                            <button onclick="copyUrl('url-uuid-fail')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                            <button onclick="copyUrl('url-uuid-fail')" class="p-1.5 hover:bg-white/5 rounded-lg text-hc-muted hover:text-white transition-all shrink-0">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -199,7 +199,7 @@
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug
                                 </div>
                             </div>
-                            <button onclick="copyUrl('url-slug-success')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                            <button onclick="copyUrl('url-slug-success')" class="p-1.5 hover:bg-white/5 rounded-lg text-hc-muted hover:text-white transition-all shrink-0">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -211,7 +211,7 @@
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug/start
                                 </div>
                             </div>
-                            <button onclick="copyUrl('url-slug-start')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                            <button onclick="copyUrl('url-slug-start')" class="p-1.5 hover:bg-white/5 rounded-lg text-hc-muted hover:text-white transition-all shrink-0">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -223,7 +223,7 @@
                                     @Context.Request.Scheme://@Context.Request.Host/ping/@(ViewBag.PingKey)/@Model.Slug/fail
                                 </div>
                             </div>
-                            <button onclick="copyUrl('url-slug-fail')" class="p-1.5 hover:bg-white/5 rounded-lg text-text-secondary hover:text-white transition-all shrink-0">
+                            <button onclick="copyUrl('url-slug-fail')" class="p-1.5 hover:bg-white/5 rounded-lg text-hc-muted hover:text-white transition-all shrink-0">
                                 <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                             </button>
                         </div>
@@ -242,8 +242,8 @@
             </h2>
             <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-hc-black border border-white/5 rounded-xl p-1">
                 <button onclick="loadPingData('24h')" id="btn-24h" class="px-3 py-1.5 rounded-lg text-white bg-blue-600/20 text-blue-400 transition-colors">24H</button>
-                <button onclick="loadPingData('3d')" id="btn-3d" class="px-3 py-1.5 rounded-lg text-text-secondary hover:text-white transition-colors">3D</button>
-                <button onclick="loadPingData('7d')" id="btn-7d" class="px-3 py-1.5 rounded-lg text-text-secondary hover:text-white transition-colors">7D</button>
+                <button onclick="loadPingData('3d')" id="btn-3d" class="px-3 py-1.5 rounded-lg text-hc-muted hover:text-white transition-colors">3D</button>
+                <button onclick="loadPingData('7d')" id="btn-7d" class="px-3 py-1.5 rounded-lg text-hc-muted hover:text-white transition-colors">7D</button>
             </div>
         </div>
         
@@ -275,7 +275,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
-                            <tr class="text-[9px] uppercase font-black text-text-secondary border-b border-white/5">
+                            <tr class="text-[9px] uppercase font-black text-hc-muted border-b border-white/5">
                                 <th class="px-2 py-2">Month</th>
                                 <th class="px-2 py-2 text-right">Downtime</th>
                                 <th class="px-2 py-2 text-right">Uptime</th>
@@ -287,7 +287,7 @@
                                 <tr class="group hover:bg-white/[0.02] transition-colors">
                                     <td class="px-2 py-2">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-1.5 h-1.5 rounded-full @(stat.UptimePercentage >= 99.9 ? "bg-green-500" : (stat.UptimePercentage >= 99 ? "bg-green-400" : "bg-yellow-500"))"></div>
+                                            <div class="w-1.5 h-1.5 rounded-full @(stat.UptimePercentage >= 99.9 ? "bg-green-500" : (stat.UptimePercentage >= 99 ? "bg-green-400" : "bg-hc-amber"))"></div>
                                             <span class="text-[10px] font-bold text-white/80 group-hover:text-white transition-colors">@stat.Month</span>
                                         </div>
                                     </td>
@@ -295,14 +295,14 @@
                                         <span class="text-[10px] font-mono text-white/40 group-hover:text-white/60 transition-colors">@stat.DowntimeDuration</span>
                                     </td>
                                     <td class="px-2 py-2 text-right">
-                                        <span class="text-[10px] font-mono font-bold @(stat.UptimePercentage >= 99.9 ? "text-green-500" : (stat.UptimePercentage >= 99 ? "text-green-400" : "text-yellow-500"))">@stat.UptimePercentage%</span>
+                                        <span class="text-[10px] font-mono font-bold @(stat.UptimePercentage >= 99.9 ? "text-green-500" : (stat.UptimePercentage >= 99 ? "text-green-400" : "text-hc-amber"))">@stat.UptimePercentage%</span>
                                     </td>
                                 </tr>
                             }
                             @if (!monthlyStats.Any())
                             {
                                 <tr>
-                                    <td colspan="3" class="text-center py-4 text-[10px] text-text-secondary italic opacity-50">No data available yet.</td>
+                                    <td colspan="3" class="text-center py-4 text-[10px] text-hc-muted italic opacity-50">No data available yet.</td>
                                 </tr>
                             }
                         </tbody>
@@ -322,7 +322,7 @@
                         <tbody class="divide-y divide-white/5">
                              <tr class="group hover:bg-white/[0.02] transition-colors">
                                 <td class="px-2 py-3 w-1/3">
-                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Schedule</span>
+                                    <span class="text-[10px] font-black text-hc-muted uppercase tracking-widest">Schedule</span>
                                 </td>
                                 <td class="px-2 py-3 text-right">
                                     <span class="text-[11px] font-bold text-white">@scheduleDisplay</span>
@@ -330,7 +330,7 @@
                             </tr>
                             <tr class="group hover:bg-white/[0.02] transition-colors">
                                 <td class="px-2 py-3">
-                                    <span class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Grace Period</span>
+                                    <span class="text-[10px] font-black text-hc-muted uppercase tracking-widest">Grace Period</span>
                                 </td>
                                 <td class="px-2 py-3 text-right">
                                     <span class="text-[11px] font-bold text-white">@FormatMinutes(Model.GraceSeconds)</span>
@@ -343,7 +343,7 @@
                 @if (ViewBag.CanManage != false)
                 {
                     <div class="mt-4 flex justify-end">
-                         <button onclick="openScheduleModal()" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-blue-600/10 border border-white/10 hover:border-blue-500/20 text-text-secondary hover:text-blue-500 transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                         <button onclick="openScheduleModal()" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-blue-600/10 border border-white/10 hover:border-blue-500/20 text-hc-muted hover:text-blue-500 transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                             <i data-lucide="edit-2" class="w-3 h-3"></i>
                             Edit Rules
                         </button>
@@ -364,8 +364,8 @@
                 <table class="w-full caption-bottom text-sm">
                     <thead class="[&_tr]:border-b border-white/5 bg-hc-black/10">
                         <tr class="border-b border-white/5 transition-colors hover:bg-white/[0.02]">
-                            <th class="h-10 px-4 pl-6 text-left align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest w-full">Integration</th>
-                            <th class="h-10 px-4 text-right align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest whitespace-nowrap pr-6">Status</th>
+                            <th class="h-10 px-4 pl-6 text-left align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest w-full">Integration</th>
+                            <th class="h-10 px-4 text-right align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest whitespace-nowrap pr-6">Status</th>
                         </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0 divide-y divide-white/5">
@@ -440,7 +440,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="2" class="p-8 text-center text-text-secondary font-medium text-xs opacity-50 bg-white/[0.01]">
+                                <td colspan="2" class="p-8 text-center text-hc-muted font-medium text-xs opacity-50 bg-white/[0.01]">
                                     No active integrations. 
                                     <a href="/project/@project?.Slug/integrations" class="text-blue-500 hover:underline hover:text-blue-400 ml-1">Manage Integrations</a>
                                 </td>
@@ -463,14 +463,14 @@
             <table class="w-full caption-bottom text-sm text-left">
                 <thead class="[&_tr]:border-b border-white/5 bg-hc-black/10">
                     <tr class="border-b border-white/5 transition-colors hover:bg-white/[0.02]">
-                        <th class="h-10 px-4 pl-6 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest w-10">#</th>
-                        <th class="h-10 px-4 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest w-28">Date</th>
-                        <th class="h-10 px-4 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest w-24">Time</th>
-                        <th class="h-10 px-4 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest w-24">Status</th>
-                        <th class="h-10 px-4 pr-6 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest">User Agent</th>
+                        <th class="h-10 px-4 pl-6 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest w-10">#</th>
+                        <th class="h-10 px-4 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest w-28">Date</th>
+                        <th class="h-10 px-4 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest w-24">Time</th>
+                        <th class="h-10 px-4 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest w-24">Status</th>
+                        <th class="h-10 px-4 pr-6 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest">User Agent</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm text-text-secondary">
+                <tbody class="text-sm text-hc-muted">
                     @{
                         var userTz = ViewBag.UserTimezone as string ?? "UTC";
                         var pingList = pings?.OrderByDescending(p => p.ReceivedAt).Take(5).ToList();
@@ -482,7 +482,7 @@
                         {
                             var statusClass = ping.Status == HealthyCron.Models.PingType.Success ? "bg-green-500/10 text-green-500 border border-green-500/20" :
                             (ping.Status == HealthyCron.Models.PingType.Start ? "bg-blue-500/10 text-blue-500 border border-blue-500/20" : 
-                            (ping.Status == HealthyCron.Models.PingType.Paused || ping.Status == HealthyCron.Models.PingType.Resumed ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"));
+                            (ping.Status == HealthyCron.Models.PingType.Paused || ping.Status == HealthyCron.Models.PingType.Resumed ? "bg-hc-amber/10 text-hc-amber border border-hc-amber/20" : "bg-red-500/10 text-red-500 border border-red-500/20"));
                             
                             var statusText = ping.Status switch {
                                 HealthyCron.Models.PingType.Success => "OK",
@@ -509,13 +509,13 @@
                                     })"
                                 data-id="@ping.Id" data-time="@localTime.ToString("MMM dd, yyyy HH:mm:ss")" data-status="@statusText" data-message="@ping.Message" data-ip="@ping.IpAddress" data-ua="@ping.UserAgent" data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
                                 <td class="p-4 pl-6 align-middle text-center">
-                                    <span class="text-[10px] text-text-secondary font-black opacity-30 group-hover:opacity-100 transition-opacity">@(rowNum--)</span>
+                                    <span class="text-[10px] text-hc-muted font-black opacity-30 group-hover:opacity-100 transition-opacity">@(rowNum--)</span>
                                 </td>
                                 <td class="p-4 align-middle">
                                      <span class="text-sm text-white font-medium whitespace-nowrap">@localTime.ToString("MMM dd")</span>
                                 </td>
                                 <td class="p-4 align-middle">
-                                    <span class="text-xs text-text-secondary font-mono whitespace-nowrap">@localTime.ToString("HH:mm:ss")</span>
+                                    <span class="text-xs text-hc-muted font-mono whitespace-nowrap">@localTime.ToString("HH:mm:ss")</span>
                                 </td>
                                 <td class="p-4 align-middle">
                                     <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest @statusClass">
@@ -524,7 +524,7 @@
                                 </td>
                                 <td class="p-4 pr-6 align-middle">
                                     <div class="flex items-center gap-1.5 opacity-60">
-                                        <i data-lucide="globe" class="w-3.5 h-3.5 text-text-secondary shrink-0"></i>
+                                        <i data-lucide="globe" class="w-3.5 h-3.5 text-hc-muted shrink-0"></i>
                                         <span class="text-xs text-white font-mono truncate" title="@ping.UserAgent">@(string.IsNullOrEmpty(ping.UserAgent) ? "N/A" : ping.UserAgent)</span>
                                     </div>
                                 </td>
@@ -534,7 +534,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="5" class="p-8 text-center text-text-secondary font-medium text-xs opacity-50 bg-white/[0.01]">
+                            <td colspan="5" class="p-8 text-center text-hc-muted font-medium text-xs opacity-50 bg-white/[0.01]">
                                 No activity recorded yet.
                             </td>
                         </tr>
@@ -551,13 +551,13 @@
 <div id="scheduleModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeScheduleModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <i data-lucide="timer" class="text-yellow-500"></i>
+                    <i data-lucide="timer" class="text-hc-amber"></i>
                     Change Schedule
                 </h3>
-                <button onclick="closeScheduleModal()" class="text-text-secondary hover:text-white transition-colors">
+                <button onclick="closeScheduleModal()" class="text-hc-muted hover:text-white transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -566,11 +566,11 @@
                 <div class="p-8 space-y-8">
                     <!-- Schedule Type -->
                     <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3 px-1">1. Choose Schedule Type</label>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-hc-muted mb-3 px-1">1. Choose Schedule Type</label>
                         <div class="grid grid-cols-3 bg-hc-black p-1.5 rounded-2xl border border-white/5">
-                            <button type="button" onclick="setScheduleType(0)" id="btn-sch-0" class="py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "active-sch text-white" : "text-text-secondary opacity-50 hover:opacity-100")">Interval</button>
-                            <button type="button" onclick="setScheduleType(1)" id="btn-sch-1" class="py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "active-sch text-white" : "text-text-secondary opacity-50 hover:opacity-100")">Cron</button>
-                            <button type="button" onclick="setScheduleType(2)" id="btn-sch-2" class="py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Calendar ? "active-sch text-white" : "text-text-secondary opacity-50 hover:opacity-100")">Calendar</button>
+                            <button type="button" onclick="setScheduleType(0)" id="btn-sch-0" class="py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Interval ? "active-sch text-white" : "text-hc-muted opacity-50 hover:opacity-100")">Interval</button>
+                            <button type="button" onclick="setScheduleType(1)" id="btn-sch-1" class="py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Cron ? "active-sch text-white" : "text-hc-muted opacity-50 hover:opacity-100")">Cron</button>
+                            <button type="button" onclick="setScheduleType(2)" id="btn-sch-2" class="py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all schedule-btn @(Model.ScheduleType == HealthyCron.Models.ScheduleType.Calendar ? "active-sch text-white" : "text-hc-muted opacity-50 hover:opacity-100")">Calendar</button>
                             <input type="hidden" name="ScheduleType" id="schedule-type-input" value="@((int)Model.ScheduleType)">
                         </div>
                     </div>
@@ -578,7 +578,7 @@
                     <!-- Configuration Area -->
                     <div class="bg-hc-black/50 rounded-2xl p-6 border border-white/5 space-y-4">
                         <div id="config-sch-0" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Interval ? "hidden" : "")">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3">Health Check Interval</label>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-hc-muted mb-3">Health Check Interval</label>
                             <div class="flex gap-3">
                                 <div class="w-24 bg-hc-black border border-white/10 rounded-xl focus-within:ring-2 focus-within:ring-blue/50 transition-all overflow-hidden">
                                     <input type="number" name="PeriodValue" value="@(Model.PeriodSeconds >= 3600 ? Model.PeriodSeconds / 3600 : (Model.PeriodSeconds >= 60 ? Model.PeriodSeconds / 60 : Model.PeriodSeconds))" min="1" class="w-full bg-transparent px-4 py-3.5 text-white outline-none text-center font-bold">
@@ -589,16 +589,16 @@
                                         <option value="minutes" selected="@(Model.PeriodSeconds >= 60 && Model.PeriodSeconds < 3600 ? "selected" : null)">Minutes</option>
                                         <option value="hours" selected="@(Model.PeriodSeconds >= 3600 ? "selected" : null)">Hours</option>
                                     </select>
-                                    <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none opacity-50"></i>
+                                    <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-hc-muted pointer-events-none opacity-50"></i>
                                 </div>
                             </div>
                         </div>
 
                         <div id="config-sch-1" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Cron ? "hidden" : "")">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3">Cron Expression</label>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-hc-muted mb-3">Cron Expression</label>
                             <input type="text" name="CronExpression" value="@Model.CronExpression" placeholder="0 0 * * *" class="w-full bg-hc-black border border-white/10 rounded-xl px-4 py-3.5 text-white focus:ring-2 focus:ring-blue/50 outline-none font-mono tracking-widest text-sm">
                             <div class="mt-3 p-3 bg-white/[0.02] border border-white/5 rounded-xl space-y-2">
-                                <p class="text-[10px] text-text-secondary font-black uppercase tracking-widest flex items-center gap-2">
+                                <p class="text-[10px] text-hc-muted font-black uppercase tracking-widest flex items-center gap-2">
                                     <i data-lucide="info" class="w-3 h-3 text-blue-500"></i>
                                     Examples
                                 </p>
@@ -612,10 +612,10 @@
                         </div>
 
                         <div id="config-sch-2" class="@(Model.ScheduleType != HealthyCron.Models.ScheduleType.Calendar ? "hidden" : "")">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3">Calendar Expression</label>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-hc-muted mb-3">Calendar Expression</label>
                             <input type="text" name="CalendarExpression" value="@Model.CalendarExpression" placeholder="Mon *-*-* 00:00:00" class="w-full bg-hc-black border border-white/10 rounded-xl px-4 py-3.5 text-white focus:ring-2 focus:ring-blue-500/50 outline-none font-mono tracking-widest text-sm">
                             <div class="mt-3 p-3 bg-white/[0.02] border border-white/5 rounded-xl space-y-2">
-                                <p class="text-[10px] text-text-secondary font-black uppercase tracking-widest flex items-center gap-2">
+                                <p class="text-[10px] text-hc-muted font-black uppercase tracking-widest flex items-center gap-2">
                                     <i data-lucide="info" class="w-3 h-3 text-blue-400"></i>
                                     Examples
                                 </p>
@@ -631,7 +631,7 @@
 
                     <!-- Grace Period -->
                     <div>
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-text-secondary mb-3 px-1">2. Set Grace Period (Time to wait before alerting)</label>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-hc-muted mb-3 px-1">2. Set Grace Period (Time to wait before alerting)</label>
                         <div class="flex gap-3">
                             <div class="w-24 bg-hc-black border border-white/10 rounded-xl focus-within:ring-2 focus-within:ring-red-500/50 transition-all overflow-hidden">
                                 <input type="number" name="GraceSeconds" value="@(Model.GraceSeconds >= 3600 ? Model.GraceSeconds / 3600 : (Model.GraceSeconds >= 60 ? Model.GraceSeconds / 60 : Model.GraceSeconds))" min="1" class="w-full bg-transparent px-4 py-3.5 text-white outline-none text-center font-bold">
@@ -642,15 +642,15 @@
                                     <option value="minutes" selected="@(Model.GraceSeconds >= 60 && Model.GraceSeconds < 3600 ? "selected" : null)">Minutes</option>
                                     <option value="hours" selected="@(Model.GraceSeconds >= 3600 ? "selected" : null)">Hours</option>
                                 </select>
-                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none opacity-50"></i>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-hc-muted pointer-events-none opacity-50"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-hc-black/50 px-6 py-4 flex items-center justify-end gap-3 border-t border-white/5">
-                    <button type="button" onclick="closeScheduleModal()" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-white transition-all">Cancel</button>
-                    <button type="submit" class="bg-yellow-600 hover:bg-yellow-500 text-white px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-600/20 active:scale-95">
+                    <button type="button" onclick="closeScheduleModal()" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-hc-muted hover:text-white transition-all">Cancel</button>
+                    <button type="submit" class="bg-yellow-600 hover:bg-hc-amber text-white px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-yellow-600/20 active:scale-95">
                         Apply Changes
                     </button>
                 </div>
@@ -663,13 +663,13 @@
 <div id="editModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeEditModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="edit-3" class="text-blue-500"></i>
                     Edit Details
                 </h3>
-                <button onclick="closeEditModal()" class="text-text-secondary hover:text-white transition-colors">
+                <button onclick="closeEditModal()" class="text-hc-muted hover:text-white transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -678,19 +678,19 @@
                 <input type="hidden" name="ProjectSlug" value="@project?.Slug">
                 <div class="p-6 space-y-6">
                     <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Name</label>
-                        <input type="text" name="Name" value="@Model.Name" required class="w-full bg-hc-black border border-border-color rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-bold">
+                        <label class="block text-xs font-black uppercase tracking-widest text-hc-muted mb-2">Name</label>
+                        <input type="text" name="Name" value="@Model.Name" required class="w-full bg-hc-black border border-hc-border rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-bold">
                     </div>
                     <div>
-                        <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Slug</label>
-                        <input type="text" name="Slug" value="@Model.Slug" id="edit-slug" class="w-full bg-hc-black border border-border-color rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-mono text-sm">
-                        <p id="slug-hint" class="text-[10px] text-text-secondary mt-1">Changing slug updates the Ping URL.</p>
+                        <label class="block text-xs font-black uppercase tracking-widest text-hc-muted mb-2">Slug</label>
+                        <input type="text" name="Slug" value="@Model.Slug" id="edit-slug" class="w-full bg-hc-black border border-hc-border rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none font-mono text-sm">
+                        <p id="slug-hint" class="text-[10px] text-hc-muted mt-1">Changing slug updates the Ping URL.</p>
                         <p id="slug-error" class="text-[10px] text-red-500 mt-1 hidden font-bold">Invalid slug. Use only lowercase letters, numbers, and hyphens.</p>
                     </div>
                 </div>
-                <div class="bg-hc-black/50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 border-t border-border-color">
+                <div class="bg-hc-black/50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 border-t border-hc-border">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-600/80 text-white px-8 py-3 rounded-xl font-black transition-all shadow-lg shadow-blue/20 w-full sm:w-auto">Save Details</button>
-                    <button type="button" onclick="closeEditModal()" class="px-6 py-3 rounded-xl border border-border-color text-text-secondary hover:text-white transition-all w-full sm:w-auto mt-2 sm:mt-0 font-bold">Cancel</button>
+                    <button type="button" onclick="closeEditModal()" class="px-6 py-3 rounded-xl border border-hc-border text-hc-muted hover:text-white transition-all w-full sm:w-auto mt-2 sm:mt-0 font-bold">Cancel</button>
                 </div>
             </form>
         </div>
@@ -701,20 +701,20 @@
 <div id="pingModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closePingModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2"><i data-lucide="activity" class="text-blue-500"></i>Ping Details</h3>
-                <button onclick="closePingModal()" class="text-text-secondary hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <button onclick="closePingModal()" class="text-hc-muted hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             <div class="p-6">
                 <div class="space-y-6">
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Status</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Status</p>
                             <span id="modal-status" class="text-sm font-black uppercase tracking-widest"></span>
                         </div>
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Received At</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Received At</p>
                             <span id="modal-time" class="text-sm text-white font-bold"></span>
                         </div>
                     </div>
@@ -722,27 +722,27 @@
                     <!-- New Metadata Fields -->
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Source IP</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Source IP</p>
                             <span id="modal-ip" class="text-sm text-white font-mono break-all"></span>
                         </div>
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Method</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Method</p>
                             <span id="modal-method" class="text-sm text-white font-mono font-bold"></span>
                         </div>
                     </div>
 
                     <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Ping Message</p>
+                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Ping Message</p>
                         <p id="modal-message" class="text-sm text-white italic"></p>
                     </div>
 
                     <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">User Agent</p>
-                        <p id="modal-ua" class="text-xs text-text-secondary break-all font-mono"></p>
+                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">User Agent</p>
+                        <p id="modal-ua" class="text-xs text-hc-muted break-all font-mono"></p>
                     </div>
 
                     <div class="bg-black/40 rounded-xl p-4 border border-white/5 overflow-x-auto hidden">
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-2">Request Headers</p>
+                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-2">Request Headers</p>
                         <pre id="modal-headers" class="text-[10px] text-green-400 font-mono"></pre>
                     </div>
 
@@ -801,7 +801,7 @@
 
         let badgeHtml = '';
         if (status === 'Paused') {
-            badgeHtml = `<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-yellow-500/10 text-yellow-500">
+            badgeHtml = `<span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-hc-amber/10 text-hc-amber">
                             <i data-lucide="pause-circle" class="w-3 h-3"></i>
                             Paused
                         </span>`;
@@ -886,13 +886,13 @@
         
         tr.innerHTML = `
             <td class="p-4 pl-6 align-middle text-center">
-                <span class="text-[10px] text-text-secondary font-black opacity-30">NEW</span>
+                <span class="text-[10px] text-hc-muted font-black opacity-30">NEW</span>
             </td>
             <td class="p-4 align-middle">
                  <span class="text-sm text-white font-medium whitespace-nowrap">${data.dateDisplay || '-'}</span>
             </td>
             <td class="p-4 align-middle">
-                <span class="text-xs text-text-secondary font-mono whitespace-nowrap">${data.timeDisplay || '-'}</span>
+                <span class="text-xs text-hc-muted font-mono whitespace-nowrap">${data.timeDisplay || '-'}</span>
             </td>
             <td class="p-4 align-middle">
                 <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest ${statusClass}">
@@ -901,7 +901,7 @@
             </td>
             <td class="p-4 pr-6 align-middle">
                 <div class="flex items-center gap-1.5 opacity-60">
-                    <i data-lucide="globe" class="w-3.5 h-3.5 text-text-secondary shrink-0"></i>
+                    <i data-lucide="globe" class="w-3.5 h-3.5 text-hc-muted shrink-0"></i>
                     <span class="text-xs text-white font-mono truncate" title="${data.userAgent || ''}">${data.userAgent || 'N/A'}</span>
                 </div>
             </td>
@@ -938,12 +938,12 @@
                 btn.dataset.enabled = newStatus.toString();
                 
                 if (newStatus) {
-                    btn.classList.remove('bg-white/5', 'border-white/10', 'text-text-secondary');
+                    btn.classList.remove('bg-white/5', 'border-white/10', 'text-hc-muted');
                     btn.classList.add('bg-green-500/10', 'border-green-500/20', 'text-green-500');
                     btn.innerHTML = `<i data-lucide="bell" class="w-3 h-3"></i><span>Enabled</span>`;
                 } else {
                     btn.classList.remove('bg-green-500/10', 'border-green-500/20', 'text-green-500');
-                    btn.classList.add('bg-white/5', 'border-white/10', 'text-text-secondary');
+                    btn.classList.add('bg-white/5', 'border-white/10', 'text-hc-muted');
                     btn.innerHTML = `<i data-lucide="bell-off" class="w-3 h-3"></i><span>Disabled</span>`;
                 }
                 lucide.createIcons();
@@ -963,12 +963,12 @@
     function switchEndpoint(type) {
         document.querySelectorAll('.endpoint-tab').forEach(tab => {
             tab.classList.remove('bg-blue-600/10', 'text-blue', 'active');
-            tab.classList.add('text-text-secondary', 'opacity-50');
+            tab.classList.add('text-hc-muted', 'opacity-50');
         });
         document.querySelectorAll('.endpoint-content').forEach(content => content.classList.add('hidden'));
 
         document.getElementById(`tab-${type}`).classList.add('bg-blue-600/10', 'text-blue', 'active');
-        document.getElementById(`tab-${type}`).classList.remove('text-text-secondary', 'opacity-50');
+        document.getElementById(`tab-${type}`).classList.remove('text-hc-muted', 'opacity-50');
         document.getElementById(`endpoint-${type}`).classList.remove('hidden');
     }
 
@@ -1165,11 +1165,11 @@
         // Update active button state
         document.querySelectorAll('[id^="btn-"]').forEach(btn => {
             btn.classList.remove('text-white', 'bg-blue-600/20', 'text-blue-400');
-            btn.classList.add('text-text-secondary');
+            btn.classList.add('text-hc-muted');
         });
         const activeBtn = document.getElementById(`btn-${range}`);
         if(activeBtn) {
-            activeBtn.classList.remove('text-text-secondary');
+            activeBtn.classList.remove('text-hc-muted');
             activeBtn.classList.add('text-white', 'bg-blue-600/20', 'text-blue-400');
         }
 

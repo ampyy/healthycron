@@ -21,9 +21,9 @@
     @if (!byProject.Any())
     {
         <div class="glass-card rounded-2xl p-12 text-center">
-            <i data-lucide="users" class="w-12 h-12 text-text-secondary mx-auto mb-4"></i>
+            <i data-lucide="users" class="w-12 h-12 text-hc-muted mx-auto mb-4"></i>
             <h2 class="text-white font-bold text-lg mb-2">No team members yet</h2>
-            <p class="text-text-secondary text-sm mb-6">Go into any project's Settings to invite collaborators.</p>
+            <p class="text-hc-muted text-sm mb-6">Go into any project's Settings to invite collaborators.</p>
             <a href="/dashboard/projects" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black font-bold text-sm hover:bg-white/90 transition-all">
                 View Projects
             </a>
@@ -42,7 +42,7 @@
                         </div>
                         <div>
                             <h2 class="font-bold text-white">@group.Key.ProjectName</h2>
-                            <p class="text-[10px] text-text-secondary">@group.Count() member@(group.Count() == 1 ? "" : "s")</p>
+                            <p class="text-[10px] text-hc-muted">@group.Count() member@(group.Count() == 1 ? "" : "s")</p>
                         </div>
                     </div>
                     <a href="/project/@group.Key.ProjectSlug/settings" class="text-xs text-white/50 hover:text-white transition-colors flex items-center gap-1">
@@ -55,9 +55,9 @@
                     <table class="w-full caption-bottom text-sm text-left">
                         <thead class="[&_tr]:border-b border-white/5 bg-hc-black/10">
                             <tr class="border-b border-white/5 transition-colors hover:bg-white/[0.02]">
-                                <th class="h-10 px-4 pl-6 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest">Member</th>
-                                <th class="h-10 px-4 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest">Role</th>
-                                <th class="h-10 px-4 align-middle font-medium text-text-secondary uppercase text-[10px] tracking-widest">Joined</th>
+                                <th class="h-10 px-4 pl-6 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest">Member</th>
+                                <th class="h-10 px-4 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest">Role</th>
+                                <th class="h-10 px-4 align-middle font-medium text-hc-muted uppercase text-[10px] tracking-widest">Joined</th>
                             </tr>
                         </thead>
                         <tbody class="[&_tr:last-child]:border-0 divide-y divide-white/5">
@@ -71,19 +71,19 @@
                                 <tr class="border-b border-white/5 transition-colors hover:bg-white/[0.02] group">
                                     <td class="p-4 pl-6 align-middle">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-text-secondary font-bold text-xs shrink-0">
+                                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-hc-muted font-bold text-xs shrink-0">
                                                 @(member.UserEmail?.Substring(0,1).ToUpper())
                                             </div>
                                             <div>
                                                 <div class="text-white text-sm font-medium">@member.UserEmail</div>
-                                                <div class="text-text-secondary text-[10px] font-mono">@member.UserId.ToString().Substring(0,8)…</div>
+                                                <div class="text-hc-muted text-[10px] font-mono">@member.UserId.ToString().Substring(0,8)…</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="p-4 align-middle">
                                         <span class="px-2.5 py-1 @badgeCls text-[9px] rounded-md uppercase font-black tracking-widest">@roleLabel</span>
                                     </td>
-                                    <td class="p-4 align-middle text-text-secondary text-xs">
+                                    <td class="p-4 align-middle text-hc-muted text-xs">
                                         @member.JoinedAt.ToString("MMM dd, yyyy")
                                     </td>
                                 </tr>

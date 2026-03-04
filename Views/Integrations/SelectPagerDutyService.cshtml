@@ -18,7 +18,7 @@
     <div class="max-w-2xl w-full">
         <!-- Logo and Header -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-2xl shadow-orange-500/20 mb-4">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-hc-amber to-red-600 rounded-2xl shadow-2xl shadow-hc-amber/20 mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 text-white">
                     <path d="M10.5 20.5 10 21a2 2 0 0 1-2.828 0L4.343 18.172a2 2 0 0 1 0-2.828l17-17a2 2 0 0 1 2.828 0L21 1l.5.5"/>
                     <path d="m15 5 4 4"/>
@@ -43,8 +43,8 @@
                     {
                         @foreach (var service in services)
                         {
-                            <label class="flex items-center p-4 bg-slate-700/30 hover:bg-slate-700/50 border border-slate-600/50 hover:border-orange-500/50 rounded-xl cursor-pointer transition-all group">
-                                <input type="radio" name="serviceId" value="@service.Id" required class="w-5 h-5 text-orange-500 focus:ring-orange-500 focus:ring-offset-slate-800" />
+                            <label class="flex items-center p-4 bg-slate-700/30 hover:bg-slate-700/50 border border-slate-600/50 hover:border-hc-amber/50 rounded-xl cursor-pointer transition-all group">
+                                <input type="radio" name="serviceId" value="@service.Id" required class="w-5 h-5 text-hc-amber focus:ring-hc-amber focus:ring-offset-slate-800" />
                                 <div class="ml-4 flex-1">
                                     <div class="flex items-center gap-2">
                                         <p class="text-white font-medium">@service.Name</p>
@@ -60,7 +60,7 @@
                                         <p class="text-slate-400 text-sm mt-1">@service.Description</p>
                                     }
                                 </div>
-                                <i data-lucide="check-circle" class="w-5 h-5 text-orange-500 opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></i>
+                                <i data-lucide="check-circle" class="w-5 h-5 text-hc-amber opacity-0 group-has-[:checked]:opacity-100 transition-opacity"></i>
                             </label>
                         }
                     }
@@ -76,7 +76,7 @@
                     <a href="/integrations" class="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-medium transition-all text-center">
                         Cancel
                     </a>
-                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white rounded-xl font-medium transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40">
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-hc-amber to-red-600 hover:from-orange-600 hover:to-red-700 text-white rounded-xl font-medium transition-all shadow-lg shadow-hc-amber/25 hover:shadow-hc-amber/40">
                         Connect Service
                     </button>
                 </div>

@@ -17,19 +17,19 @@
         data-ip="@ping.IpAddress" data-ua="@ping.UserAgent"
         data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
         <td class="px-4 py-3 pl-6 w-10">
-            <span class="text-[10px] font-mono text-text-secondary/40">@rowNum</span>
+            <span class="text-[10px] font-mono text-hc-muted/40">@rowNum</span>
         </td>
         <td class="px-4 py-3 w-24">
             <span class="text-xs text-white font-bold">@localTime.ToString("MMM dd")</span>
         </td>
         <td class="px-4 py-3 w-24">
-            <span class="text-[10px] text-text-secondary font-mono">@localTime.ToString("HH:mm:ss")</span>
+            <span class="text-[10px] text-hc-muted font-mono">@localTime.ToString("HH:mm:ss")</span>
         </td>
         <td class="px-4 py-3 w-20">
             <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest @statusClass">@statusStr</span>
         </td>
         <td class="px-4 py-3">
-            <span class="text-[10px] text-text-secondary font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
+            <span class="text-[10px] text-hc-muted font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
         </td>
     </tr>
     rowNum--;

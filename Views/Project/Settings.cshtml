@@ -8,7 +8,7 @@
 
 <div class="max-w-4xl mx-auto pb-20">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
+    <div class="flex items-center gap-2 text-hc-muted text-sm mb-6 tracking-wider font-semibold">
         <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
             Projects
@@ -35,7 +35,7 @@
         <form action="/project/@project.Slug/update" method="POST" class="p-6">
             <div class="grid grid-cols-1 gap-6">
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Project Name</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-hc-muted mb-2">Project Name</label>
                     <input type="text" name="name" value="@project.Name" required
                         class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
                 </div>
@@ -61,7 +61,7 @@
                 <div class="inline-block min-w-full align-middle">
                     <table class="w-full text-left">
                         <thead>
-                            <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-white/[0.02]">
+                            <tr class="text-[10px] uppercase font-black text-hc-muted border-b border-white/5 bg-white/[0.02]">
                                 <th class="px-6 py-4">Type</th>
                                 <th class="px-6 py-4">Status</th>
                                 <th class="px-6 py-4">Prefix</th>
@@ -83,7 +83,7 @@
                                 <tr class="hover:bg-white/[0.01] transition-colors">
                                     <td class="px-6 py-4">
                                         <div class="font-bold text-white text-sm sm:text-base whitespace-nowrap">@kt.Label</div>
-                                        <div class="text-[10px] text-text-secondary">@kt.Desc</div>
+                                        <div class="text-[10px] text-hc-muted">@kt.Desc</div>
                                     </td>
                                     <td class="px-6 py-4">
                                         @if (activeKey != null)
@@ -92,7 +92,7 @@
                                         }
                                         else
                                         {
-                                            <span class="px-2 py-0.5 bg-white/5 text-text-secondary text-[10px] rounded uppercase font-bold">Not Generated</span>
+                                            <span class="px-2 py-0.5 bg-white/5 text-hc-muted text-[10px] rounded uppercase font-bold">Not Generated</span>
                                         }
                                     </td>
                                     <td class="px-6 py-4">
@@ -102,14 +102,14 @@
                                                 @if (kt.Type == HealthyCron.Models.ApiKeyType.Ping && !string.IsNullOrEmpty(activeKey.PlaintextKey))
                                                 {
                                                     <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-blue-400 font-mono">@activeKey.PlaintextKey</code>
-                                                    <button onclick="copyText('@activeKey.PlaintextKey')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Key">
+                                                    <button onclick="copyText('@activeKey.PlaintextKey')" class="p-1.5 hover:bg-white/5 rounded text-hc-muted hover:text-white transition-all" title="Copy Key">
                                                         <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                                     </button>
                                                 }
                                                 else
                                                 {
-                                                    <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-text-secondary font-mono">@activeKey.KeyPrefix...</code>
-                                                    <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-text-secondary hover:text-white transition-all" title="Copy Prefix">
+                                                    <code class="text-[11px] bg-black/30 px-2 py-1 rounded border border-white/5 text-hc-muted font-mono">@activeKey.KeyPrefix...</code>
+                                                    <button onclick="copyText('@activeKey.KeyPrefix')" class="p-1.5 hover:bg-white/5 rounded text-hc-muted hover:text-white transition-all" title="Copy Prefix">
                                                         <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                                     </button>
                                                 }
@@ -117,10 +117,10 @@
                                         }
                                         else
                                         {
-                                            <span class="text-text-secondary">---</span>
+                                            <span class="text-hc-muted">---</span>
                                         }
                                     </td>
-                                    <td class="px-6 py-4 text-[11px] text-text-secondary whitespace-nowrap">
+                                    <td class="px-6 py-4 text-[11px] text-hc-muted whitespace-nowrap">
                                         @(activeKey?.CreatedAt.ToString("MMM dd, yyyy") ?? "---")
                                     </td>
                                     <td class="px-6 py-4 text-right">
@@ -145,8 +145,8 @@
             </div>
         </div>
         <div class="px-6 py-4 bg-hc-black/50 border-t border-white/5 flex items-center gap-2">
-            <i data-lucide="book-open" class="w-4 h-4 text-text-secondary"></i>
-            <p class="text-xs text-text-secondary">
+            <i data-lucide="book-open" class="w-4 h-4 text-hc-muted"></i>
+            <p class="text-xs text-hc-muted">
                 Learn how to use API keys in our <a href="/docs/api" class="text-blue hover:underline">documentation</a>.
             </p>
         </div>
@@ -172,7 +172,7 @@
 
         @if (TempData["Success"] != null)
         {
-            <div class="mx-6 mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2 text-emerald-400 text-sm">
+            <div class="mx-6 mt-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2.5 flex items-center gap-2 text-hc-green text-sm">
                 <i data-lucide="check-circle" class="w-4 h-4 shrink-0"></i>
                 @TempData["Success"]
             </div>
@@ -181,7 +181,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="text-[10px] uppercase font-black text-text-secondary border-b border-white/5 bg-white/[0.02]">
+                    <tr class="text-[10px] uppercase font-black text-hc-muted border-b border-white/5 bg-white/[0.02]">
                         <th class="px-6 py-3">Member</th>
                         <th class="px-6 py-3">Role</th>
                         <th class="px-6 py-3">Joined</th>
@@ -193,15 +193,15 @@
                     <tr class="hover:bg-white/[0.01] transition-colors">
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
-                                <div class="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs">@(user.Email.Substring(0, 1).ToUpper())</div>
+                                <div class="w-7 h-7 rounded-full bg-hc-amber/20 flex items-center justify-center text-hc-amber font-bold text-xs">@(user.Email.Substring(0, 1).ToUpper())</div>
                                 <div>
                                     <div class="text-white font-medium text-sm">@user.Email</div>
-                                    <div class="text-text-secondary text-[10px]">You</div>
+                                    <div class="text-hc-muted text-[10px]">You</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-3"><span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 text-[10px] rounded uppercase font-bold">Owner</span></td>
-                        <td class="px-6 py-3 text-text-secondary text-xs">—</td>
+                        <td class="px-6 py-3"><span class="px-2 py-0.5 bg-hc-amber/10 text-hc-amber text-[10px] rounded uppercase font-bold">Owner</span></td>
+                        <td class="px-6 py-3 text-hc-muted text-xs">—</td>
                         @if (isOwner) { <td class="px-6 py-3"></td> }
                     </tr>
                     @foreach (var member in members)
@@ -209,17 +209,17 @@
                         var (badgeClass, label) = member.Role switch {
                             HealthyCron.Enums.ProjectRole.Manager  => ("bg-blue-500/10 text-blue-400", "Manager"),
                             HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
-                            _                                      => ("bg-emerald-500/10 text-emerald-400", "Team Member")
+                            _                                      => ("bg-emerald-500/10 text-hc-green", "Team Member")
                         };
                         <tr class="hover:bg-white/[0.01] transition-colors">
                             <td class="px-6 py-3">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-text-secondary font-bold text-xs">@(member.UserEmail?.Substring(0, 1).ToUpper())</div>
-                                    <span class="text-text-secondary text-sm">@member.UserEmail</span>
+                                    <div class="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-hc-muted font-bold text-xs">@(member.UserEmail?.Substring(0, 1).ToUpper())</div>
+                                    <span class="text-hc-muted text-sm">@member.UserEmail</span>
                                 </div>
                             </td>
                             <td class="px-6 py-3"><span class="px-2 py-0.5 @badgeClass text-[10px] rounded uppercase font-bold">@label</span></td>
-                            <td class="px-6 py-3 text-text-secondary text-xs">@member.JoinedAt.ToString("MMM dd, yyyy")</td>
+                            <td class="px-6 py-3 text-hc-muted text-xs">@member.JoinedAt.ToString("MMM dd, yyyy")</td>
                             @if (isOwner)
                             {
                                 <td class="px-6 py-3 text-right">
@@ -234,7 +234,7 @@
                     }
                     @if (!members.Any())
                     {
-                        <tr><td colspan="4" class="px-6 py-6 text-center text-text-secondary text-sm">No members yet. Invite someone to get started.</td></tr>
+                        <tr><td colspan="4" class="px-6 py-6 text-center text-hc-muted text-sm">No members yet. Invite someone to get started.</td></tr>
                     }
                 </tbody>
             </table>
@@ -243,8 +243,8 @@
         @if (invitations.Any())
         {
             <div class="border-t border-white/5 px-6 py-3 flex items-center gap-2">
-                <i data-lucide="mail" class="w-4 h-4 text-amber-400"></i>
-                <span class="text-xs font-bold text-text-secondary uppercase tracking-widest">Pending Invitations</span>
+                <i data-lucide="mail" class="w-4 h-4 text-hc-amber"></i>
+                <span class="text-xs font-bold text-hc-muted uppercase tracking-widest">Pending Invitations</span>
             </div>
             <table class="w-full text-left">
                 <tbody class="divide-y divide-white/5">
@@ -253,17 +253,17 @@
                         var (badgeClass, label) = inv.Role switch {
                             HealthyCron.Enums.ProjectRole.Manager  => ("bg-blue-500/10 text-blue-400", "Manager"),
                             HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
-                            _                                      => ("bg-emerald-500/10 text-emerald-400", "Team Member")
+                            _                                      => ("bg-emerald-500/10 text-hc-green", "Team Member")
                         };
                         <tr class="hover:bg-white/[0.01] transition-colors">
-                            <td class="px-6 py-3 text-text-secondary text-sm w-1/2">
+                            <td class="px-6 py-3 text-hc-muted text-sm w-1/2">
                                 <div class="flex items-center gap-2">
-                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400/70"></i>
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-hc-amber/70"></i>
                                     @inv.Email
                                 </div>
                             </td>
                             <td class="px-6 py-3"><span class="px-2 py-0.5 @badgeClass text-[10px] rounded uppercase font-bold">@label</span></td>
-                            <td class="px-6 py-3 text-text-secondary text-xs">Expires @inv.ExpiresAt.ToString("MMM dd")</td>
+                            <td class="px-6 py-3 text-hc-muted text-xs">Expires @inv.ExpiresAt.ToString("MMM dd")</td>
                         </tr>
                     }
                 </tbody>
@@ -283,7 +283,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h3 class="font-bold text-white mb-1">Transfer Project</h3>
-                    <p class="text-sm text-text-secondary">Transfer this project to another user's email address.</p>
+                    <p class="text-sm text-hc-muted">Transfer this project to another user's email address.</p>
                 </div>
                 <button onclick="openTransferModal()" class="px-6 py-2.5 bg-hc-black-light hover:bg-white/5 text-white rounded-xl font-bold border border-white/10 transition-all text-sm">
                     Transfer
@@ -296,7 +296,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h3 class="font-bold text-rose-500 mb-1">Delete Project</h3>
-                    <p class="text-sm text-text-secondary">Permanently delete this project and all its monitors, pings, and data.</p>
+                    <p class="text-sm text-hc-muted">Permanently delete this project and all its monitors, pings, and data.</p>
                 </div>
                 <form id="deleteProjectForm" action="/project/@project.Slug/delete" method="POST">
                                     <button type="button" onclick="confirmDeleteProject()" class="px-6 py-2.5 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 rounded-xl font-bold border border-rose-500/20 transition-all text-sm">
@@ -312,13 +312,13 @@
 <div id="keyResultModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeKeyResultModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="key" class="text-blue"></i>
                     API Key Generated
                 </h3>
-                <button onclick="closeKeyResultModal()" class="text-text-secondary hover:text-white transition-colors">
+                <button onclick="closeKeyResultModal()" class="text-hc-muted hover:text-white transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -334,7 +334,7 @@
                     <div class="relative group">
                         <input type="text" id="fullKeyDisplay" readonly
                             class="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 pr-12 text-white font-mono text-sm outline-none">
-                        <button onclick="copyGeneratedKey()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg text-text-secondary hover:text-white transition-all">
+                        <button onclick="copyGeneratedKey()" class="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-lg text-hc-muted hover:text-white transition-all">
                             <i data-lucide="copy" class="w-5 h-5"></i>
                         </button>
                     </div>
@@ -353,7 +353,7 @@
         <div id="toastIcon" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"></div>
         <div class="overflow-hidden">
             <div id="toastTitle" class="font-bold text-white text-sm"></div>
-            <div id="toastMessage" class="text-xs text-text-secondary truncate"></div>
+            <div id="toastMessage" class="text-xs text-hc-muted truncate"></div>
         </div>
     </div>
 </div>
@@ -362,7 +362,7 @@
 <div id="confirmModal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeConfirmModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-md w-full border border-border-color relative z-10">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-md w-full border border-hc-border relative z-10">
             <div class="p-6">
                 <div class="flex items-center gap-4 mb-6">
                     <div id="confirmIconBg" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
@@ -370,7 +370,7 @@
                     </div>
                     <div>
                         <h3 id="confirmTitle" class="text-xl font-black text-white">Confirm Action</h3>
-                        <p id="confirmDescription" class="text-sm text-text-secondary mt-1">Are you sure you want to proceed?</p>
+                        <p id="confirmDescription" class="text-sm text-hc-muted mt-1">Are you sure you want to proceed?</p>
                     </div>
                 </div>
                 <div class="flex gap-3">
@@ -390,31 +390,31 @@
 <div id="inviteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeInviteModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="user-plus" class="text-blue w-5 h-5"></i>
                     Invite Team Member
                 </h3>
-                <button onclick="closeInviteModal()" class="text-text-secondary hover:text-white transition-colors">
+                <button onclick="closeInviteModal()" class="text-hc-muted hover:text-white transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
             <form action="/project/@project.Slug/team/invite" method="POST" class="p-6 space-y-5">
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Email Address</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-hc-muted mb-2">Email Address</label>
                     <input type="email" name="email" required placeholder="colleague@example.com"
-                        class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-text-secondary/50">
+                        class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-hc-muted/50">
                 </div>
                 <div>
-                    <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Role</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-hc-muted mb-2">Role</label>
                     <select name="role" class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
                         <option value="0">Team Member — create/edit/delete monitors &amp; integrations</option>
                         <option value="1">Manager — all of Team Member + invite/remove members</option>
                         <option value="2">Read Only — view monitors and logs only</option>
                     </select>
                 </div>
-                <div class="bg-blue/5 border border-blue/10 rounded-xl p-3 text-xs text-text-secondary">
+                <div class="bg-blue/5 border border-blue/10 rounded-xl p-3 text-xs text-hc-muted">
                     <i data-lucide="info" class="w-3.5 h-3.5 inline-block mr-1 text-blue-400"></i>
                     An invitation email will be sent. The link expires in 7 days.
                 </div>

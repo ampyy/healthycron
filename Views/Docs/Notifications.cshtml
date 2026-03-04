@@ -6,14 +6,14 @@
 <div class="space-y-12">
     <header>
         <h1 class="text-4xl font-black text-white mb-6">Notifications</h1>
-        <p class="text-lg text-text-secondary leading-relaxed">
+        <p class="text-lg text-hc-muted leading-relaxed">
             HealthyCron connects with your existing workflow to alert you the moment a monitor goes down. Configure various integrations to ensure your team stays informed.
         </p>
     </header>
 
     <section class="space-y-6">
         <h2 class="text-2xl font-black text-white">Supported Integrations</h2>
-        <p class="text-text-secondary leading-relaxed">
+        <p class="text-hc-muted leading-relaxed">
             Assign one or more integrations to your monitors. We support everything from simple emails to enterprise incident management tools.
         </p>
 
@@ -27,7 +27,7 @@
                         </div>
                         <h3 class="text-white font-bold">Slack</h3>
                     </div>
-                    <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                    <p class="text-sm text-hc-muted leading-relaxed mb-4">
                         Instant messages to your team's channels. Supports OAuth for easy setup and rich message formatting.
                     </p>
                 </div>
@@ -43,7 +43,7 @@
                         </div>
                         <h3 class="text-white font-bold">PagerDuty</h3>
                     </div>
-                    <p class="text-sm text-text-secondary leading-relaxed mb-4">
+                    <p class="text-sm text-hc-muted leading-relaxed mb-4">
                         Trigger incidents automatically. Perfect for critical production cron jobs that need professional on-call handling.
                     </p>
                 </div>
@@ -58,7 +58,7 @@
                     </div>
                     <h3 class="text-white font-bold">Discord</h3>
                 </div>
-                <p class="text-sm text-text-secondary leading-relaxed">
+                <p class="text-sm text-hc-muted leading-relaxed">
                     Simple Webhook integration for Discord channels. Stay updated without leaving your community server.
                 </p>
             </div>
@@ -71,7 +71,7 @@
                     </div>
                     <h3 class="text-white font-bold">Email</h3>
                 </div>
-                <p class="text-sm text-text-secondary leading-relaxed">
+                <p class="text-sm text-hc-muted leading-relaxed">
                     Reliable email alerts delivered to one or many addresses. Customize the subject and body for specific workflows.
                 </p>
             </div>
@@ -86,7 +86,7 @@
             <h2 class="text-2xl font-black text-white">Alert Logic</h2>
         </div>
         <div class="glass-card border border-white/5 p-8 rounded-2xl space-y-6">
-            <p class="text-text-secondary leading-relaxed">
+            <p class="text-hc-muted leading-relaxed">
                 HealthyCron sends notifications during the following state transitions:
             </p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -95,21 +95,21 @@
                         <div class="w-2 h-2 rounded-full bg-rose-500"></div>
                         <span class="text-white font-bold text-sm">UP → DOWN</span>
                     </div>
-                    <p class="text-xs text-text-secondary">Sent immediately when a monitor exceeds its Grace Time.</p>
+                    <p class="text-xs text-hc-muted">Sent immediately when a monitor exceeds its Grace Time.</p>
                 </div>
                 <div class="space-y-2">
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
                         <span class="text-white font-bold text-sm">DOWN → UP</span>
                     </div>
-                    <p class="text-xs text-text-secondary">A "Recovery" notification when the job checks in correctly after being down.</p>
+                    <p class="text-xs text-hc-muted">A "Recovery" notification when the job checks in correctly after being down.</p>
                 </div>
                 <div class="space-y-2">
                     <div class="flex items-center gap-2">
                         <div class="w-2 h-2 rounded-full bg-rose-500"></div>
                         <span class="text-white font-bold text-sm">START FAIL</span>
                     </div>
-                    <p class="text-xs text-text-secondary">If a job starts but never finishes within its expected duration (Grace Time).</p>
+                    <p class="text-xs text-hc-muted">If a job starts but never finishes within its expected duration (Grace Time).</p>
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
         <i data-lucide="webhook" class="w-10 h-10 text-blue shrink-0"></i>
         <div>
             <h3 class="text-xl font-bold text-white mb-1">Custom Webhooks</h3>
-            <p class="text-text-secondary leading-relaxed">
+            <p class="text-hc-muted leading-relaxed">
                 Need to trigger a custom script or an unsupported service? Use our flexible Webhook integration to send <code>POST</code> requests with a customizable JSON payload to any URL.
             </p>
         </div>

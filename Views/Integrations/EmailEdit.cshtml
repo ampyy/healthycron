@@ -8,7 +8,7 @@
 
 <div class="max-w-5xl ml-0 pb-20 px-4 sm:px-6 lg:px-8 mt-8">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-xs mb-6 uppercase tracking-wider font-semibold flex-wrap">
+    <div class="flex items-center gap-2 text-hc-muted text-xs mb-6 uppercase tracking-wider font-semibold flex-wrap">
         <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
             Projects
@@ -29,7 +29,7 @@
             </div>
             <div>
                 <h1 class="text-2xl font-bold text-white">Edit Email Integration</h1>
-                <p class="text-text-secondary mt-0.5 text-sm">Update your email notification settings</p>
+                <p class="text-hc-muted mt-0.5 text-sm">Update your email notification settings</p>
             </div>
         </div>
     </div>
@@ -56,15 +56,15 @@
                 required
                 value="@emailDetails.Email"
                 placeholder="alerts@example.com"
-                class="w-full px-4 py-3 rounded-xl bg-[#141414] border border-[#262626] text-white placeholder-text-secondary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
+                class="w-full px-4 py-3 rounded-xl bg-hc-ink border border-hc-border text-white placeholder-hc-muted focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
             />
-            <p class="mt-2 text-xs text-text-secondary">The email address where notifications will be sent</p>
+            <p class="mt-2 text-xs text-hc-muted">The email address where notifications will be sent</p>
         </div>
 
         <!-- Integration Name -->
         <div>
             <label for="name" class="block text-sm font-semibold text-white mb-2">
-                Integration Name <span class="text-text-secondary text-xs font-normal">(Optional)</span>
+                Integration Name <span class="text-hc-muted text-xs font-normal">(Optional)</span>
             </label>
             <input
                 type="text"
@@ -72,13 +72,13 @@
                 name="name"
                 value="@integration.Name"
                 placeholder="Team Alerts Email"
-                class="w-full px-4 py-3 rounded-xl bg-[#141414] border border-[#262626] text-white placeholder-text-secondary focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
+                class="w-full px-4 py-3 rounded-xl bg-hc-ink border border-hc-border text-white placeholder-hc-muted focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
             />
         </div>
 
         <!-- Actions -->
         <div class="flex items-center justify-between gap-3 pt-4 border-t border-white/5">
-            <a href="/project/@project.Slug/integrations" class="px-4 py-2.5 rounded-xl text-text-secondary hover:text-white font-semibold text-sm transition-colors border border-white/10 hover:border-white/20">
+            <a href="/project/@project.Slug/integrations" class="px-4 py-2.5 rounded-xl text-hc-muted hover:text-white font-semibold text-sm transition-colors border border-white/10 hover:border-white/20">
                 Cancel
             </a>
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2">

@@ -7,7 +7,7 @@
 
 <div class="max-w-5xl mx-auto pb-20 mt-8">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+    <div class="flex items-center gap-2 text-hc-muted text-sm mb-6 uppercase tracking-wider font-semibold">
         <a href="/dashboard" class="hover:text-blue-400 transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
             Projects
@@ -43,10 +43,10 @@
 
     <form method="post" action="/project/@project?.Slug/integrations/webhook" id="webhook-form">
         <!-- Integration Name -->
-        <div class="glass-card rounded-2xl border border-[#262626] bg-[#0a0a0a] p-6 mb-4">
+        <div class="glass-card rounded-2xl border border-hc-border bg-[#0a0a0a] p-6 mb-4">
             <label class="block text-sm font-bold text-white mb-2">Integration Name</label>
             <input type="text" name="name" value="Webhook" placeholder="e.g. My API Alerting"
-                   class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-blue-500 hover:border-[#404040] focus:ring-1 focus:ring-blue-500 outline-none transition-all shadow-inner" />
+                   class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-blue-500 hover:border-[#404040] focus:ring-1 focus:ring-blue-500 outline-none transition-all shadow-inner" />
         </div>
 
         <!-- Two-column webhook config -->
@@ -64,28 +64,28 @@
                     <div>
                         <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">URL <span class="text-rose-400">*</span></label>
                         <div class="flex gap-2">
-                            <select name="downMethod" id="down_method" class="bg-[#141414] border border-[#262626] rounded-xl px-3 py-3 text-[14px] text-white focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-all">
+                            <select name="downMethod" id="down_method" class="bg-hc-ink border border-hc-border rounded-xl px-3 py-3 text-[14px] text-white focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-all">
                                 <option value="POST" selected>POST</option>
                                 <option value="GET">GET</option>
                                 <option value="PUT">PUT</option>
                             </select>
                             <input type="url" name="downUrl" id="down_url" placeholder="https://example.com/alert"
-                                   class="flex-1 bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono" />
+                                   class="flex-1 bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono" />
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Headers</label>
                         <textarea name="downHeaders" rows="3" placeholder="X-Api-Key: your-key&#10;Content-Type: application/json"
-                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono resize-y"></textarea>
-                        <p class="text-[11px] text-[#737373] mt-1">One header per line — <code class="text-[#aaa]">Name: Value</code></p>
+                                  class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-hc-muted mt-1">One header per line — <code class="text-[#aaa]">Name: Value</code></p>
                     </div>
 
                     <div id="down_body_section">
                         <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Body</label>
                         <textarea name="downBody" rows="4" placeholder='{"monitor": "$NAME", "status": "$STATUS"}'
-                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono resize-y"></textarea>
-                        <p class="text-[11px] text-[#737373] mt-1">Supports: <code class="text-blue-400">$NAME</code> <code class="text-blue-400">$STATUS</code> <code class="text-blue-400">$PROJECT</code> <code class="text-blue-400">$MONITOR_ID</code> <code class="text-blue-400">$TIMESTAMP</code></p>
+                                  class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-hc-muted mt-1">Supports: <code class="text-blue-400">$NAME</code> <code class="text-blue-400">$STATUS</code> <code class="text-blue-400">$PROJECT</code> <code class="text-blue-400">$MONITOR_ID</code> <code class="text-blue-400">$TIMESTAMP</code></p>
                     </div>
                 </div>
             </div>
@@ -93,46 +93,46 @@
             <!-- UP column -->
             <div class="glass-card rounded-2xl border border-emerald-500/20 bg-[#0a0a0a] p-6 relative overflow-hidden">
                 <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none"></div>
-                <h2 class="text-base font-black text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                <h2 class="text-base font-black text-hc-green uppercase tracking-widest mb-2 flex items-center gap-2">
                     <i data-lucide="arrow-up-circle" class="w-4 h-4"></i>
-                    Execute when monitor goes <span class="text-emerald-400 ml-1">UP</span>
-                    <span class="text-emerald-400/60 text-[10px] border border-emerald-400/20 px-1.5 py-0.5 rounded ml-auto">Optional</span>
+                    Execute when monitor goes <span class="text-hc-green ml-1">UP</span>
+                    <span class="text-hc-green/60 text-[10px] border border-hc-green/20 px-1.5 py-0.5 rounded ml-auto">Optional</span>
                 </h2>
-                <p class="text-[12px] text-[#737373] mb-4">Leave the URL blank to skip this webhook on recovery.</p>
+                <p class="text-[12px] text-hc-muted mb-4">Leave the URL blank to skip this webhook on recovery.</p>
 
                 <div class="space-y-4 relative z-10">
                     <div>
                         <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">URL</label>
                         <div class="flex gap-2">
-                            <select name="upMethod" id="up_method" class="bg-[#141414] border border-[#262626] rounded-xl px-3 py-3 text-[14px] text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+                            <select name="upMethod" id="up_method" class="bg-hc-ink border border-hc-border rounded-xl px-3 py-3 text-[14px] text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
                                 <option value="POST" selected>POST</option>
                                 <option value="GET">GET</option>
                                 <option value="PUT">PUT</option>
                             </select>
                             <input type="url" name="upUrl" id="up_url" placeholder="https://example.com/recovered (optional)"
-                                   class="flex-1 bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono" />
+                                   class="flex-1 bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono" />
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Headers</label>
                         <textarea name="upHeaders" rows="3" placeholder="X-Api-Key: your-key&#10;Content-Type: application/json"
-                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono resize-y"></textarea>
-                        <p class="text-[11px] text-[#737373] mt-1">One header per line — <code class="text-[#aaa]">Name: Value</code></p>
+                                  class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-hc-muted mt-1">One header per line — <code class="text-[#aaa]">Name: Value</code></p>
                     </div>
 
                     <div id="up_body_section">
                         <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Body</label>
                         <textarea name="upBody" rows="4" placeholder='{"monitor": "$NAME", "status": "$STATUS"}'
-                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono resize-y"></textarea>
-                        <p class="text-[11px] text-[#737373] mt-1">Supports: <code class="text-blue-400">$NAME</code> <code class="text-blue-400">$STATUS</code> <code class="text-blue-400">$PROJECT</code> <code class="text-blue-400">$MONITOR_ID</code> <code class="text-blue-400">$TIMESTAMP</code></p>
+                                  class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-hc-muted mt-1">Supports: <code class="text-blue-400">$NAME</code> <code class="text-blue-400">$STATUS</code> <code class="text-blue-400">$PROJECT</code> <code class="text-blue-400">$MONITOR_ID</code> <code class="text-blue-400">$TIMESTAMP</code></p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Placeholders reference (collapsible) -->
-        <div class="glass-card rounded-2xl border border-[#262626] bg-[#0a0a0a] mb-6">
+        <div class="glass-card rounded-2xl border border-hc-border bg-[#0a0a0a] mb-6">
             <button type="button" onclick="togglePlaceholders()"
                     class="w-full flex items-center justify-between px-6 py-4 text-sm font-bold text-[#A3A3A3] hover:text-white transition-colors">
                 <span class="flex items-center gap-2">
@@ -144,9 +144,9 @@
             <div id="placeholders-panel" class="hidden px-6 pb-5">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-[#262626]">
-                            <th class="text-left py-2 text-[11px] uppercase tracking-widest text-[#737373] font-black">Placeholder</th>
-                            <th class="text-left py-2 text-[11px] uppercase tracking-widest text-[#737373] font-black">Replaced with</th>
+                        <tr class="border-b border-hc-border">
+                            <th class="text-left py-2 text-[11px] uppercase tracking-widest text-hc-muted font-black">Placeholder</th>
+                            <th class="text-left py-2 text-[11px] uppercase tracking-widest text-hc-muted font-black">Replaced with</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-[#1a1a1a]">

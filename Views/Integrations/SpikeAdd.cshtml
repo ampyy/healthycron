@@ -6,8 +6,8 @@
 
 <div class="max-w-5xl pb-20 mt-8">
     <!-- Breadcrumbs -->
-    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
-        <a href="/dashboard" class="hover:text-amber-500 transition-colors flex items-center gap-1">
+    <div class="flex items-center gap-2 text-hc-muted text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-hc-amber transition-colors flex items-center gap-1">
             <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
             Projects
         </a>
@@ -22,7 +22,7 @@
     <!-- Header -->
     <div class="mb-8">
         <div class="flex items-center gap-4 mb-3">
-            <div class="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center shrink-0">
+            <div class="w-14 h-14 bg-hc-amber/10 border border-hc-amber/20 rounded-2xl flex items-center justify-center shrink-0">
                 <img src="/images/spike.png" class="w-7 h-7 object-contain" alt="Spike.sh" />
             </div>
             <div>
@@ -33,24 +33,24 @@
     </div>
 
     <!-- Form container -->
-    <div class="glass-card rounded-2xl border border-[#262626] bg-[#0a0a0a] p-8 relative overflow-hidden group">
+    <div class="glass-card rounded-2xl border border-hc-border bg-[#0a0a0a] p-8 relative overflow-hidden group">
         <!-- Subtle Glow -->
-        <div class="absolute -top-32 -left-32 w-64 h-64 bg-amber-500/5 blur-[80px] rounded-full pointer-events-none opacity-50"></div>
+        <div class="absolute -top-32 -left-32 w-64 h-64 bg-hc-amber/5 blur-[80px] rounded-full pointer-events-none opacity-50"></div>
 
         <form id="spike-form" method="post" action="/project/@project?.Slug/integrations/spike" class="space-y-6 relative z-10">
             <div>
-                <label class="block text-sm font-bold text-white mb-2">Integration Name <span class="text-amber-500">*</span></label>
+                <label class="block text-sm font-bold text-white mb-2">Integration Name <span class="text-hc-amber">*</span></label>
                 <input type="text" id="integration-name" name="name" required value="Spike.sh"
-                       class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-amber-500 hover:border-[#404040] focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-inner" />
+                       class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-hc-amber hover:border-[#404040] focus:ring-1 focus:ring-hc-amber outline-none transition-all shadow-inner" />
             </div>
             
             <div>
-                <label class="block text-sm font-bold text-white mb-2">Webhook URL <span class="text-amber-500">*</span></label>
+                <label class="block text-sm font-bold text-white mb-2">Webhook URL <span class="text-hc-amber">*</span></label>
                 <input type="url" id="webhook-url" name="webhookUrl" required placeholder="https://hooks.spike.sh/..."
-                       class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-amber-500 hover:border-[#404040] focus:ring-1 focus:ring-amber-500 outline-none transition-all font-mono shadow-inner" />
+                       class="w-full bg-hc-ink border border-hc-border rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-hc-amber hover:border-[#404040] focus:ring-1 focus:ring-hc-amber outline-none transition-all font-mono shadow-inner" />
                 <div class="mt-2 flex items-center justify-between">
-                    <span class="text-xs text-[#737373]">Get this from your Spike.sh Integrations.</span>
-                    <a href="https://spike.sh" target="_blank" class="text-amber-500 hover:text-amber-400 text-xs font-bold flex items-center gap-1 transition-colors">
+                    <span class="text-xs text-hc-muted">Get this from your Spike.sh Integrations.</span>
+                    <a href="https://spike.sh" target="_blank" class="text-hc-amber hover:text-hc-amber text-xs font-bold flex items-center gap-1 transition-colors">
                         Open Spike.sh <i data-lucide="external-link" class="w-3 h-3"></i>
                     </a>
                 </div>
@@ -61,11 +61,11 @@
                 <span id="error-text" class="break-all whitespace-normal font-medium text-rose-400"></span>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-6 border-t border-[#262626]">
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-hc-border">
                 <a href="/project/@project?.Slug/integrations" class="px-6 py-2.5 rounded-xl text-[#A3A3A3] hover:text-white font-bold text-sm transition-colors">
                     Cancel
                 </a>
-                <button type="submit" id="submit-btn" class="bg-amber-600 outline-none hover:bg-amber-500 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button type="submit" id="submit-btn" class="bg-amber-600 outline-none hover:bg-hc-amber text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-lg shadow-hc-amber/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     Connect Spike
                 </button>

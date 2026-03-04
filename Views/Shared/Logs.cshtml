@@ -15,7 +15,7 @@
 <div class="max-w-6xl mx-auto pb-20 px-4 sm:px-6">
     <!-- Breadcrumbs -->
     <div class="flex items-center justify-between mb-8">
-        <div class="flex flex-wrap items-center gap-2 text-text-secondary text-sm uppercase tracking-wider font-semibold">
+        <div class="flex flex-wrap items-center gap-2 text-hc-muted text-sm uppercase tracking-wider font-semibold">
             <a href="/dashboard" class="hover:text-blue transition-colors flex items-center gap-1">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                 Projects
@@ -33,7 +33,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-2xl font-black text-white mb-1 uppercase tracking-tight">Project Activity Logs</h1>
-                    <p class="text-xs text-text-secondary">Viewing recent events for @project?.Name.</p>
+                    <p class="text-xs text-hc-muted">Viewing recent events for @project?.Name.</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3">
@@ -55,7 +55,7 @@
                                 <option value="1" selected="@(currentStatus == 1 ? "selected" : null)">Fail</option>
                                 <option value="2" selected="@(currentStatus == 2 ? "selected" : null)">Start</option>
                             </select>
-                            <i data-lucide="filter" class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-secondary pointer-events-none"></i>
+                            <i data-lucide="filter" class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-hc-muted pointer-events-none"></i>
                         </div>
 
                         @if (currentStatus != null)
@@ -75,7 +75,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="text-[9px] uppercase font-black text-text-secondary border-b border-white/5 bg-hc-black/50">
+                    <tr class="text-[9px] uppercase font-black text-hc-muted border-b border-white/5 bg-hc-black/50">
                         <th class="px-4 py-3 pl-6 w-10">#</th>
                         <th class="px-4 py-3 w-24">Date</th>
                         <th class="px-4 py-3 w-24">Time</th>
@@ -100,19 +100,19 @@
                             data-ip="@ping.IpAddress" data-ua="@ping.UserAgent"
                             data-method="@ping.HttpMethod" data-headers="@ping.RequestHeaders">
                             <td class="px-4 py-3 pl-6 w-10">
-                                <span class="text-[10px] font-mono text-text-secondary/40">@rowNum</span>
+                                <span class="text-[10px] font-mono text-hc-muted/40">@rowNum</span>
                             </td>
                             <td class="px-4 py-3 w-24">
                                 <span class="text-xs text-white font-bold">@localTime.ToString("MMM dd")</span>
                             </td>
                             <td class="px-4 py-3 w-24">
-                                <span class="text-[10px] text-text-secondary font-mono">@localTime.ToString("HH:mm:ss")</span>
+                                <span class="text-[10px] text-hc-muted font-mono">@localTime.ToString("HH:mm:ss")</span>
                             </td>
                             <td class="px-4 py-3 w-20">
                                 <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest @statusClass">@statusStr</span>
                             </td>
                             <td class="px-4 py-3">
-                                <span class="text-[10px] text-text-secondary font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
+                                <span class="text-[10px] text-hc-muted font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
                             </td>
                         </tr>
                         rowNum--;
@@ -120,7 +120,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="5" class="px-6 py-20 text-center text-text-secondary font-medium text-xs opacity-50 italic">No logs matching your criteria were found.</td>
+                            <td colspan="5" class="px-6 py-20 text-center text-hc-muted font-medium text-xs opacity-50 italic">No logs matching your criteria were found.</td>
                         </tr>
                     }
                 </tbody>
@@ -143,48 +143,48 @@
 <div id="pingModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closePingModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2"><i data-lucide="activity" class="text-blue"></i>Ping Details</h3>
-                <button onclick="closePingModal()" class="text-text-secondary hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <button onclick="closePingModal()" class="text-hc-muted hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             <div class="p-6">
                 <div class="space-y-6">
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Status</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Status</p>
                             <span id="modal-status" class="text-sm font-black uppercase tracking-widest"></span>
                         </div>
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Received At</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Received At</p>
                             <span id="modal-time" class="text-sm text-white font-bold"></span>
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Source IP</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Source IP</p>
                             <span id="modal-ip" class="text-sm text-white font-mono break-all"></span>
                         </div>
                         <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Method</p>
+                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Method</p>
                             <span id="modal-method" class="text-sm text-white font-mono font-bold"></span>
                         </div>
                     </div>
 
                     <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">Ping Message</p>
+                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Ping Message</p>
                         <p id="modal-message" class="text-sm text-white italic"></p>
                     </div>
 
                     <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-1">User Agent</p>
-                        <p id="modal-ua" class="text-xs text-text-secondary break-all font-mono"></p>
+                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">User Agent</p>
+                        <p id="modal-ua" class="text-xs text-hc-muted break-all font-mono"></p>
                     </div>
 
                     <div class="bg-black/40 rounded-xl p-4 border border-white/5 overflow-x-auto">
-                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black mb-2">Request Headers</p>
-                        <pre id="modal-headers" class="text-[10px] text-emerald-400 font-mono"></pre>
+                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-2">Request Headers</p>
+                        <pre id="modal-headers" class="text-[10px] text-hc-green font-mono"></pre>
                     </div>
 
                     <button onclick="closePingModal()" class="w-full bg-blue text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue/20">Close</button>
@@ -260,7 +260,7 @@
                 <span class="text-xs text-white font-bold">${data.dateDisplay}</span>
             </td>
             <td class="px-4 py-3">
-                <span class="text-[10px] text-text-secondary font-mono">${data.timeDisplay}</span>
+                <span class="text-[10px] text-hc-muted font-mono">${data.timeDisplay}</span>
             </td>
             <td class="px-4 py-3">
                 <div class="flex items-center gap-2">
@@ -278,12 +278,12 @@
                         <span class="text-[10px] text-white font-mono truncate">${data.method || 'GET'} ${data.ipAddress || 'N/A'}</span>
                     </div>
                     <div class="flex items-center gap-1.5 opacity-40 overflow-hidden">
-                        <span class="text-[9px] text-text-secondary font-mono truncate" title="${data.userAgent || ''}">${(data.userAgent && data.userAgent.length > 20) ? data.userAgent.substring(0, 20) + '...' : (data.userAgent || 'N/A')}</span>
+                        <span class="text-[9px] text-hc-muted font-mono truncate" title="${data.userAgent || ''}">${(data.userAgent && data.userAgent.length > 20) ? data.userAgent.substring(0, 20) + '...' : (data.userAgent || 'N/A')}</span>
                     </div>
                 </div>
             </td>
             <td class="px-4 py-3 text-right">
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-text-secondary group-hover:text-blue transition-all ml-auto opacity-50 group-hover:opacity-100"></i>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-hc-muted group-hover:text-blue transition-all ml-auto opacity-50 group-hover:opacity-100"></i>
             </td>
         `;
 

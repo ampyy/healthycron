@@ -6,14 +6,14 @@
 <div class="space-y-12">
     <header>
         <h1 class="text-4xl font-black text-white mb-6">Pinging API</h1>
-        <p class="text-lg text-text-secondary leading-relaxed">
+        <p class="text-lg text-hc-muted leading-relaxed">
             Each monitor in HealthyCron has a unique Ping URL. Your jobs and scripts send HTTP requests to this URL to signal their status.
         </p>
     </header>
 
     <section class="space-y-6">
         <h2 class="text-2xl font-black text-white">Ping URL Formats</h2>
-        <p class="text-text-secondary leading-relaxed">
+        <p class="text-hc-muted leading-relaxed">
             HealthyCron supports two flexible formats for identifying which monitor you are pinging.
         </p>
 
@@ -26,7 +26,7 @@
                 <code class="text-blue text-sm block bg-black/30 p-4 rounded-xl border border-white/5 break-all font-mono">
                     https://healthycron.com/ping/&lt;uuid&gt;
                 </code>
-                <p class="text-text-secondary text-sm mt-4 leading-relaxed">
+                <p class="text-hc-muted text-sm mt-4 leading-relaxed">
                     The simplest way to ping. Every monitor is assigned a unique UUID upon creation. This ID never changes, even if you rename the monitor or move it between projects.
                 </p>
             </div>
@@ -39,7 +39,7 @@
                 <code class="text-blue text-sm block bg-black/30 p-4 rounded-xl border border-white/5 break-all font-mono">
                     https://healthycron.com/ping/&lt;project-ping-key&gt;/&lt;name-slug&gt;
                 </li>
-                <p class="text-text-secondary text-sm mt-4 leading-relaxed">
+                <p class="text-hc-muted text-sm mt-4 leading-relaxed">
                     Identify monitors by a project-wide <strong>Ping Key</strong> and a user-defined <strong>Slug</strong> (e.g., <code>daily-backup</code>). This format is ideal for version-controlled scripts where you want to keep the URL readable.
                 </p>
             </div>
@@ -48,7 +48,7 @@
 
     <section class="space-y-6">
         <h2 class="text-2xl font-black text-white">Signaling Success, Start, and Failure</h2>
-        <p class="text-text-secondary leading-relaxed">
+        <p class="text-hc-muted leading-relaxed">
             You can append status suffixes to your Ping URL to provide more context about the job's execution.
         </p>
 
@@ -58,7 +58,7 @@
                     <h3 class="text-lg font-bold text-white">Success (Check-in)</h3>
                     <span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[10px] uppercase font-black font-mono">Default</span>
                 </div>
-                <p class="text-sm text-text-secondary mb-4 leading-relaxed">
+                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
                     The primary signal. It tells HealthyCron the job finished successfully and resets the "Late" timer.
                 </p>
                 <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;</code>
@@ -66,7 +66,7 @@
 
             <div class="glass-card border border-white/5 p-6 rounded-2xl">
                 <h3 class="text-lg font-bold text-white mb-2">Job Start</h3>
-                <p class="text-sm text-text-secondary mb-4 leading-relaxed">
+                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
                     Send this at the beginning of your script. HealthyCron uses this to measure execution time and can alert you if a job gets stuck (starts but never succeeds within Grace Time).
                 </p>
                 <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;/start</code>
@@ -74,7 +74,7 @@
 
             <div class="glass-card border border-white/5 p-6 rounded-2xl">
                 <h3 class="text-lg font-bold text-white mb-2">Signaling Failure</h3>
-                <p class="text-sm text-text-secondary mb-4 leading-relaxed">
+                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
                     If your script catches an error, send a <code>/fail</code> ping to trigger immediate notifications, even if the scheduled time hasn't passed yet.
                 </p>
                 <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;/fail</code>
@@ -82,7 +82,7 @@
 
             <div class="glass-card border border-white/5 p-6 rounded-2xl">
                 <h3 class="text-lg font-bold text-white mb-2">Exit Codes</h3>
-                <p class="text-sm text-text-secondary mb-4 leading-relaxed">
+                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
                     You can append an integer exit code. Any non-zero code is treated as a failure.
                 </p>
                 <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;/1</code>
@@ -99,7 +99,7 @@
                 </div>
                 <div>
                     <h4 class="text-white font-bold mb-1">HTTP Methods</h4>
-                    <p class="text-sm text-text-secondary leading-relaxed">
+                    <p class="text-sm text-hc-muted leading-relaxed">
                         HealthyCron accepts <code>GET</code>, <code>POST</code>, <code>PUT</code>, and <code>HEAD</code> requests. Use whichever is most convenient for your environment.
                     </p>
                 </div>
@@ -111,7 +111,7 @@
                 </div>
                 <div>
                     <h4 class="text-white font-bold mb-1">Capturing Logs</h4>
-                    <p class="text-sm text-text-secondary leading-relaxed">
+                    <p class="text-sm text-hc-muted leading-relaxed">
                         If you use <code>POST</code>, HealthyCron will capture the request body (up to 10KB) and store it in your ping logs. This is perfect for capturing stack traces or error messages from failed jobs.
                     </p>
                 </div>

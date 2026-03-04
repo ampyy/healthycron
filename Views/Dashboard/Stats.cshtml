@@ -11,7 +11,7 @@
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
             <h1 class="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
-            <p class="text-text-secondary">Global metrics across all your projects.</p>
+            <p class="text-hc-muted">Global metrics across all your projects.</p>
         </div>
         <div class="flex">
             <span class="px-3 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
@@ -24,7 +24,7 @@
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
-            <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Projects</p>
+            <p class="text-[10px] font-black text-hc-muted uppercase tracking-widest mb-1">Projects</p>
             <h2 class="text-3xl font-black text-white">@Model.TotalProjects</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <i data-lucide="folder" class="w-8 h-8 text-blue-500"></i>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
-            <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Monitors</p>
+            <p class="text-[10px] font-black text-hc-muted uppercase tracking-widest mb-1">Monitors</p>
             <h2 class="text-3xl font-black text-white">@Model.TotalMonitors</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
@@ -40,7 +40,7 @@
         </div>
 
         <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
-            <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Total Beats</p>
+            <p class="text-[10px] font-black text-hc-muted uppercase tracking-widest mb-1">Total Beats</p>
             <h2 class="text-3xl font-black text-white">@Model.TotalBeats.ToString("N0")</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <i data-lucide="zap" class="w-8 h-8 text-yellow"></i>
@@ -78,7 +78,7 @@
                 <div>
                     <div class="flex justify-between items-end mb-2">
                         <span class="text-xs font-bold text-white uppercase tracking-tight">Projects</span>
-                        <span class="text-[10px] text-text-secondary font-mono">@Model.TotalProjects / @Model.ProjectQuota</span>
+                        <span class="text-[10px] text-hc-muted font-mono">@Model.TotalProjects / @Model.ProjectQuota</span>
                     </div>
                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                         <div class="h-full bg-blue-600 transition-all duration-1000"
@@ -90,7 +90,7 @@
                 <div>
                     <div class="flex justify-between items-end mb-2">
                         <span class="text-xs font-bold text-white uppercase tracking-tight">Monitors</span>
-                        <span class="text-[10px] text-text-secondary font-mono">@Model.TotalMonitors / @Model.MonitorQuota</span>
+                        <span class="text-[10px] text-hc-muted font-mono">@Model.TotalMonitors / @Model.MonitorQuota</span>
                     </div>
                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                         <div class="h-full bg-blue-600 transition-all duration-1000"
@@ -102,7 +102,7 @@
                     <div class="p-4 bg-hc-black/50 rounded-xl border border-white/5 flex items-center justify-between group cursor-pointer hover:border-blue-500/30 transition-all">
                         <div>
                             <p class="text-sm font-bold text-white">Starter Plan</p>
-                            <p class="text-[10px] text-text-secondary uppercase font-black">Free Tier</p>
+                            <p class="text-[10px] text-hc-muted uppercase font-black">Free Tier</p>
                         </div>
                         <button class="px-3 py-1.5 bg-white text-hc-black text-[10px] font-black rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-all uppercase tracking-tighter">Upgrade</button>
                     </div>
@@ -121,7 +121,7 @@
                     @foreach(var project in chartData) {
                         <div class="flex items-center gap-1.5">
                             <div class="w-1.5 h-1.5 rounded-full" style="background-color: @project.Color"></div>
-                            <span class="text-[9px] font-black text-text-secondary uppercase tracking-widest">@project.ProjectName</span>
+                            <span class="text-[9px] font-black text-hc-muted uppercase tracking-widest">@project.ProjectName</span>
                         </div>
                     }
                 </div>

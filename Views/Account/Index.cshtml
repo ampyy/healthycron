@@ -12,12 +12,12 @@
 <div class="space-y-6 animate-fade-in max-w-4xl mx-auto pb-20">
     <div class="flex flex-col gap-2">
         <h1 class="text-2xl font-bold text-white tracking-tight">Account Settings</h1>
-        <p class="text-text-secondary">Manage your profile, preferences, and security settings.</p>
+        <p class="text-hc-muted">Manage your profile, preferences, and security settings.</p>
     </div>
 
     @if (!string.IsNullOrEmpty(successMessage))
     {
-        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-3">
+        <div class="bg-emerald-500/10 border border-emerald-500/20 text-hc-green px-4 py-3 rounded-xl flex items-center gap-3">
             <i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
             <span class="font-medium text-sm">@successMessage</span>
         </div>
@@ -38,7 +38,7 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold text-white mb-1">Preferred Time Zone</h2>
-                <p class="text-sm text-text-secondary">All timestamps in the UI will be converted to this timezone. Stored data remains in UTC.</p>
+                <p class="text-sm text-hc-muted">All timestamps in the UI will be converted to this timezone. Stored data remains in UTC.</p>
             </div>
         </div>
 
@@ -56,9 +56,9 @@
 
         <form asp-action="UpdateTimezone" method="post" class="space-y-4">
             <div>
-                <label class="block text-xs font-bold uppercase tracking-widest text-text-secondary mb-2">
+                <label class="block text-xs font-bold uppercase tracking-widest text-hc-muted mb-2">
                     IANA Timezone
-                    <span class="ml-2 normal-case font-normal text-text-secondary/70">(e.g. UTC, Asia/Kolkata, America/New_York)</span>
+                    <span class="ml-2 normal-case font-normal text-hc-muted/70">(e.g. UTC, Asia/Kolkata, America/New_York)</span>
                 </label>
 
                 <!-- Search + select combo -->
@@ -66,7 +66,7 @@
                     <input id="tz-search" type="text" placeholder="Search timezone…"
                         class="w-full bg-hc-black border border-white/10 rounded-t-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none"
                         oninput="filterTimezones(this.value)">
-                    <i data-lucide="search" class="absolute right-4 top-3 w-5 h-5 text-text-secondary pointer-events-none"></i>
+                    <i data-lucide="search" class="absolute right-4 top-3 w-5 h-5 text-hc-muted pointer-events-none"></i>
                 </div>
                 <select name="timezone" id="timezone-select"
                     class="w-full bg-hc-black border border-white/10 border-t-0 rounded-b-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none" size="6">
@@ -82,7 +82,7 @@
                         }
                     }
                 </select>
-                <p class="text-xs text-text-secondary mt-1.5">
+                <p class="text-xs text-hc-muted mt-1.5">
                     Current: <span class="text-blue font-mono font-bold">@currentTz</span>
                     &nbsp;·&nbsp; Current time: <span class="font-mono" id="current-local-time">–</span>
                 </p>
@@ -104,10 +104,10 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold text-white mb-1">Password</h2>
-                <p class="text-sm text-text-secondary">Update your account password.</p>
+                <p class="text-sm text-hc-muted">Update your account password.</p>
             </div>
         </div>
-        <p class="text-xs text-center text-text-secondary italic">Password updates coming soon.</p>
+        <p class="text-xs text-center text-hc-muted italic">Password updates coming soon.</p>
     </div>
 
     <!-- Email Reports -->
@@ -118,7 +118,7 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold text-white mb-1">Email Reports</h2>
-                <p class="text-sm text-text-secondary">Configure your periodic email reports and reminders.</p>
+                <p class="text-sm text-hc-muted">Configure your periodic email reports and reminders.</p>
             </div>
         </div>
 
@@ -126,7 +126,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-bold text-white mb-1">Weekly Reports</h3>
-                    <p class="text-xs text-text-secondary">Receive a weekly summary of your monitor activity.</p>
+                    <p class="text-xs text-hc-muted">Receive a weekly summary of your monitor activity.</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="receiveWeeklyReports" value="true" class="sr-only peer" @(Model.ReceiveWeeklyReports ? "checked" : "")>
@@ -136,7 +136,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-bold text-white mb-1">Monthly Reports</h3>
-                    <p class="text-xs text-text-secondary">Receive a monthly summary of your monitor activity.</p>
+                    <p class="text-xs text-hc-muted">Receive a monthly summary of your monitor activity.</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="receiveMonthlyReports" value="true" class="sr-only peer" @(Model.ReceiveMonthlyReports ? "checked" : "")>
@@ -146,7 +146,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-sm font-bold text-white mb-1">Ongoing Reminders</h3>
-                    <p class="text-xs text-text-secondary">Receive ongoing reminders while any monitor is down.</p>
+                    <p class="text-xs text-hc-muted">Receive ongoing reminders while any monitor is down.</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="receiveIncidentReminders" value="true" class="sr-only peer" @(Model.ReceiveIncidentReminders ? "checked" : "")>
@@ -170,7 +170,7 @@
             </div>
             <div>
                 <h2 class="text-lg font-bold text-white mb-1">Delete Account</h2>
-                <p class="text-sm text-text-secondary">Permanently delete your account and all associated data. This cannot be undone.</p>
+                <p class="text-sm text-hc-muted">Permanently delete your account and all associated data. This cannot be undone.</p>
             </div>
         </div>
         <form asp-action="DeleteAccount" method="post"

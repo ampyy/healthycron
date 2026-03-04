@@ -9,7 +9,7 @@
 <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
         <h1 class="text-3xl font-bold text-white mb-2">My Projects</h1>
-        <p class="text-text-secondary">Organize and manage your monitoring tasks.</p>
+        <p class="text-hc-muted">Organize and manage your monitoring tasks.</p>
     </div>
     <button onclick="document.getElementById('createProjectModal').classList.remove('hidden')"
         class="bg-blue hover:bg-blue/80 text-white px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue/20 w-full sm:w-auto">
@@ -27,7 +27,7 @@
             <i data-lucide="folder-plus" class="w-10 h-10 text-blue"></i>
         </div>
         <h3 class="text-2xl font-bold text-white mb-2">No projects yet</h3>
-        <p class="text-text-secondary mb-8 max-w-sm mx-auto">Create a project to group your monitors by application or
+        <p class="text-hc-muted mb-8 max-w-sm mx-auto">Create a project to group your monitors by application or
             environment.</p>
         <button onclick="document.getElementById('createProjectModal').classList.remove('hidden')"
             class="bg-blue hover:bg-blue/80 text-white px-8 py-3 rounded-xl font-bold transition-all">
@@ -41,7 +41,7 @@ else
         @foreach (var project in Model)
         {
             <a href="/@project.Slug/monitors"
-                class="glass-card rounded-2xl p-6 group border border-border-color hover:border-blue-500/50 transition-all duration-300 relative overflow-hidden">
+                class="glass-card rounded-2xl p-6 group border border-hc-border hover:border-blue-500/50 transition-all duration-300 relative overflow-hidden">
 
                 <!-- Dynamic Gradient Background -->
                 <div
@@ -58,14 +58,14 @@ else
 
                         <!-- Arrow Icon -->
                         <div
-                            class="p-2 rounded-lg bg-hc-black-light/50 border border-border-color group-hover:border-blue/30 group-hover:translate-x-1 transition-all">
+                            class="p-2 rounded-lg bg-hc-black-light/50 border border-hc-border group-hover:border-blue/30 group-hover:translate-x-1 transition-all">
                             <i data-lucide="arrow-right"
-                                class="w-4 h-4 text-text-secondary group-hover:text-blue transition-colors"></i>
+                                class="w-4 h-4 text-hc-muted group-hover:text-blue transition-colors"></i>
                         </div>
                     </div>
 
                     <h3 class="text-xl font-bold text-white mb-1 group-hover:text-blue transition-colors">@project.Name</h3>
-                    <div class="flex items-center gap-1.5 text-text-secondary text-xs">
+                    <div class="flex items-center gap-1.5 text-hc-muted text-xs">
                         <i data-lucide="user" class="w-3 h-3"></i>
                         <span class="truncate">@(project.OwnerEmail ?? "—")</span>
                         @if (project.UserId != ViewBag.CurrentUserId) {
@@ -74,7 +74,7 @@ else
                     </div>
 
                     <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
-                        <div class="flex items-center gap-4 text-sm text-text-secondary">
+                        <div class="flex items-center gap-4 text-sm text-hc-muted">
                             <div class="flex items-center gap-1.5">
                                 <i data-lucide="activity" class="w-4 h-4"></i>
                                 <span>@project.MonitorCount Monitors</span>
@@ -99,11 +99,11 @@ else
             onclick="document.getElementById('createProjectModal').classList.add('hidden')"></div>
 
         <div
-            class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
+            class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
+            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white">Create New Project</h3>
                 <button onclick="document.getElementById('createProjectModal').classList.add('hidden')"
-                    class="text-text-secondary hover:text-white transition-colors">
+                    class="text-hc-muted hover:text-white transition-colors">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -113,7 +113,7 @@ else
                     <div>
                         <label for="name" class="block text-sm font-semibold text-white mb-2">Project Name</label>
                         <input type="text" name="name" id="name" required
-                            class="w-full bg-hc-black border border-border-color rounded-xl px-4 py-3 text-white placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-blue/50 transition-all"
+                            class="w-full bg-hc-black border border-hc-border rounded-xl px-4 py-3 text-white placeholder-hc-muted focus:outline-none focus:ring-2 focus:ring-blue/50 transition-all"
                             placeholder="e.g. My Website, API Service">
                     </div>
                     <div class="bg-blue/5 rounded-xl p-4 border border-blue/10">
@@ -124,14 +124,14 @@ else
                         </p>
                     </div>
                 </div>
-                <div class="bg-hc-black/50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 border-t border-border-color">
+                <div class="bg-hc-black/50 px-6 py-4 sm:flex sm:flex-row-reverse gap-3 border-t border-hc-border">
                     <button type="submit"
                         class="bg-blue hover:bg-blue/80 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue/20 w-full sm:w-auto">
                         Create Project
                     </button>
                     <button type="button"
                         onclick="document.getElementById('createProjectModal').classList.add('hidden')"
-                        class="px-6 py-2.5 rounded-xl border border-border-color text-text-secondary hover:text-white hover:bg-white/5 transition-all w-full sm:w-auto mt-2 sm:mt-0 font-bold">
+                        class="px-6 py-2.5 rounded-xl border border-hc-border text-hc-muted hover:text-white hover:bg-white/5 transition-all w-full sm:w-auto mt-2 sm:mt-0 font-bold">
                         Cancel
                     </button>
                 </div>
