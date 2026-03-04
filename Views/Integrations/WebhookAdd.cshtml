@@ -1,0 +1,205 @@
+@{
+    var project = (ViewBag.Project as HealthyCron.Models.Project)!;
+    ViewData["Title"] = $"{project?.Name} - Add Webhook Integration";
+    Layout = "_DashboardLayout";
+    var errorMsg = TempData["Error"] as string;
+}
+
+<div class="max-w-5xl mx-auto pb-20 mt-8">
+    <!-- Breadcrumbs -->
+    <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 uppercase tracking-wider font-semibold">
+        <a href="/dashboard" class="hover:text-blue-400 transition-colors flex items-center gap-1">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            Projects
+        </a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project?.Slug/monitors" class="hover:text-white transition-colors">@project?.Name</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <a href="/project/@project?.Slug/integrations" class="hover:text-white transition-colors">Integrations</a>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+        <span class="text-white">Add Webhook</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center gap-4 mb-3">
+            <div class="w-14 h-14 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center shrink-0">
+                <img src="/images/webhook.png" class="w-7 h-7 object-contain" alt="Webhook" />
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-white">Webhook</h1>
+                <p class="text-[15px] text-[#A3A3A3] mt-1">Execute an HTTP request when a monitor goes down or recovers. Use <code class="text-blue-400 bg-white/5 px-1 rounded">$NAME</code>, <code class="text-blue-400 bg-white/5 px-1 rounded">$STATUS</code>, and other placeholders in URLs and body.</p>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMsg))
+    {
+        <div class="mb-6 flex items-center gap-3 rounded-xl bg-rose-500/10 border border-rose-500/20 px-4 py-3 text-rose-400 text-sm font-medium">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            @errorMsg
+        </div>
+    }
+
+    <form method="post" action="/project/@project?.Slug/integrations/webhook" id="webhook-form">
+        <!-- Integration Name -->
+        <div class="glass-card rounded-2xl border border-[#262626] bg-[#0a0a0a] p-6 mb-4">
+            <label class="block text-sm font-bold text-white mb-2">Integration Name</label>
+            <input type="text" name="name" value="Webhook" placeholder="e.g. My API Alerting"
+                   class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[15px] text-white placeholder-[#737373] focus:border-blue-500 hover:border-[#404040] focus:ring-1 focus:ring-blue-500 outline-none transition-all shadow-inner" />
+        </div>
+
+        <!-- Two-column webhook config -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+            <!-- DOWN column -->
+            <div class="glass-card rounded-2xl border border-rose-500/20 bg-[#0a0a0a] p-6 relative overflow-hidden">
+                <div class="absolute -top-24 -left-24 w-48 h-48 bg-rose-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+                <h2 class="text-base font-black text-rose-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                    <i data-lucide="arrow-down-circle" class="w-4 h-4"></i>
+                    Execute when monitor goes <span class="text-rose-400 ml-1">DOWN</span>
+                    <span class="text-rose-400 text-[10px] border border-rose-400/40 px-1.5 py-0.5 rounded ml-auto">Required</span>
+                </h2>
+
+                <div class="space-y-4 relative z-10">
+                    <div>
+                        <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">URL <span class="text-rose-400">*</span></label>
+                        <div class="flex gap-2">
+                            <select name="downMethod" id="down_method" class="bg-[#141414] border border-[#262626] rounded-xl px-3 py-3 text-[14px] text-white focus:border-rose-500 focus:ring-1 focus:ring-rose-500 outline-none transition-all">
+                                <option value="POST" selected>POST</option>
+                                <option value="GET">GET</option>
+                                <option value="PUT">PUT</option>
+                            </select>
+                            <input type="url" name="downUrl" id="down_url" placeholder="https://example.com/alert"
+                                   class="flex-1 bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Headers</label>
+                        <textarea name="downHeaders" rows="3" placeholder="X-Api-Key: your-key&#10;Content-Type: application/json"
+                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-[#737373] mt-1">One header per line — <code class="text-[#aaa]">Name: Value</code></p>
+                    </div>
+
+                    <div id="down_body_section">
+                        <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Body</label>
+                        <textarea name="downBody" rows="4" placeholder='{"monitor": "$NAME", "status": "$STATUS"}'
+                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-rose-500 hover:border-[#404040] focus:ring-1 focus:ring-rose-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-[#737373] mt-1">Supports: <code class="text-blue-400">$NAME</code> <code class="text-blue-400">$STATUS</code> <code class="text-blue-400">$PROJECT</code> <code class="text-blue-400">$MONITOR_ID</code> <code class="text-blue-400">$TIMESTAMP</code></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UP column -->
+            <div class="glass-card rounded-2xl border border-emerald-500/20 bg-[#0a0a0a] p-6 relative overflow-hidden">
+                <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+                <h2 class="text-base font-black text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <i data-lucide="arrow-up-circle" class="w-4 h-4"></i>
+                    Execute when monitor goes <span class="text-emerald-400 ml-1">UP</span>
+                    <span class="text-emerald-400/60 text-[10px] border border-emerald-400/20 px-1.5 py-0.5 rounded ml-auto">Optional</span>
+                </h2>
+                <p class="text-[12px] text-[#737373] mb-4">Leave the URL blank to skip this webhook on recovery.</p>
+
+                <div class="space-y-4 relative z-10">
+                    <div>
+                        <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">URL</label>
+                        <div class="flex gap-2">
+                            <select name="upMethod" id="up_method" class="bg-[#141414] border border-[#262626] rounded-xl px-3 py-3 text-[14px] text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+                                <option value="POST" selected>POST</option>
+                                <option value="GET">GET</option>
+                                <option value="PUT">PUT</option>
+                            </select>
+                            <input type="url" name="upUrl" id="up_url" placeholder="https://example.com/recovered (optional)"
+                                   class="flex-1 bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Headers</label>
+                        <textarea name="upHeaders" rows="3" placeholder="X-Api-Key: your-key&#10;Content-Type: application/json"
+                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-[#737373] mt-1">One header per line — <code class="text-[#aaa]">Name: Value</code></p>
+                    </div>
+
+                    <div id="up_body_section">
+                        <label class="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Request Body</label>
+                        <textarea name="upBody" rows="4" placeholder='{"monitor": "$NAME", "status": "$STATUS"}'
+                                  class="w-full bg-[#141414] border border-[#262626] rounded-xl px-4 py-3 text-[13px] text-white placeholder-[#737373] focus:border-emerald-500 hover:border-[#404040] focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-mono resize-y"></textarea>
+                        <p class="text-[11px] text-[#737373] mt-1">Supports: <code class="text-blue-400">$NAME</code> <code class="text-blue-400">$STATUS</code> <code class="text-blue-400">$PROJECT</code> <code class="text-blue-400">$MONITOR_ID</code> <code class="text-blue-400">$TIMESTAMP</code></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholders reference (collapsible) -->
+        <div class="glass-card rounded-2xl border border-[#262626] bg-[#0a0a0a] mb-6">
+            <button type="button" onclick="togglePlaceholders()"
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-bold text-[#A3A3A3] hover:text-white transition-colors">
+                <span class="flex items-center gap-2">
+                    <i data-lucide="brackets" class="w-4 h-4 text-blue-400"></i>
+                    Available placeholders
+                </span>
+                <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="placeholders-chevron"></i>
+            </button>
+            <div id="placeholders-panel" class="hidden px-6 pb-5">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-[#262626]">
+                            <th class="text-left py-2 text-[11px] uppercase tracking-widest text-[#737373] font-black">Placeholder</th>
+                            <th class="text-left py-2 text-[11px] uppercase tracking-widest text-[#737373] font-black">Replaced with</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#1a1a1a]">
+                        <tr><td class="py-2 font-mono text-blue-400">$NAME</td><td class="py-2 text-[#A3A3A3]">Monitor name</td></tr>
+                        <tr><td class="py-2 font-mono text-blue-400">$STATUS</td><td class="py-2 text-[#A3A3A3]">"down" or "up"</td></tr>
+                        <tr><td class="py-2 font-mono text-blue-400">$PROJECT</td><td class="py-2 text-[#A3A3A3]">Project name</td></tr>
+                        <tr><td class="py-2 font-mono text-blue-400">$MONITOR_ID</td><td class="py-2 text-[#A3A3A3]">Monitor UUID</td></tr>
+                        <tr><td class="py-2 font-mono text-blue-400">$TIMESTAMP</td><td class="py-2 text-[#A3A3A3]">UTC timestamp (ISO 8601)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3">
+            <a href="/project/@project?.Slug/integrations" class="px-6 py-2.5 rounded-xl text-[#A3A3A3] hover:text-white font-bold text-sm transition-colors">
+                Cancel
+            </a>
+            <button type="submit" id="save-btn"
+                    class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-2.5 rounded-xl font-black text-sm transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 outline-none">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                Save Integration
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+        updateBodyVisibility('down');
+        updateBodyVisibility('up');
+    });
+
+    document.getElementById('down_method').addEventListener('change', () => updateBodyVisibility('down'));
+    document.getElementById('up_method').addEventListener('change', () => updateBodyVisibility('up'));
+
+    function updateBodyVisibility(side) {
+        const method = document.getElementById(`${side}_method`).value;
+        const section = document.getElementById(`${side}_body_section`);
+        section.style.display = (method === 'GET') ? 'none' : 'block';
+    }
+
+    function togglePlaceholders() {
+        const panel = document.getElementById('placeholders-panel');
+        const chevron = document.getElementById('placeholders-chevron');
+        panel.classList.toggle('hidden');
+        chevron.style.transform = panel.classList.contains('hidden') ? '' : 'rotate(180deg)';
+    }
+
+    document.getElementById('webhook-form').addEventListener('submit', function() {
+        const btn = document.getElementById('save-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div> Saving...';
+    });
+</script>

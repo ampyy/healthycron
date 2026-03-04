@@ -241,6 +241,23 @@ using (var scope = app.Services.CreateScope())
                 CONSTRAINT fk_spike_integrations FOREIGN KEY (integration_id) REFERENCES integrations (id) ON DELETE CASCADE
             );
 
+            CREATE TABLE IF NOT EXISTS webhook_integrations (
+                integration_id UUID PRIMARY KEY,
+                down_method TEXT NOT NULL DEFAULT 'POST',
+                down_url TEXT NOT NULL,
+                down_headers TEXT,
+                down_body TEXT,
+                up_method TEXT,
+                up_url TEXT,
+                up_headers TEXT,
+                up_body TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                CONSTRAINT fk_webhook_integrations FOREIGN KEY (integration_id) REFERENCES integrations (id) ON DELETE CASCADE
+            );
+
+            ALTER TABLE webhook_integrations ALTER COLUMN down_url DROP NOT NULL;
+            ALTER TABLE webhook_integrations ALTER COLUMN down_method DROP NOT NULL;
+
             CREATE TABLE IF NOT EXISTS temp_telegram_handshakes (
                 token TEXT PRIMARY KEY,
                 chat_id TEXT NOT NULL,

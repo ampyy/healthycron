@@ -76,6 +76,20 @@ namespace HealthyCron.Data.Repository
             return await QueryAsync<MonitorPing>(sql, new { MonitorId = monitorId, Limit = limit });
         }
 
+        public async Task<IEnumerable<MonitorPing>> GetPingsByDateRangeAsync(Guid monitorId, DateTime startDate, DateTime endDate)
+        {
+            const string sql = @"
+                SELECT 
+                    id, monitor_id, received_at, status, message,
+                    ip_address, user_agent, http_method, request_headers, duration_ms
+                FROM monitor_pings 
+                WHERE monitor_id = @MonitorId 
+                AND received_at >= @StartDate 
+                AND received_at <= @EndDate
+                ORDER BY received_at ASC";
+            return await QueryAsync<MonitorPing>(sql, new { MonitorId = monitorId, StartDate = startDate, EndDate = endDate });
+        }
+
         public async Task<IEnumerable<MonitorPing>> GetPingsByProjectIdAsync(Guid projectId, int limit = 100)
         {
             const string sql = @"

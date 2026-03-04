@@ -20,21 +20,24 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: '#000000',
-                        'navy-light': '#111111',
-                        'navy-lighter': '#1a1a1a',
+                        hc-black: '#0A0A0B',
+                        'hc-black-light': '#111114',
+                        'hc-black-lighter': '#18181C',
                         blue: '#ffffff',
                         purple: '#a3a3a3',
                         'text-secondary': '#737373',
-                        'border-color': '#262626'
+                        'border-color': '#27272D'
+                    },
+                    fontFamily: {
+                        sans: ['Sora', 'system-ui', 'sans-serif'],
+                        mono: ['DM Mono', 'monospace']
                     }
                 }
             }
@@ -42,14 +45,36 @@
     </script>
 
     <style>
+        :root {
+            --hc-black: #0A0A0B;
+            --hc-ink: #111114;
+            --hc-surface: #18181C;
+            --hc-border: #27272D;
+            --hc-border-mid: #38383F;
+
+            --hc-white: #FAFAFA;
+            --hc-silver: #D4D4D8;
+            --hc-dim: #A1A1AA;
+            --hc-muted: #52525B;
+
+            --hc-red: #EF3340;
+            --hc-red-deep: #C41E27;
+            --hc-red-subtle: #2D1215;
+            --hc-green: #22C55E;
+            --hc-green-subtle: #0D2318;
+            --hc-amber: #F59E0B;
+            --hc-amber-subtle: #261D09;
+            --hc-blue: #3B82F6;
+            --hc-blue-subtle: #0D1B38;
+        }
         * {
             scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #e5e5e5;
+            font-family: 'Sora', sans-serif;
+            background-color: var(--hc-black);
+            color: var(--hc-white);
         }
 
         /* Gradient Text */

@@ -473,5 +473,34 @@ namespace HealthyCron.Controllers
             await _integrationRepository.UpdateMonitorIntegrationStatusAsync(id, integrationId, request.IsEnabled);
             return Ok(new { success = true });
         }
+
+        [HttpGet("api/{id:guid}/pings")]
+        public async Task<IActionResult> GetPingsByDateRange(Guid id, [FromQuery] DateTime start, [FromQuery] DateTime end)
+        {
+            var user = HttpContext.Items["User"] as User;
+            if (user == null) return Unauthorized();
+
+            var monitor = await _monitorRepository.GetMonitorByIdAsync(id);
+            if (monitor == null) return NotFound();
+
+            var project = await _projectRepository.GetProjectByIdAsync(monitor.ProjectId);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanViewProjectAsync(project.Id, project.UserId, user.Id)) return Forbid();
+
+            // Ensure valid date range, default to last 24h if missing/invalid
+            if (start == default || end == default || start > end)
+            {
+                end = DateTime.UtcNow;
+                start = end.AddHours(-24);
+            }
+
+            var pings = await _monitorRepository.GetPingsByDateRangeAsync(id, start, end);
+            
+            return Json(pings.Select(p => new {
+                receivedAt = p.ReceivedAt,
+                durationMs = p.DurationMs,
+                status = p.Status
+            }));
+        }
     }
 }

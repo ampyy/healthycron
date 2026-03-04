@@ -154,6 +154,15 @@ namespace HealthyCron.Controllers
                         SpikeDetails = spikeDetails
                     });
                 }
+                else if (integration.Type == IntegrationType.Webhook)
+                {
+                    var webhookDetails = await _integrationRepository.GetWebhookIntegrationByIntegrationIdAsync(integration.Id);
+                    integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
+                    {
+                        Integration = integration,
+                        WebhookDetails = webhookDetails
+                    });
+                }
                 else
                 {
                     integrationsWithDetails.Add(new HealthyCron.Models.ViewModels.IntegrationListItemViewModel
@@ -512,6 +521,159 @@ namespace HealthyCron.Controllers
             return RedirectToAction("Index", new { slug = project.Slug });
         }
 
+
+
+        // ─── WEBHOOK ───────────────────────────────────────────────────────────
+
+        [HttpGet("project/{slug}/integrations/webhook/add")]
+        public async Task<IActionResult> WebhookAdd(string slug)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            ViewBag.Project = project;
+            ViewBag.User = user;
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/webhook")]
+        public async Task<IActionResult> WebhookCreate(string slug,
+            [FromForm] string? downUrl,
+            [FromForm] string? downMethod,
+            [FromForm] string? downHeaders,
+            [FromForm] string? downBody,
+            [FromForm] string? upUrl,
+            [FromForm] string? upMethod,
+            [FromForm] string? upHeaders,
+            [FromForm] string? upBody,
+            [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            if (string.IsNullOrWhiteSpace(downUrl) && string.IsNullOrWhiteSpace(upUrl))
+            {
+                TempData["Error"] = "At least one URL (Down or Up) is required";
+                return RedirectToAction("WebhookAdd", new { slug });
+            }
+            if (!string.IsNullOrWhiteSpace(downUrl) && !Uri.TryCreate(downUrl, UriKind.Absolute, out _))
+            {
+                TempData["Error"] = "Down URL must be a valid URL";
+                return RedirectToAction("WebhookAdd", new { slug });
+            }
+
+            // DOWN is optional if UP is set
+            string? normalizedDownMethod = null;
+            string? normalizedDownUrl = null;
+            if (!string.IsNullOrWhiteSpace(downUrl))
+            {
+                normalizedDownMethod = (downMethod ?? "POST").ToUpper();
+                normalizedDownUrl = downUrl.Trim();
+            }
+
+            // UP is entirely optional — only validate if URL is provided
+            string? normalizedUpMethod = null;
+            string? normalizedUpUrl = null;
+            if (!string.IsNullOrWhiteSpace(upUrl))
+            {
+                if (!Uri.TryCreate(upUrl, UriKind.Absolute, out _))
+                {
+                    TempData["Error"] = "Up URL must be a valid URL";
+                    return RedirectToAction("WebhookAdd", new { slug });
+                }
+                normalizedUpMethod = (upMethod ?? "POST").ToUpper();
+                normalizedUpUrl = upUrl.Trim();
+            }
+
+            var integration = new Integration
+            {
+                ProjectId = project.Id,
+                Type = IntegrationType.Webhook,
+                Name = string.IsNullOrWhiteSpace(name) ? "Webhook" : name,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            var integrationId = await _integrationRepository.CreateIntegrationAsync(integration);
+
+            await _integrationRepository.CreateWebhookIntegrationAsync(new WebhookIntegration
+            {
+                IntegrationId = integrationId,
+                DownMethod = normalizedDownMethod,
+                DownUrl = normalizedDownUrl,
+                DownHeaders = string.IsNullOrWhiteSpace(downHeaders) ? null : downHeaders,
+                DownBody = string.IsNullOrWhiteSpace(downBody) ? null : downBody,
+                UpMethod = normalizedUpMethod,
+                UpUrl = normalizedUpUrl,
+                UpHeaders = string.IsNullOrWhiteSpace(upHeaders) ? null : upHeaders,
+                UpBody = string.IsNullOrWhiteSpace(upBody) ? null : upBody
+            });
+
+            var monitors = await _monitorRepository.GetMonitorsByProjectIdAsync(project.Id);
+            foreach (var monitor in monitors)
+                await _integrationRepository.AddMonitorIntegrationAsync(monitor.Id, integrationId);
+
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        [HttpPost("integrations/{id}/test-webhook")]
+        public async Task<IActionResult> TestWebhook(Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null) return NotFound();
+            var project = await _projectRepository.GetProjectByIdAsync(integration.ProjectId);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return StatusCode(403);
+
+            var wh = await _integrationRepository.GetWebhookIntegrationByIntegrationIdAsync(id);
+            if (wh == null) return NotFound(new { error = "Webhook details not found" });
+
+            // Replace placeholders with test values
+            string Replace(string? s) => (s ?? string.Empty)
+                .Replace("$NAME", "Test Monitor")
+                .Replace("$STATUS", "down")
+                .Replace("$PROJECT", project.Name)
+                .Replace("$MONITOR_ID", "00000000-0000-0000-0000-000000000000")
+                .Replace("$TIMESTAMP", DateTime.UtcNow.ToString("o"));
+
+            var url = Replace(wh.DownUrl);
+            var method = wh.DownMethod?.ToUpper() ?? "POST";
+            var body = Replace(wh.DownBody);
+            var headers = wh.DownHeaders;
+
+            try
+            {
+                using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+                var request = new HttpRequestMessage(new HttpMethod(method), url);
+                if (!string.IsNullOrEmpty(headers))
+                {
+                    foreach (var line in headers.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        var colon = line.IndexOf(':');
+                        if (colon > 0)
+                            request.Headers.TryAddWithoutValidation(line[..colon].Trim(), line[(colon + 1)..].Trim());
+                    }
+                }
+                if ((method == "POST" || method == "PUT") && !string.IsNullOrEmpty(body))
+                    request.Content = new StringContent(body, System.Text.Encoding.UTF8, "application/json");
+
+                var response = await http.SendAsync(request);
+                var statusCode = (int)response.StatusCode;
+                var success = statusCode is >= 200 and < 300;
+                return Ok(new { success, status_code = statusCode, message = success ? $"Test sent! Status {statusCode}" : $"Got status {statusCode}" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { success = false, error = ex.Message });
+            }
+        }
 
 
         [HttpGet("project/{slug}/integrations/slack/authorize")]
@@ -972,6 +1134,138 @@ namespace HealthyCron.Controllers
                 ["email"] = email
             });
 
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        // ─── EMAIL EDIT ────────────────────────────────────────────────────────
+
+        [HttpGet("project/{slug}/integrations/email/{id}/edit")]
+        public async Task<IActionResult> EmailEdit(string slug, Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null || integration.ProjectId != project.Id) return NotFound();
+
+            var emailDetails = await _integrationRepository.GetEmailIntegrationByIntegrationIdAsync(id);
+            if (emailDetails == null) return NotFound();
+
+            ViewBag.Project = project;
+            ViewBag.Integration = integration;
+            ViewBag.EmailDetails = emailDetails;
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/email/{id}/edit")]
+        public async Task<IActionResult> EmailEditPost(string slug, Guid id,
+            [FromForm] string email, [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null || integration.ProjectId != project.Id) return NotFound();
+
+            if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
+            {
+                TempData["Error"] = "A valid email address is required";
+                return RedirectToAction("EmailEdit", new { slug, id });
+            }
+
+            var finalName = string.IsNullOrWhiteSpace(name) ? $"Email - {email}" : name;
+            await _integrationRepository.UpdateEmailIntegrationAsync(id, email.Trim().ToLower(), finalName);
+            TempData["Success"] = "Email integration updated";
+            return RedirectToAction("Index", new { slug = project.Slug });
+        }
+
+        // ─── WEBHOOK EDIT ──────────────────────────────────────────────────────
+
+        [HttpGet("project/{slug}/integrations/webhook/{id}/edit")]
+        public async Task<IActionResult> WebhookEdit(string slug, Guid id)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null || integration.ProjectId != project.Id) return NotFound();
+
+            var webhookDetails = await _integrationRepository.GetWebhookIntegrationByIntegrationIdAsync(id);
+            if (webhookDetails == null) return NotFound();
+
+            ViewBag.Project = project;
+            ViewBag.Integration = integration;
+            ViewBag.WebhookDetails = webhookDetails;
+            return View();
+        }
+
+        [HttpPost("project/{slug}/integrations/webhook/{id}/edit")]
+        public async Task<IActionResult> WebhookEditPost(string slug, Guid id,
+            [FromForm] string? downUrl, [FromForm] string? downMethod,
+            [FromForm] string? downHeaders, [FromForm] string? downBody,
+            [FromForm] string? upUrl, [FromForm] string? upMethod,
+            [FromForm] string? upHeaders, [FromForm] string? upBody,
+            [FromForm] string? name)
+        {
+            var user = HttpContext.Items["User"] as User;
+            var project = await _projectRepository.GetProjectBySlugAsync(slug);
+            if (project == null) return NotFound();
+            if (!await _projectAuth.CanManageMonitorsAsync(project.Id, project.UserId, user!.Id))
+                return Forbid();
+
+            var integration = await _integrationRepository.GetIntegrationByIdAsync(id);
+            if (integration == null || integration.ProjectId != project.Id) return NotFound();
+
+            if (string.IsNullOrWhiteSpace(downUrl) && string.IsNullOrWhiteSpace(upUrl))
+            {
+                TempData["Error"] = "At least one URL (Down or Up) is required";
+                return RedirectToAction("WebhookEdit", new { slug, id });
+            }
+
+            string? normalizedDownMethod = null, normalizedDownUrl = null;
+            if (!string.IsNullOrWhiteSpace(downUrl))
+            {
+                if (!Uri.TryCreate(downUrl, UriKind.Absolute, out _))
+                {
+                    TempData["Error"] = "Down URL must be a valid URL";
+                    return RedirectToAction("WebhookEdit", new { slug, id });
+                }
+                normalizedDownMethod = (downMethod ?? "POST").ToUpper();
+                normalizedDownUrl = downUrl.Trim();
+            }
+
+            string? normalizedUpMethod = null, normalizedUpUrl = null;
+            if (!string.IsNullOrWhiteSpace(upUrl))
+            {
+                if (!Uri.TryCreate(upUrl, UriKind.Absolute, out _))
+                {
+                    TempData["Error"] = "Up URL must be a valid URL";
+                    return RedirectToAction("WebhookEdit", new { slug, id });
+                }
+                normalizedUpMethod = (upMethod ?? "POST").ToUpper();
+                normalizedUpUrl = upUrl.Trim();
+            }
+
+            var finalName = string.IsNullOrWhiteSpace(name) ? "Webhook" : name;
+            await _integrationRepository.UpdateWebhookIntegrationAsync(id,
+                normalizedDownMethod, normalizedDownUrl,
+                string.IsNullOrWhiteSpace(downHeaders) ? null : downHeaders,
+                string.IsNullOrWhiteSpace(downBody) ? null : downBody,
+                normalizedUpMethod, normalizedUpUrl,
+                string.IsNullOrWhiteSpace(upHeaders) ? null : upHeaders,
+                string.IsNullOrWhiteSpace(upBody) ? null : upBody,
+                finalName);
+
+            TempData["Success"] = "Webhook integration updated";
             return RedirectToAction("Index", new { slug = project.Slug });
         }
 

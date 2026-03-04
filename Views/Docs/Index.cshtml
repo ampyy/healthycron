@@ -43,7 +43,7 @@
         </ul>
     </section>
 
-    <section class="bg-navy-light border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl">
+    <section class="bg-hc-black-light border border-white/10 rounded-2xl p-6 space-y-4 shadow-xl">
         <h3 class="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
             <i data-lucide="info" class="w-4 h-4 text-blue"></i>
             HealthyCron is not the right tool for:
@@ -70,7 +70,7 @@
                 <p class="text-text-secondary leading-relaxed">
                     A <strong class="text-white">Check</strong> represents a single service you want to monitor. When monitoring cron jobs, you would create a separate check for each cron job. Each check has a unique ping URL, schedule, and associated integrations. For more information, see <a href="/docs/configuring-checks" class="text-blue hover:underline">Configuring checks</a>.
                 </p>
-                <div class="bg-navy/50 border border-white/5 rounded-2xl overflow-hidden mt-6">
+                <div class="bg-hc-black/50 border border-white/5 rounded-2xl overflow-hidden mt-6">
                     <div class="px-6 py-4 border-b border-white/5 bg-white/5">
                         <p class="text-xs font-black text-text-secondary uppercase tracking-widest">Status States</p>
                     </div>
@@ -104,7 +104,7 @@
                             </div>
                         </div>
                         <div class="flex gap-4 items-start border-t border-white/5 pt-4">
-                            <div class="w-4 h-4 rounded-full bg-navy border border-white/20 mt-1 shrink-0"></div>
+                            <div class="w-4 h-4 rounded-full bg-hc-black border border-white/20 mt-1 shrink-0"></div>
                             <div>
                                 <strong class="text-white block mb-0.5">Paused</strong>
                                 <span class="text-sm text-text-secondary">Monitoring can be manually paused to avoid unwanted alerts during known maintenance or issues.</span>
@@ -130,14 +130,14 @@
                     Each check has a unique Ping URL. Clients like cron jobs or batch scripts make HTTP requests to signal execution start, success, or failure.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div class="bg-navy-light border border-white/10 rounded-2xl p-5 hover:border-blue/30 transition-colors">
+                    <div class="bg-hc-black-light border border-white/10 rounded-2xl p-5 hover:border-blue/30 transition-colors">
                         <p class="text-[10px] font-black uppercase text-blue-400 tracking-widest mb-3">ID Format</p>
                         <code class="text-blue text-sm block bg-black/30 p-3 rounded-lg border border-white/5 break-all">https://healthycron.com/ping/&lt;uuid&gt;</code>
                         <p class="text-text-secondary text-xs mt-3 leading-relaxed">
                             Uses a system-assigned unique UUID. Guaranteed to be unique across HealthyCron.
                         </p>
                     </div>
-                    <div class="bg-navy-light border border-white/10 rounded-2xl p-5 hover:border-blue/30 transition-colors">
+                    <div class="bg-hc-black-light border border-white/10 rounded-2xl p-5 hover:border-blue/30 transition-colors">
                         <p class="text-[10px] font-black uppercase text-blue-400 tracking-widest mb-3">Slug Format</p>
                         <code class="text-blue text-sm block bg-black/30 p-3 rounded-lg border border-white/5 break-all">https://healthycron.com/ping/&lt;key&gt;/&lt;slug&gt;</code>
                         <p class="text-text-secondary text-xs mt-3 leading-relaxed">
@@ -174,7 +174,7 @@
                 </p>
                 
                 <div class="space-y-4 mt-6">
-                    <div class="bg-navy-light border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
+                    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-blue/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
                         <h4 class="text-white font-bold mb-3 flex items-center gap-2">
                              <i data-lucide="zap" class="w-4 h-4 text-blue"></i>
@@ -187,7 +187,7 @@
                         </p>
                     </div>
                     
-                    <div class="bg-navy-light border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
+                    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6 relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
                         <h4 class="text-white font-bold mb-3 flex items-center gap-2">
                              <i data-lucide="calendar-days" class="w-4 h-4 text-blue"></i>

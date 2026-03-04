@@ -78,7 +78,7 @@
                 @foreach (var member in members)
                 {
                     var roleBadge = member.Role switch {
-                        HealthyCron.Enums.ProjectRole.Manager => ("bg-purple-500/10 text-purple-400", "Manager"),
+                        HealthyCron.Enums.ProjectRole.Manager => ("bg-blue-500/10 text-blue-400", "Manager"),
                         HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
                         _ => ("bg-emerald-500/10 text-emerald-400", "Team Member")
                     };
@@ -133,7 +133,7 @@
                     @foreach (var inv in invitations)
                     {
                         var roleBadge = inv.Role switch {
-                            HealthyCron.Enums.ProjectRole.Manager => ("bg-purple-500/10 text-purple-400", "Manager"),
+                            HealthyCron.Enums.ProjectRole.Manager => ("bg-blue-500/10 text-blue-400", "Manager"),
                             HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
                             _ => ("bg-emerald-500/10 text-emerald-400", "Team Member")
                         };
@@ -155,8 +155,8 @@
 <div id="inviteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeInviteModal()"></div>
-        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="user-plus" class="text-blue w-5 h-5"></i>
                     Invite Team Member
@@ -169,11 +169,11 @@
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Email Address</label>
                     <input type="email" name="email" required placeholder="colleague@example.com"
-                        class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-text-secondary/50">
+                        class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-text-secondary/50">
                 </div>
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Role</label>
-                    <select name="role" class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
+                    <select name="role" class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
                         <option value="0">Team Member – can create/edit/delete monitors &amp; integrations</option>
                         <option value="1">Manager – all of Team Member + invite/remove members</option>
                         <option value="2">Read Only – can only view monitors and logs</option>

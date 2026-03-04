@@ -31,6 +31,7 @@ namespace HealthyCron.Data.Interfaces
         // Email Integration
         Task CreateEmailIntegrationAsync(EmailIntegration emailIntegration);
         Task<EmailIntegration?> GetEmailIntegrationByIntegrationIdAsync(Guid integrationId);
+        Task UpdateEmailIntegrationAsync(Guid integrationId, string email, string name);
 
         // PagerDuty Integration
         Task CreatePagerDutyIntegrationAsync(PagerDutyIntegration pagerDutyIntegration);
@@ -62,6 +63,11 @@ namespace HealthyCron.Data.Interfaces
         // Spike.sh Integration
         Task CreateSpikeIntegrationAsync(SpikeIntegration spikeIntegration);
         Task<SpikeIntegration?> GetSpikeIntegrationByIntegrationIdAsync(Guid integrationId);
+
+        // Webhook Integration
+        Task CreateWebhookIntegrationAsync(WebhookIntegration webhookIntegration);
+        Task<WebhookIntegration?> GetWebhookIntegrationByIntegrationIdAsync(Guid integrationId);
+        Task UpdateWebhookIntegrationAsync(Guid integrationId, string? downMethod, string? downUrl, string? downHeaders, string? downBody, string? upMethod, string? upUrl, string? upHeaders, string? upBody, string name);
 
 
         // Monitor Integration Mapping

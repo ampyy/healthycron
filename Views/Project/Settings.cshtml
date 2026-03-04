@@ -37,7 +37,7 @@
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Project Name</label>
                     <input type="text" name="name" value="@project.Name" required
-                        class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
+                        class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
                 </div>
             </div>
             <div class="pt-6 mt-6 border-t border-white/5 flex justify-end">
@@ -144,7 +144,7 @@
                 </div>
             </div>
         </div>
-        <div class="px-6 py-4 bg-navy/50 border-t border-white/5 flex items-center gap-2">
+        <div class="px-6 py-4 bg-hc-black/50 border-t border-white/5 flex items-center gap-2">
             <i data-lucide="book-open" class="w-4 h-4 text-text-secondary"></i>
             <p class="text-xs text-text-secondary">
                 Learn how to use API keys in our <a href="/docs/api" class="text-blue hover:underline">documentation</a>.
@@ -207,7 +207,7 @@
                     @foreach (var member in members)
                     {
                         var (badgeClass, label) = member.Role switch {
-                            HealthyCron.Enums.ProjectRole.Manager  => ("bg-purple-500/10 text-purple-400", "Manager"),
+                            HealthyCron.Enums.ProjectRole.Manager  => ("bg-blue-500/10 text-blue-400", "Manager"),
                             HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
                             _                                      => ("bg-emerald-500/10 text-emerald-400", "Team Member")
                         };
@@ -251,7 +251,7 @@
                     @foreach (var inv in invitations)
                     {
                         var (badgeClass, label) = inv.Role switch {
-                            HealthyCron.Enums.ProjectRole.Manager  => ("bg-purple-500/10 text-purple-400", "Manager"),
+                            HealthyCron.Enums.ProjectRole.Manager  => ("bg-blue-500/10 text-blue-400", "Manager"),
                             HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-slate-500/10 text-slate-400", "Read Only"),
                             _                                      => ("bg-emerald-500/10 text-emerald-400", "Team Member")
                         };
@@ -285,7 +285,7 @@
                     <h3 class="font-bold text-white mb-1">Transfer Project</h3>
                     <p class="text-sm text-text-secondary">Transfer this project to another user's email address.</p>
                 </div>
-                <button onclick="openTransferModal()" class="px-6 py-2.5 bg-navy-light hover:bg-white/5 text-white rounded-xl font-bold border border-white/10 transition-all text-sm">
+                <button onclick="openTransferModal()" class="px-6 py-2.5 bg-hc-black-light hover:bg-white/5 text-white rounded-xl font-bold border border-white/10 transition-all text-sm">
                     Transfer
                 </button>
             </div>
@@ -312,8 +312,8 @@
 <div id="keyResultModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeKeyResultModal()"></div>
-        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="key" class="text-blue"></i>
                     API Key Generated
@@ -349,7 +349,7 @@
 
 <!-- Global Toast Notification -->
 <div id="toast" class="fixed bottom-8 right-8 z-[100] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="bg-navy-light border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-3 min-w-[300px]">
+    <div class="bg-hc-black-light border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-3 min-w-[300px]">
         <div id="toastIcon" class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"></div>
         <div class="overflow-hidden">
             <div id="toastTitle" class="font-bold text-white text-sm"></div>
@@ -362,7 +362,7 @@
 <div id="confirmModal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeConfirmModal()"></div>
-        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-md w-full border border-border-color relative z-10">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-md w-full border border-border-color relative z-10">
             <div class="p-6">
                 <div class="flex items-center gap-4 mb-6">
                     <div id="confirmIconBg" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
@@ -390,8 +390,8 @@
 <div id="inviteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeInviteModal()"></div>
-        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl sm:max-w-md w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="user-plus" class="text-blue w-5 h-5"></i>
                     Invite Team Member
@@ -404,11 +404,11 @@
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Email Address</label>
                     <input type="email" name="email" required placeholder="colleague@example.com"
-                        class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-text-secondary/50">
+                        class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all placeholder-text-secondary/50">
                 </div>
                 <div>
                     <label class="block text-xs font-black uppercase tracking-widest text-text-secondary mb-2">Role</label>
-                    <select name="role" class="w-full bg-navy border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
+                    <select name="role" class="w-full bg-hc-black border border-white/5 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none transition-all">
                         <option value="0">Team Member — create/edit/delete monitors &amp; integrations</option>
                         <option value="1">Manager — all of Team Member + invite/remove members</option>
                         <option value="2">Read Only — view monitors and logs only</option>

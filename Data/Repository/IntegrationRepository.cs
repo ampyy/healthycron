@@ -170,6 +170,15 @@ namespace HealthyCron.Data.Repository
             return await QueryFirstOrDefaultAsync<EmailIntegration>(sql, new { IntegrationId = integrationId });
         }
 
+        public async Task UpdateEmailIntegrationAsync(Guid integrationId, string email, string name)
+        {
+            const string updateIntegration = @"UPDATE integrations SET name = @name WHERE id = @id";
+            await ExecuteAsync(updateIntegration, new { name, id = integrationId });
+
+            const string updateEmail = @"UPDATE email_integrations SET email = @email WHERE integration_id = @id";
+            await ExecuteAsync(updateEmail, new { email, id = integrationId });
+        }
+
         public async Task CreatePagerDutyIntegrationAsync(PagerDutyIntegration pagerDutyIntegration)
         {
             const string sql = @"
@@ -288,6 +297,47 @@ namespace HealthyCron.Data.Repository
                 FROM spike_integrations
                 WHERE integration_id = @IntegrationId";
             return await QueryFirstOrDefaultAsync<SpikeIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task CreateWebhookIntegrationAsync(WebhookIntegration webhookIntegration)
+        {
+            const string sql = @"
+                INSERT INTO webhook_integrations 
+                    (integration_id, down_method, down_url, down_headers, down_body,
+                     up_method, up_url, up_headers, up_body)
+                VALUES 
+                    (@IntegrationId, @DownMethod, @DownUrl, @DownHeaders, @DownBody,
+                     @UpMethod, @UpUrl, @UpHeaders, @UpBody)";
+            await ExecuteAsync(sql, webhookIntegration);
+        }
+
+        public async Task<WebhookIntegration?> GetWebhookIntegrationByIntegrationIdAsync(Guid integrationId)
+        {
+            const string sql = @"
+                SELECT integration_id, down_method, down_url, down_headers, down_body,
+                       up_method, up_url, up_headers, up_body, created_at
+                FROM webhook_integrations
+                WHERE integration_id = @IntegrationId";
+            return await QueryFirstOrDefaultAsync<WebhookIntegration>(sql, new { IntegrationId = integrationId });
+        }
+
+        public async Task UpdateWebhookIntegrationAsync(Guid integrationId, string? downMethod, string? downUrl, string? downHeaders, string? downBody, string? upMethod, string? upUrl, string? upHeaders, string? upBody, string name)
+        {
+            const string updateIntegration = @"UPDATE integrations SET name = @name WHERE id = @id";
+            await ExecuteAsync(updateIntegration, new { name, id = integrationId });
+
+            const string updateWebhook = @"
+                UPDATE webhook_integrations SET
+                    down_method = @downMethod,
+                    down_url = @downUrl,
+                    down_headers = @downHeaders,
+                    down_body = @downBody,
+                    up_method = @upMethod,
+                    up_url = @upUrl,
+                    up_headers = @upHeaders,
+                    up_body = @upBody
+                WHERE integration_id = @id";
+            await ExecuteAsync(updateWebhook, new { downMethod, downUrl, downHeaders, downBody, upMethod, upUrl, upHeaders, upBody, id = integrationId });
         }
 
         public async Task CreatePushoverPendingSubscriptionAsync(PushoverPendingSubscription subscription)

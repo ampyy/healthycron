@@ -14,6 +14,7 @@ namespace HealthyCron.Models.ViewModels
         public TelegramIntegration? TelegramDetails { get; set; }
         public PushoverIntegration? PushoverDetails { get; set; }
         public SpikeIntegration? SpikeDetails { get; set; }
+        public WebhookIntegration? WebhookDetails { get; set; }
         public bool IsEnabledForMonitor { get; set; }
     }
 }

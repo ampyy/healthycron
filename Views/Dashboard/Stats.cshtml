@@ -14,8 +14,8 @@
             <p class="text-text-secondary">Global metrics across all your projects.</p>
         </div>
         <div class="flex">
-            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
-                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="px-3 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                 System Live
             </span>
         </div>
@@ -27,7 +27,7 @@
             <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Projects</p>
             <h2 class="text-3xl font-black text-white">@Model.TotalProjects</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <i data-lucide="folder" class="w-8 h-8 text-blue"></i>
+                <i data-lucide="folder" class="w-8 h-8 text-blue-500"></i>
             </div>
         </div>
 
@@ -35,7 +35,7 @@
             <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Monitors</p>
             <h2 class="text-3xl font-black text-white">@Model.TotalMonitors</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <i data-lucide="activity" class="w-8 h-8 text-purple"></i>
+                <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
             </div>
         </div>
 
@@ -43,23 +43,23 @@
             <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1">Total Beats</p>
             <h2 class="text-3xl font-black text-white">@Model.TotalBeats.ToString("N0")</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <i data-lucide="zap" class="w-8 h-8 text-amber"></i>
+                <i data-lucide="zap" class="w-8 h-8 text-yellow"></i>
             </div>
         </div>
 
         <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
-            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Healthy</p>
+            <p class="text-[10px] font-black text-green-500 uppercase tracking-widest mb-1">Healthy</p>
             <h2 class="text-3xl font-black text-white">@Model.HealthyMonitors</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <i data-lucide="check-circle" class="w-8 h-8 text-emerald-500"></i>
+                <i data-lucide="check-circle" class="w-8 h-8 text-green-500"></i>
             </div>
         </div>
 
         <div class="glass-card rounded-2xl p-5 border border-white/5 relative overflow-hidden group">
-            <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Missed/Failed</p>
+            <p class="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">Missed/Failed</p>
             <h2 class="text-3xl font-black text-white">@(Model.MissedMonitors + Model.FailedMonitors)</h2>
             <div class="absolute right-4 top-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <i data-lucide="alert-circle" class="w-8 h-8 text-rose-500"></i>
+                <i data-lucide="alert-circle" class="w-8 h-8 text-red-500"></i>
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
         <!-- Usage Quotas -->
         <div class="glass-card rounded-2xl p-8 border border-white/5 lg:col-span-1">
             <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                <i data-lucide="pie-chart" class="text-blue w-5 h-5"></i>
+                <i data-lucide="pie-chart" class="text-blue-500 w-5 h-5"></i>
                 Usage Quotas
             </h3>
 
@@ -81,7 +81,7 @@
                         <span class="text-[10px] text-text-secondary font-mono">@Model.TotalProjects / @Model.ProjectQuota</span>
                     </div>
                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-blue transition-all duration-1000"
+                        <div class="h-full bg-blue-600 transition-all duration-1000"
                             style="width: @(Math.Min(100, (Model.TotalProjects * 100) / Model.ProjectQuota))%"></div>
                     </div>
                 </div>
@@ -93,18 +93,18 @@
                         <span class="text-[10px] text-text-secondary font-mono">@Model.TotalMonitors / @Model.MonitorQuota</span>
                     </div>
                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                        <div class="h-full bg-purple transition-all duration-1000"
+                        <div class="h-full bg-blue-600 transition-all duration-1000"
                             style="width: @(Math.Min(100, (Model.TotalMonitors * 100) / Model.MonitorQuota))%"></div>
                     </div>
                 </div>
 
                 <div class="pt-4">
-                    <div class="p-4 bg-navy/50 rounded-xl border border-white/5 flex items-center justify-between group cursor-pointer hover:border-blue/30 transition-all">
+                    <div class="p-4 bg-hc-black/50 rounded-xl border border-white/5 flex items-center justify-between group cursor-pointer hover:border-blue-500/30 transition-all">
                         <div>
                             <p class="text-sm font-bold text-white">Starter Plan</p>
                             <p class="text-[10px] text-text-secondary uppercase font-black">Free Tier</p>
                         </div>
-                        <button class="px-3 py-1.5 bg-white text-navy text-[10px] font-black rounded-lg group-hover:bg-blue group-hover:text-white transition-all uppercase tracking-tighter">Upgrade</button>
+                        <button class="px-3 py-1.5 bg-white text-hc-black text-[10px] font-black rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-all uppercase tracking-tighter">Upgrade</button>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@
         <div class="glass-card rounded-2xl p-8 border border-white/5 lg:col-span-2 relative overflow-hidden">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="trending-up" class="text-emerald-500 w-5 h-5"></i>
+                    <i data-lucide="trending-up" class="text-green-500 w-5 h-5"></i>
                     Ping Volume (Last 24h)
                 </h3>
                 <div class="flex gap-3">
@@ -127,56 +127,9 @@
                 </div>
             </div>
 
-            <div class="h-48 flex items-end gap-1.5 px-2">
-                @for (int i = 0; i < 24; i++)
-                {
-                    var hourData = chartData.Select(p => p.Data.Count > i ? p.Data[i] : new HealthyCron.Models.ViewModels.PingCountByHour { Count = 0 }).ToList();
-                    var totalInHour = hourData.Sum(d => d.Count);
-                    var maxTotal = chartData.Any() && chartData.Max(p => p.Data.Any() ? p.Data.Max(d => d.Count) : 0) > 0 
-                        ? chartData.Max(p => p.Data.Max(d => d.Count)) * 4 // Scale factor
-                        : 100;
-
-                    <div class="flex-1 flex flex-col-reverse group relative cursor-pointer h-full justify-start">
-                        @for (int j = 0; j < chartData.Count(); j++)
-                        {
-                            var p = chartData.ElementAt(j);
-                            var count = p.Data.Count > i ? p.Data[i].Count : 0;
-                            var height = maxTotal > 0 ? (count * 100.0 / maxTotal) : 0;
-                            
-                            if (count > 0) {
-                                <div class="w-full rounded-sm transition-all group-hover:brightness-125" 
-                                     style="height: @(height)%; background-color: @p.Color; margin-bottom: 1px;"
-                                     title="@p.ProjectName: @count pings">
-                                </div>
-                            }
-                        }
-                        @if (totalInHour == 0) {
-                             <div class="w-full h-1 bg-white/5 rounded-full self-end mb-0 group-hover:bg-white/10 transition-all"></div>
-                        }
-
-                        <!-- Tooltip -->
-                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-navy-light text-white text-[10px] font-bold rounded-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none whitespace-nowrap shadow-2xl">
-                            <p class="text-text-secondary mb-1 border-b border-white/5 pb-1">@DateTime.UtcNow.AddHours(-23 + i).ToString("MMM dd, HH:00")</p>
-                            @foreach(var p in chartData) {
-                                var c = p.Data.Count > i ? p.Data[i].Count : 0;
-                                <div class="flex justify-between gap-4 mt-0.5">
-                                    <span style="color: @p.Color">@p.ProjectName</span>
-                                    <span class="font-mono">@c</span>
-                                </div>
-                            }
-                            <div class="mt-1 pt-1 border-t border-white/5 flex justify-between">
-                                <span>Total</span>
-                                <span class="text-blue">@totalInHour</span>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <div class="flex justify-between mt-6 text-[9px] text-text-secondary font-black uppercase tracking-widest px-2 border-t border-white/5 pt-4">
-                <span>24 hours ago</span>
-                <span>12h ago</span>
-                <span>Today</span>
+            <!-- Chart Container -->
+            <div class="h-64 relative mt-4">
+                <canvas id="pingChart"></canvas>
             </div>
         </div>
     </div>
@@ -184,7 +137,109 @@
 
 @section Scripts {
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            
+            // Prepare Data from Razor
+            const rawData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(chartData, new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }));
+            
+            // Generate last 24h labels
+            const labels = [];
+            const now = new Date();
+            for (let i = 23; i >= 0; i--) {
+                const d = new Date(now.getTime() - i * 60 * 60 * 1000);
+                labels.push(d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            }
+
+            // Transform rawData into Chart.js datasets
+            const datasets = rawData.map(project => {
+                // Pad data array to exactly 24 elements if necessary
+                let dataPoints = project.data.map(d => d.count);
+                while (dataPoints.length < 24) {
+                    dataPoints.push(0);
+                }
+                
+                return {
+                    label: project.projectName,
+                    data: dataPoints,
+                    borderColor: project.color,
+                    backgroundColor: project.color + '20', // Add transparency for fill
+                    borderWidth: 2,
+                    pointRadius: 0, // Hide points by default
+                    pointHoverRadius: 4,
+                    pointBackgroundColor: project.color,
+                    fill: false,
+                    tension: 0.4, // Smooth curves
+                    cubicInterpolationMode: 'monotone'
+                };
+            });
+
+            const ctx = document.getElementById('pingChart').getContext('2d');
+            
+            Chart.defaults.color = '#9ca3af';
+            Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // We use our custom HTML legend above
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 4,
+                            usePointStyle: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.dataset.label}: ${context.parsed.y} pings`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 6,
+                                font: { size: 10 }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                precision: 0,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+        });
     </script>
 }
+

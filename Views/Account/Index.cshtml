@@ -64,12 +64,12 @@
                 <!-- Search + select combo -->
                 <div class="relative">
                     <input id="tz-search" type="text" placeholder="Search timezone…"
-                        class="w-full bg-navy border border-white/10 rounded-t-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none"
+                        class="w-full bg-hc-black border border-white/10 rounded-t-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none"
                         oninput="filterTimezones(this.value)">
                     <i data-lucide="search" class="absolute right-4 top-3 w-5 h-5 text-text-secondary pointer-events-none"></i>
                 </div>
                 <select name="timezone" id="timezone-select"
-                    class="w-full bg-navy border border-white/10 border-t-0 rounded-b-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none" size="6">
+                    class="w-full bg-hc-black border border-white/10 border-t-0 rounded-b-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue/50 outline-none" size="6">
                     @foreach (var tz in ianaTimezones)
                     {
                         if (currentTz == tz)
@@ -130,7 +130,7 @@
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="receiveWeeklyReports" value="true" class="sr-only peer" @(Model.ReceiveWeeklyReports ? "checked" : "")>
-                    <div class="w-11 h-6 bg-navy border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
+                    <div class="w-11 h-6 bg-hc-black border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
                 </label>
             </div>
             <div class="flex items-center justify-between">
@@ -140,7 +140,7 @@
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="receiveMonthlyReports" value="true" class="sr-only peer" @(Model.ReceiveMonthlyReports ? "checked" : "")>
-                    <div class="w-11 h-6 bg-navy border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
+                    <div class="w-11 h-6 bg-hc-black border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
                 </label>
             </div>
             <div class="flex items-center justify-between">
@@ -150,7 +150,7 @@
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="receiveIncidentReminders" value="true" class="sr-only peer" @(Model.ReceiveIncidentReminders ? "checked" : "")>
-                    <div class="w-11 h-6 bg-navy border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
+                    <div class="w-11 h-6 bg-hc-black border border-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-checked:border-emerald-500"></div>
                 </label>
             </div>
             <div class="flex justify-end pt-4 border-t border-white/5">

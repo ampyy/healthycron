@@ -22,29 +22,57 @@
     <link rel="manifest" href="~/favicon/site.webmanifest">
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        navy: '#000000',
-                        'navy-light': '#111111',
+                        hc-black: '#0A0A0B',
+                        'hc-black-light': '#111114',
                         blue: '#7c3aed',
                         purple: '#a855f7',
                         'text-secondary': '#737373',
-                        'border-color': '#262626'
+                        'border-color': '#27272D'
+                    },
+                    fontFamily: {
+                        sans: ['Sora', 'system-ui', 'sans-serif'],
+                        mono: ['DM Mono', 'monospace']
                     }
                 }
             }
         }
     </script>
     <style>
+        :root {
+            --hc-black: #0A0A0B;
+            --hc-ink: #111114;
+            --hc-surface: #18181C;
+            --hc-border: #27272D;
+            --hc-border-mid: #38383F;
+
+            --hc-white: #FAFAFA;
+            --hc-silver: #D4D4D8;
+            --hc-dim: #A1A1AA;
+            --hc-muted: #52525B;
+
+            --hc-red: #EF3340;
+            --hc-red-deep: #C41E27;
+            --hc-red-subtle: #2D1215;
+            --hc-green: #22C55E;
+            --hc-green-subtle: #0D2318;
+            --hc-amber: #F59E0B;
+            --hc-amber-subtle: #261D09;
+            --hc-blue: #3B82F6;
+            --hc-blue-subtle: #0D1B38;
+        }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #E5E5E5;
+            font-family: 'Sora', sans-serif;
+            background-color: var(--hc-black);
+            color: var(--hc-white);
         }
 
         .sidebar-transition {
@@ -52,9 +80,9 @@
         }
 
         .glass-sidebar {
-            background: rgba(10, 10, 10, 0.97);
+            background: rgba(10, 10, 11, 0.97); /* #0A0A0B */
             backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(26, 26, 26, 0.8);
+            border-right: 1px solid var(--hc-border);
         }
 
         .glass-sidebar.minimized {
@@ -99,11 +127,11 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #000000;
+            background: var(--hc-black);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #222222;
+            background: var(--hc-border);
             border-radius: 3px;
         }
     </style>
@@ -121,7 +149,7 @@
 
         <!-- Minimize Toggle (Desktop) -->
         <button id="minimize-btn" onclick="toggleSidebarMinimize()"
-            class="hidden lg:flex absolute -right-3 top-20 w-6 h-6 bg-navy-light border border-border-color rounded-full items-center justify-center text-text-secondary hover:text-white z-50 transition-all shadow-lg active:scale-95">
+            class="hidden lg:flex absolute -right-3 top-20 w-6 h-6 bg-hc-black-light border border-border-color rounded-full items-center justify-center text-text-secondary hover:text-white z-50 transition-all shadow-lg active:scale-95">
             <i data-lucide="chevron-left" class="w-3.5 h-3.5 transition-transform duration-300" id="minimize-icon"></i>
         </button>
 
@@ -136,7 +164,7 @@
 
         <!-- User Profile (Mini) -->
         <div class="px-4 py-6 border-b border-border-color sidebar-text">
-            <div class="bg-navy-light/50 rounded-xl p-3 border border-white/5">
+            <div class="bg-hc-black-light/50 rounded-xl p-3 border border-white/5">
                 <p class="text-[10px] uppercase tracking-widest text-text-secondary mb-1">Account</p>
                 <p class="text-sm font-bold text-white truncate">@ViewBag.UserEmail</p>
             </div>
@@ -192,7 +220,7 @@
     <div id="main-content" class="flex-1 flex flex-col h-screen transition-all duration-300 main-content overflow-x-hidden w-full max-w-[100vw]">
         <!-- Top Bar -->
         <header
-            class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-border-color bg-navy/50 backdrop-blur-md">
+            class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-border-color bg-hc-black/50 backdrop-blur-md">
             <button class="lg:hidden text-text-secondary hover:text-white p-2" onclick="toggleMobileSidebar()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -213,7 +241,7 @@
                             <div class="text-sm font-bold text-white group-hover:text-blue transition-colors">@userEmail</div>
                             <div class="text-xs text-text-secondary">Account Settings</div>
                         </div>
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue to-purple flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue/20 group-hover:scale-105 transition-transform border border-white/10">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform border border-white/10">
                             @initial
                         </div>
                     </a>

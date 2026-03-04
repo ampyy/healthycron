@@ -12,6 +12,7 @@ namespace HealthyCron.Enums
         Call = 8,
         Telegram = 10,
         Pushover = 11,
-        Spike = 12
+        Spike = 12,
+        Webhook = 13
     }
 }

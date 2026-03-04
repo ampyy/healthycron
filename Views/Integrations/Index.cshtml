@@ -6,7 +6,7 @@
     Layout = "_DashboardLayout";
 }
 
-<div class="max-w-4xl mx-auto pb-20">
+<div class="max-w-5xl ml-0 pb-20 px-4 sm:px-6 lg:px-8">
     <!-- Breadcrumbs -->
     <div class="flex items-center gap-2 text-text-secondary text-sm mb-6 tracking-wider font-semibold">
         <a href="/dashboard" class="hover:text-blue-500 transition-colors flex items-center gap-1">
@@ -22,7 +22,7 @@
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-                <i data-lucide="zap" class="text-blue"></i>
+                <i data-lucide="zap" class="text-blue-500"></i>
                 Integrations
             </h1>
             <p class="text-text-secondary mt-1">Manage where you receive notifications for this project.</p>
@@ -35,14 +35,14 @@
     }
     @if (successParam == "pushover")
     {
-        <div class="mb-6 flex items-center gap-3 rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-amber-400 text-sm font-medium">
+        <div class="mb-6 flex items-center gap-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 px-4 py-3 text-yellow-400 text-sm font-medium">
             <i data-lucide="check-circle-2" class="w-4 h-4 shrink-0"></i>
             Pushover connected successfully! You'll start receiving alerts on your device.
         </div>
     }
     @if (errorParam == "pushover_cancelled")
     {
-        <div class="mb-6 flex items-center gap-3 rounded-xl bg-rose-500/10 border border-rose-500/20 px-4 py-3 text-rose-400 text-sm font-medium">
+        <div class="mb-6 flex items-center gap-3 rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-red-400 text-sm font-medium">
             <i data-lucide="x-circle" class="w-4 h-4 shrink-0"></i>
             Pushover subscription was cancelled. You can try again anytime.
         </div>
@@ -70,6 +70,7 @@
                     var telegramDetails = item.TelegramDetails;
                     var pushoverDetails = item.PushoverDetails;
                     var spikeDetails = item.SpikeDetails;
+                    var webhookDetails = item.WebhookDetails;
                     var isSlack = integration.Type == HealthyCron.Enums.IntegrationType.Slack;
                     var isTeams = integration.Type == HealthyCron.Enums.IntegrationType.Teams;
                     var isGoogleChat = integration.Type == HealthyCron.Enums.IntegrationType.GoogleChat;
@@ -81,6 +82,7 @@
                     var isTelegram = integration.Type == HealthyCron.Enums.IntegrationType.Telegram;
                     var isPushover = integration.Type == HealthyCron.Enums.IntegrationType.Pushover;
                     var isSpike = integration.Type == HealthyCron.Enums.IntegrationType.Spike;
+                    var isWebhook = integration.Type == HealthyCron.Enums.IntegrationType.Webhook;
 
                     <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-blue-500/20 transition-all group">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -135,25 +137,31 @@
                                 }
                                 else if (isTelegram)
                                 {
-                                    <div class="w-12 h-12 bg-[#26A5E4]/10 border border-[#26A5E4]/20 rounded-xl flex items-center justify-center shrink-0">
-                                        <svg class="w-7 h-7 text-[#26A5E4]" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                                    <div class="w-12 h-12 bg-hc-black-light border border-white/5 rounded-xl flex items-center justify-center shrink-0">
+                                        <img src="/images/telegram.png" class="w-7 h-7 object-contain" alt="Telegram" />
                                     </div>
                                 }
                                 else if (isPushover)
                                 {
-                                    <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                                        <i data-lucide="bell" class="w-7 h-7 text-amber-400"></i>
+                                    <div class="w-12 h-12 bg-hc-black-light border border-white/5 rounded-xl flex items-center justify-center shrink-0">
+                                        <img src="/images/pushover.png" class="w-7 h-7 object-contain" alt="Pushover" />
                                     </div>
                                 }
                                 else if (isSpike)
                                 {
-                                    <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                                        <i data-lucide="zap" class="w-7 h-7 text-amber-400"></i>
+                                    <div class="w-12 h-12 bg-hc-black-light border border-white/5 rounded-xl flex items-center justify-center shrink-0">
+                                        <img src="/images/spike.png" class="w-7 h-7 object-contain" alt="Spike.sh" />
+                                    </div>
+                                }
+                                else if (isWebhook)
+                                {
+                                    <div class="w-12 h-12 bg-hc-black-light border border-white/5 rounded-xl flex items-center justify-center shrink-0">
+                                        <img src="/images/webhook.png" class="w-7 h-7 object-contain" alt="Webhook" />
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="w-12 h-12 bg-navy-light border border-white/5 rounded-xl flex items-center justify-center shrink-0">
+                                    <div class="w-12 h-12 bg-hc-black-light border border-white/5 rounded-xl flex items-center justify-center shrink-0">
                                         <i data-lucide="zap" class="w-7 h-7 text-blue-500"></i>
                                     </div>
                                 }
@@ -219,7 +227,7 @@
                                         var chatTypeBadgeColor = telegramDetails.ChatType switch {
                                             "channel" => "text-sky-400 bg-sky-400/10 border-sky-400/20",
                                             "private" => "text-violet-400 bg-violet-400/10 border-violet-400/20",
-                                            _ => "text-amber-400 bg-amber-400/10 border-amber-400/20"
+                                            _ => "text-yellow-400 bg-yellow-400/10 border-yellow-400/20"
                                         };
                                         <div class="flex items-center gap-2 flex-wrap mt-0.5">
                                             @if (!string.IsNullOrEmpty(telegramDetails.ChatName))
@@ -239,25 +247,57 @@
                                         var maskedUrl = "hooks.spike.sh/****";
                                         <p class="text-xs text-text-secondary font-mono mt-0.5">@maskedUrl</p>
                                     }
+                                    else if (isWebhook && webhookDetails != null)
+                                    {
+                                        string displayMethod = "POST";
+                                        string displayUrl = "";
+                                        
+                                        if (!string.IsNullOrEmpty(webhookDetails.DownUrl))
+                                        {
+                                            displayMethod = webhookDetails.DownMethod?.ToUpper() ?? "POST";
+                                            displayUrl = webhookDetails.DownUrl;
+                                        }
+                                        else if (!string.IsNullOrEmpty(webhookDetails.UpUrl))
+                                        {
+                                            displayMethod = webhookDetails.UpMethod?.ToUpper() ?? "POST";
+                                            displayUrl = webhookDetails.UpUrl;
+                                        }
+
+                                        var badgeColor = displayMethod == "GET" ? "text-green-400 bg-green-400/10 border-green-400/20" : displayMethod == "PUT" ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" : "text-blue-400 bg-blue-400/10 border-blue-400/20";
+                                        var truncatedUrl = displayUrl.Length > 40 ? displayUrl[..40] + "..." : displayUrl;
+                                        <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black border @badgeColor">@displayMethod</span>
+                                            <span class="text-xs text-text-secondary font-mono">@truncatedUrl</span>
+                                        </div>
+                                    }
                                 </div>
                             </div>
 
                             <div class="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
                                 <button onclick="openMonitorSelector('@integration.Id', '@integration.Name')" 
-                                        class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-blue/10 text-blue border border-blue-500/20 hover:bg-blue hover:text-white transition-all font-bold text-xs sm:text-sm">
+                                        class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-blue-600/10 text-blue-500 border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all font-bold text-xs sm:text-sm">
                                     <i data-lucide="list-checks" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
                                     Checks
                                 </button>
+                                @if (ViewBag.CanManage != false && (isEmail || isWebhook))
+                                {
+                                    var editUrl = isEmail ? $"/project/{@project.Slug}/integrations/email/{@integration.Id}/edit" : $"/project/{@project.Slug}/integrations/webhook/{@integration.Id}/edit";
+                                    <a href="@editUrl" 
+                                       class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 text-text-secondary border border-white/10 hover:border-blue-500/20 hover:text-blue-500 transition-all font-bold text-xs sm:text-sm">
+                                        <i data-lucide="edit-2" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
+                                        Edit
+                                    </a>
+                                }
                                 <button onclick="testIntegration('@integration.Id')" 
                                         @(ViewBag.CanManage == false ? "disabled" : "")
-                                        class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 text-text-secondary border border-white/10 hover:border-blue/20 hover:text-blue transition-all font-bold text-xs sm:text-sm @(ViewBag.CanManage == false ? "opacity-50 cursor-not-allowed" : "")">
+                                        class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-white/5 text-text-secondary border border-white/10 hover:border-blue-500/20 hover:text-blue-500 transition-all font-bold text-xs sm:text-sm @(ViewBag.CanManage == false ? "opacity-50 cursor-not-allowed" : "")">
                                     <i data-lucide="play" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
                                     Test
                                 </button>
                                 @if (ViewBag.CanManage != false)
                                 {
                                     <button onclick="deleteIntegration('@integration.Id')" 
-                                            class="flex-1 sm:flex-none flex items-center justify-center px-3 sm:px-4 py-2 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all font-bold text-xs sm:text-sm">
+                                            class="flex-1 sm:flex-none flex items-center justify-center px-3 sm:px-4 py-2 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all font-bold text-xs sm:text-sm">
                                         <i data-lucide="trash-2" class="w-3.5 h-3.5 sm:w-4 h-4"></i>
                                         <span class="sm:inline">Delete</span>
                                     </button>
@@ -300,7 +340,7 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/slack/authorize" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -317,13 +357,13 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/teams/add" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
 
             <!-- Google Chat -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-amber-500/20 transition-all flex items-center justify-between group">
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-yellow-500/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 bg-white/5 border border-white/5 rounded-xl flex items-center justify-center shrink-0">
                         <i data-lucide="message-square" class="w-6 h-6 text-[#00897B]"></i>
@@ -334,7 +374,7 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/googlechat/add" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -351,7 +391,7 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/discord/add" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -368,13 +408,13 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/email/add" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
 
             <!-- PagerDuty -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-amber-500/20 transition-all flex items-center justify-between group">
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-yellow-500/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
                         <img src="/images/pagerduty.png" class="w-6 h-6 object-contain" alt="PagerDuty" />
@@ -385,7 +425,7 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/pagerduty/authorize" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -393,8 +433,8 @@
             <!-- Webhook -->
             <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-indigo-500/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center shrink-0">
-                        <i data-lucide="webhook" class="w-6 h-6 text-indigo-400"></i>
+                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
+                        <img src="/images/webhook.png" class="w-6 h-6 object-contain" alt="Webhook" />
                     </div>
                     <div>
                         <h3 class="font-bold text-white">Webhook</h3>
@@ -402,7 +442,7 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/webhook/add" 
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue/10 group-hover:border-blue/20 group-hover:text-blue transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-600/10 group-hover:border-blue-500/20 group-hover:text-blue-500 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -412,8 +452,8 @@
             <!-- Telegram -->
             <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-[#26A5E4]/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-[#26A5E4]/10 border border-[#26A5E4]/20 rounded-xl flex items-center justify-center shrink-0">
-                        <svg class="w-6 h-6 text-[#26A5E4]" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
+                        <img src="/images/telegram.png" class="w-6 h-6 object-contain" alt="Telegram" />
                     </div>
                     <div>
                         <h3 class="font-bold text-white">Telegram</h3>
@@ -429,8 +469,8 @@
             <!-- Pushover -->
             <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-orange-500/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center shrink-0">
-                        <i data-lucide="bell" class="w-6 h-6 text-orange-400"></i>
+                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
+                        <img src="/images/pushover.png" class="w-6 h-6 object-contain" alt="Pushover" />
                     </div>
                     <div>
                         <h3 class="font-bold text-white">Pushover</h3>
@@ -444,10 +484,10 @@
             </div>
 
             <!-- Spike.sh -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-amber-500/20 transition-all flex items-center justify-between group">
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-yellow-500/20 transition-all flex items-center justify-between group">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-                        <i data-lucide="zap" class="w-6 h-6 text-amber-400"></i>
+                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
+                        <img src="/images/spike.png" class="w-6 h-6 object-contain" alt="Spike.sh" />
                     </div>
                     <div>
                         <h3 class="font-bold text-white">Spike.sh</h3>
@@ -455,7 +495,24 @@
                     </div>
                 </div>
                 <a href="/project/@project.Slug/integrations/spike/add"
-                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-amber-500/10 group-hover:border-amber-500/20 group-hover:text-amber-400 transition-all">
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-yellow-500/10 group-hover:border-yellow-500/20 group-hover:text-yellow-400 transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+            </div>
+
+            <!-- Webhook -->
+            <div class="glass-card rounded-2xl p-6 border border-white/5 hover:border-blue-500/20 transition-all flex items-center justify-between group">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center shrink-0">
+                        <img src="/images/webhook.png" class="w-6 h-6 object-contain" alt="Webhook" />
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white">Webhook</h3>
+                        <p class="text-[10px] text-text-secondary uppercase tracking-widest font-black">HTTP callbacks</p>
+                    </div>
+                </div>
+                <a href="/project/@project.Slug/integrations/webhook/add"
+                   class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-text-secondary group-hover:bg-blue-500/10 group-hover:border-blue-500/20 group-hover:text-blue-400 transition-all">
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
             </div>
@@ -470,8 +527,8 @@
         <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closeMonitorSelector()"></div>
 
         <!-- Modal Panel -->
-        <div class="inline-block bg-navy-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-xl w-full border border-border-color relative z-10">
-            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-navy/50">
+        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-xl w-full border border-border-color relative z-10">
+            <div class="px-6 py-4 border-b border-border-color flex justify-between items-center bg-hc-black/50">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="list-checks" class="text-blue-500"></i>
                     Manage Monitors
@@ -497,13 +554,13 @@
                 </div>
             </div>
 
-            <div class="bg-navy/50 px-6 py-4 flex justify-end gap-3 border-t border-border-color">
+            <div class="bg-hc-black/50 px-6 py-4 flex justify-end gap-3 border-t border-border-color">
                 <button type="button" onclick="closeMonitorSelector()" class="px-5 py-2 rounded-xl text-text-secondary hover:text-white font-bold text-sm">
                     Cancel
                 </button>
                 @if (ViewBag.CanManage != false)
                 {
-                    <button type="button" onclick="saveMonitorSelection()" id="saveMappingBtn" class="bg-blue hover:bg-blue/80 text-white px-8 py-2 rounded-xl font-black text-sm transition-all shadow-lg shadow-blue/20">
+                    <button type="button" onclick="saveMonitorSelection()" id="saveMappingBtn" class="bg-blue-600 hover:bg-blue-600/80 text-white px-8 py-2 rounded-xl font-black text-sm transition-all shadow-lg shadow-blue/20">
                         Save Changes
                     </button>
                 }
@@ -529,17 +586,17 @@
             
             if (data.monitors && data.monitors.length > 0) {
                 container.innerHTML = data.monitors.map(m => `
-                    <label class="flex items-center justify-between p-4 rounded-xl bg-navy hover:bg-white/5 border border-border-color cursor-pointer transition-all">
+                    <label class="flex items-center justify-between p-4 rounded-xl bg-hc-black hover:bg-white/5 border border-border-color cursor-pointer transition-all">
                         <span class="text-white font-bold text-sm">${m.name}</span>
                         <input type="checkbox" name="monitorIds" value="${m.id}" ${m.isSelected ? 'checked' : ''} 
-                               class="w-5 h-5 rounded border-border-color bg-navy text-blue focus:ring-blue focus:ring-offset-navy">
+                               class="w-5 h-5 rounded border-border-color bg-hc-black text-blue-500 focus:ring-blue focus:ring-offset-hc-black">
                     </label>
                 `).join('');
             } else {
                 container.innerHTML = '<p class="text-center py-8 text-text-secondary text-sm">No monitors found in this project.</p>';
             }
         } catch (error) {
-            container.innerHTML = '<p class="text-center py-8 text-rose-500 text-sm">Failed to load monitors.</p>';
+            container.innerHTML = '<p class="text-center py-8 text-red-500 text-sm">Failed to load monitors.</p>';
         }
         
         if (typeof lucide !== 'undefined') lucide.createIcons();
