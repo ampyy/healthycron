@@ -1,127 +1,155 @@
 @{
     Layout = "_DocsLayout";
-    ViewData["Title"] = "Notifications - HealthyCron Documentation";
+    ViewData["Title"] = "Notifications & Alerts";
+    ViewData["Breadcrumb"] = "Integrations  /  Notifications & Alerts";
+    ViewData["PrevPageTitle"] = "Configuring Checks";
+    ViewData["PrevPageUrl"] = "/docs/configuring-checks";
+    ViewData["NextPageTitle"] = "Projects & Teams";
+    ViewData["NextPageUrl"] = "/docs/projects";
 }
 
-<div class="space-y-12">
-    <header>
-        <h1 class="text-4xl font-black text-white mb-6">Notifications</h1>
-        <p class="text-lg text-hc-muted leading-relaxed">
-            HealthyCron connects with your existing workflow to alert you the moment a monitor goes down. Configure various integrations to ensure your team stays informed.
+<h1 class="text-2xl font-semibold text-white tracking-tight">Notifications & Alerts</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    When a monitor enters the LATE or FAILED state, HealthyCron routes the alert to all configured integration channels linked to that specific monitor.
+</p>
+
+<h2 class="text-base font-medium text-white mb-4 mt-8">Alert Deduplication</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    You will only receive one alert per failure incident. HealthyCron will not spam your channels on every missed check interval.
+</p>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    Once a failed job sends a successful ping again, its state returns to Healthy, and a <strong>recovery notification</strong> is dispatched.
+</p>
+
+<h2 class="text-base font-medium text-white mb-6 mt-12">Available Channels</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+    <!-- Email -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-colors">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="mail" class="w-5 h-5 text-hc-muted"></i>
+                <h3 class="font-semibold text-white text-sm">Email</h3>
+            </div>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded px-1.5 py-0.5">Available</span>
+        </div>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            Setup via your account settings. Receives an HTML-formatted alert containing the job name, the last seen ping time, and the expected schedule configuration.
         </p>
-    </header>
+    </div>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white">Supported Integrations</h2>
-        <p class="text-hc-muted leading-relaxed">
-            Assign one or more integrations to your monitors. We support everything from simple emails to enterprise incident management tools.
+    <!-- Webhooks -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-colors">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="webhook" class="w-5 h-5 text-hc-muted"></i>
+                <h3 class="font-semibold text-white text-sm">Webhooks</h3>
+            </div>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded px-1.5 py-0.5">Available</span>
+        </div>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            Sends a standard HTTP POST request to your designated URL with a JSON body describing the event state.
         </p>
+    </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Slack -->
-            <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-[#E01E5A]/10 border border-[#E01E5A]/20 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="#E01E5A"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"></path></svg>
-                        </div>
-                        <h3 class="text-white font-bold">Slack</h3>
-                    </div>
-                    <p class="text-sm text-hc-muted leading-relaxed mb-4">
-                        Instant messages to your team's channels. Supports OAuth for easy setup and rich message formatting.
-                    </p>
-                </div>
-                <span class="text-[10px] font-black uppercase text-blue-400 tracking-widest bg-blue/5 self-start px-2 py-1 rounded">Interactive</span>
+    <!-- Telegram -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-colors">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="send" class="w-5 h-5 text-[#3b82f6]"></i>
+                <h3 class="font-semibold text-white text-sm">Telegram</h3>
             </div>
-
-            <!-- PagerDuty -->
-            <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-[#06AC38]/10 border border-[#06AC38]/20 rounded-xl flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" class="w-6 h-6" fill="#06AC38"><path d="M16.667 0H11.4L9.733 9.667h4.6c2.467 0 4.2-.4 5.4-1.333C21 7.333 21.667 5.8 21.667 3.8c0-1.267-.4-2.2-1.133-2.8C19.8.333 18.467 0 16.667 0zM9.333 11.733 8.267 18H3.733L6.667 0H2.333L0 14.933 1.333 24h6.8L9.8 18h4.2l1.667-6.267H9.333z"/></svg>
-                        </div>
-                        <h3 class="text-white font-bold">PagerDuty</h3>
-                    </div>
-                    <p class="text-sm text-hc-muted leading-relaxed mb-4">
-                        Trigger incidents automatically. Perfect for critical production cron jobs that need professional on-call handling.
-                    </p>
-                </div>
-                <span class="text-[10px] font-black uppercase text-blue-400 tracking-widest bg-blue/5 self-start px-2 py-1 rounded">On-Call</span>
-            </div>
-
-            <!-- Discord -->
-            <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-[#5865F2]/10 border border-[#5865F2]/20 rounded-xl flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" class="w-6 h-6" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-                    </div>
-                    <h3 class="text-white font-bold">Discord</h3>
-                </div>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    Simple Webhook integration for Discord channels. Stay updated without leaving your community server.
-                </p>
-            </div>
-
-            <!-- Email -->
-            <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-10 h-10 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="mail" class="w-6 h-6 text-blue-400"></i>
-                    </div>
-                    <h3 class="text-white font-bold">Email</h3>
-                </div>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    Reliable email alerts delivered to one or many addresses. Customize the subject and body for specific workflows.
-                </p>
-            </div>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded px-1.5 py-0.5">Available</span>
         </div>
-    </section>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            Create a bot using BotFather, grab your Chat ID, and paste the webhook URL in your integration settings to receive instant mobile alerts.
+        </p>
+    </div>
 
-    <section class="space-y-6">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center">
-                <i data-lucide="settings-2" class="w-5 h-5 text-blue"></i>
+    <!-- Pushover -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-colors">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="smartphone-charging" class="w-5 h-5 text-hc-muted"></i>
+                <h3 class="font-semibold text-white text-sm">Pushover</h3>
             </div>
-            <h2 class="text-2xl font-black text-white">Alert Logic</h2>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 rounded px-1.5 py-0.5">Available</span>
         </div>
-        <div class="glass-card border border-white/5 p-8 rounded-2xl space-y-6">
-            <p class="text-hc-muted leading-relaxed">
-                HealthyCron sends notifications during the following state transitions:
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
-                        <span class="text-white font-bold text-sm">UP → DOWN</span>
-                    </div>
-                    <p class="text-xs text-hc-muted">Sent immediately when a monitor exceeds its Grace Time.</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                        <span class="text-white font-bold text-sm">DOWN → UP</span>
-                    </div>
-                    <p class="text-xs text-hc-muted">A "Recovery" notification when the job checks in correctly after being down.</p>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full bg-rose-500"></div>
-                        <span class="text-white font-bold text-sm">START FAIL</span>
-                    </div>
-                    <p class="text-xs text-hc-muted">If a job starts but never finishes within its expected duration (Grace Time).</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            High-priority push notifications directly to iOS/Android devices, supporting custom priority levels and custom notification sounds.
+        </p>
+    </div>
 
-    <section class="bg-blue/5 border border-blue-500/20 rounded-2xl p-8 flex gap-6 items-center">
-        <i data-lucide="webhook" class="w-10 h-10 text-blue shrink-0"></i>
-        <div>
-            <h3 class="text-xl font-bold text-white mb-1">Custom Webhooks</h3>
-            <p class="text-hc-muted leading-relaxed">
-                Need to trigger a custom script or an unsupported service? Use our flexible Webhook integration to send <code>POST</code> requests with a customizable JSON payload to any URL.
-            </p>
+    <!-- Slack -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 opacity-70">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="slack" class="w-5 h-5 text-hc-muted"></i>
+                <h3 class="font-semibold text-white text-sm">Slack</h3>
+            </div>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-[#8A8A93] bg-white/5 border border-white/10 rounded px-1.5 py-0.5">Coming Soon</span>
         </div>
-    </section>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            Rich message blocks sent directly to a designated channel via an incoming webhook.
+        </p>
+    </div>
+
+    <!-- Discord -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 opacity-70">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="message-square" class="w-5 h-5 text-hc-muted"></i>
+                <h3 class="font-semibold text-white text-sm">Discord</h3>
+            </div>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-[#8A8A93] bg-white/5 border border-white/10 rounded px-1.5 py-0.5">Coming Soon</span>
+        </div>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            Delivers embed alerts to any text channel via a Discord integration webhook URL.
+        </p>
+    </div>
+
+    <!-- PagerDuty -->
+    <div class="bg-hc-black-light border border-white/5 rounded-2xl p-5 opacity-70">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="phone-call" class="w-5 h-5 text-[#22C55E]"></i>
+                <h3 class="font-semibold text-white text-sm">PagerDuty</h3>
+            </div>
+            <span class="text-[9px] font-medium uppercase tracking-widest text-[#8A8A93] bg-white/5 border border-white/10 rounded px-1.5 py-0.5">Coming Soon</span>
+        </div>
+        <p class="text-xs text-[#8A8A93] leading-relaxed">
+            Automatically trigger, acknowledge, and resolve incidents in PagerDuty using Events V2 API.
+        </p>
+    </div>
+</div>
+
+<h2 class="text-base font-medium text-white mb-4 mt-8">Webhook Payload Example</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-6">
+    Webhooks receive a standard JSON payload that you can parse on your servers to trigger custom automation.
+</p>
+
+<div class="code-container bg-[#111114] border border-white/6 rounded-xl overflow-hidden mb-12">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-white/6">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">JSON PAYLOAD</span>
+        <button onclick="copyCode(this)" class="text-[#4A4A52] hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        </button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+<pre><code class="font-mono text-sm text-[#F2F2F2]">{
+  <span class="text-[#60A5FA]">"event"</span>: <span class="text-[#22C55E]">"monitor_failed"</span>,
+  <span class="text-[#60A5FA]">"monitor"</span>: {
+    <span class="text-[#60A5FA]">"id"</span>: <span class="text-[#22C55E]">"m_123456789"</span>,
+    <span class="text-[#60A5FA]">"name"</span>: <span class="text-[#22C55E]">"Nightly Database Backup"</span>,
+    <span class="text-[#60A5FA]">"slug"</span>: <span class="text-[#22C55E]">"nightly-database-backup"</span>,
+    <span class="text-[#60A5FA]">"project"</span>: <span class="text-[#22C55E]">"Production"</span>
+  },
+  <span class="text-[#60A5FA]">"details"</span>: {
+    <span class="text-[#60A5FA]">"last_ping_at"</span>: <span class="text-[#22C55E]">"2026-03-05T08:00:00Z"</span>,
+    <span class="text-[#60A5FA]">"expected_at"</span>: <span class="text-[#22C55E]">"2026-03-06T08:00:00Z"</span>,
+    <span class="text-[#60A5FA]">"grace_period_mins"</span>: <span class="text-amber-500">10</span>,
+    <span class="text-[#60A5FA]">"time_late_seconds"</span>: <span class="text-amber-500">845</span>
+  }
+}</code></pre>
+    </div>
 </div>

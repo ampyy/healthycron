@@ -1,121 +1,117 @@
 @{
     Layout = "_DocsLayout";
-    ViewData["Title"] = "Pinging API - HealthyCron Documentation";
+    ViewData["Title"] = "Pinging API";
+    ViewData["Breadcrumb"] = "Core Concepts  /  Pinging API";
+    ViewData["PrevPageTitle"] = "Monitors";
+    ViewData["PrevPageUrl"] = "/docs/monitors";
+    ViewData["NextPageTitle"] = "Configuring Checks";
+    ViewData["NextPageUrl"] = "/docs/configuring-checks";
 }
 
-<div class="space-y-12">
-    <header>
-        <h1 class="text-4xl font-black text-white mb-6">Pinging API</h1>
-        <p class="text-lg text-hc-muted leading-relaxed">
-            Each monitor in HealthyCron has a unique Ping URL. Your jobs and scripts send HTTP requests to this URL to signal their status.
-        </p>
-    </header>
+<h1 class="text-2xl font-semibold text-white tracking-tight">Pinging API</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    The pinging API is the core interface your applications use to communicate with HealthyCron. No authentication headers are required, making it trivial to integrate with bash scripts and legacy systems.
+</p>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white">Ping URL Formats</h2>
-        <p class="text-hc-muted leading-relaxed">
-            HealthyCron supports two flexible formats for identifying which monitor you are pinging.
-        </p>
+<div class="callout callout-info mb-12">
+    <div class="callout-title"><span class="callout-icon">ℹ</span> Rate Limits</div>
+    <div class="callout-body">
+        Endpoints are limited to <strong>1 ping per second per monitor</strong>. Any pings above this threshold are ignored.
+    </div>
+</div>
 
-        <div class="space-y-6">
-            <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="fingerprint" class="w-5 h-5 text-blue"></i>
-                    Unique ID Format
-                </h3>
-                <code class="text-blue text-sm block bg-black/30 p-4 rounded-xl border border-white/5 break-all font-mono">
-                    https://healthycron.com/ping/&lt;uuid&gt;
-                </code>
-                <p class="text-hc-muted text-sm mt-4 leading-relaxed">
-                    The simplest way to ping. Every monitor is assigned a unique UUID upon creation. This ID never changes, even if you rename the monitor or move it between projects.
-                </p>
-            </div>
+<!-- Success Ping -->
+<h2 class="text-base font-medium text-white mb-4 mt-12 flex items-center gap-3">
+    <span class="method-badge method-get">GET/POST</span> 
+    <code class="font-mono text-sm text-[#F2F2F2]">/ping/{uuid}</code>
+</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-6">
+    The success ping. Call this when your job completes successfully. This resets the timer and updates the monitor state to Healthy.
+</p>
+<div class="tabbed-code bg-[#111114] border border-white/6 rounded-xl overflow-hidden mb-12">
+    <div class="flex gap-0 border-b border-white/6 bg-[#0A0A0B] px-4">
+        <button onclick="switchTab(this, 0)" class="tab-btn text-xs font-medium text-white border-b-2 border-[#22C55E] -mb-px px-3 py-2.5">cURL</button>
+        <button onclick="switchTab(this, 1)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">C#</button>
+        <button onclick="switchTab(this, 2)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">Python</button>
+        <button onclick="switchTab(this, 3)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">Node.js</button>
+    </div>
+    
+    <div class="code-container tab-content block">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]">curl -fsS https://healthycron.io/ping/{uuid}</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">var</span> client = <span class="text-[#60A5FA]">new</span> HttpClient();
+<span class="text-[#60A5FA]">await</span> client.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}"</span>);</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">import</span> requests
+requests.get(<span class="text-[#22C55E]">'https://healthycron.io/ping/{uuid}'</span>)</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]">fetch(<span class="text-[#22C55E]">'https://healthycron.io/ping/{uuid}'</span>);</code></pre></div>
+    </div>
+</div>
 
-            <div class="bg-hc-black-light border border-white/5 rounded-2xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="layout-template" class="w-5 h-5 text-blue"></i>
-                    Slug Format (SEO Friendly)
-                </h3>
-                <code class="text-blue text-sm block bg-black/30 p-4 rounded-xl border border-white/5 break-all font-mono">
-                    https://healthycron.com/ping/&lt;project-ping-key&gt;/&lt;name-slug&gt;
-                </li>
-                <p class="text-hc-muted text-sm mt-4 leading-relaxed">
-                    Identify monitors by a project-wide <strong>Ping Key</strong> and a user-defined <strong>Slug</strong> (e.g., <code>daily-backup</code>). This format is ideal for version-controlled scripts where you want to keep the URL readable.
-                </p>
-            </div>
-        </div>
-    </section>
+<!-- Start Ping -->
+<h2 class="text-base font-medium text-white mb-4 mt-12 flex items-center gap-3">
+    <span class="method-badge method-get">GET/POST</span> 
+    <code class="font-mono text-sm text-[#F2F2F2]">/ping/{uuid}/start</code>
+</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-6">
+    The start ping. Call this at the very beginning of the job execution. This does not mark the job as complete, but rather informs HealthyCron that the job is currently running so it can measure exact duration upon the success ping.
+</p>
+<div class="tabbed-code bg-[#111114] border border-white/6 rounded-xl overflow-hidden mb-12">
+    <div class="flex gap-0 border-b border-white/6 bg-[#0A0A0B] px-4">
+        <button onclick="switchTab(this, 0)" class="tab-btn text-xs font-medium text-white border-b-2 border-[#22C55E] -mb-px px-3 py-2.5">cURL</button>
+        <button onclick="switchTab(this, 1)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">C#</button>
+        <button onclick="switchTab(this, 2)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">Python</button>
+        <button onclick="switchTab(this, 3)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">Node.js</button>
+    </div>
+    
+    <div class="code-container tab-content block">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]">curl -fsS https://healthycron.io/ping/{uuid}/start</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">var</span> client = <span class="text-[#60A5FA]">new</span> HttpClient();
+<span class="text-[#60A5FA]">await</span> client.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}/start"</span>);</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">import</span> requests
+requests.get(<span class="text-[#22C55E]">'https://healthycron.io/ping/{uuid}/start'</span>)</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]">fetch(<span class="text-[#22C55E]">'https://healthycron.io/ping/{uuid}/start'</span>);</code></pre></div>
+    </div>
+</div>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white">Signaling Success, Start, and Failure</h2>
-        <p class="text-hc-muted leading-relaxed">
-            You can append status suffixes to your Ping URL to provide more context about the job's execution.
-        </p>
-
-        <div class="grid grid-cols-1 gap-4">
-            <div class="glass-card border border-white/5 p-6 rounded-2xl">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-white">Success (Check-in)</h3>
-                    <span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[10px] uppercase font-black font-mono">Default</span>
-                </div>
-                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
-                    The primary signal. It tells HealthyCron the job finished successfully and resets the "Late" timer.
-                </p>
-                <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;</code>
-            </div>
-
-            <div class="glass-card border border-white/5 p-6 rounded-2xl">
-                <h3 class="text-lg font-bold text-white mb-2">Job Start</h3>
-                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
-                    Send this at the beginning of your script. HealthyCron uses this to measure execution time and can alert you if a job gets stuck (starts but never succeeds within Grace Time).
-                </p>
-                <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;/start</code>
-            </div>
-
-            <div class="glass-card border border-white/5 p-6 rounded-2xl">
-                <h3 class="text-lg font-bold text-white mb-2">Signaling Failure</h3>
-                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
-                    If your script catches an error, send a <code>/fail</code> ping to trigger immediate notifications, even if the scheduled time hasn't passed yet.
-                </p>
-                <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;/fail</code>
-            </div>
-
-            <div class="glass-card border border-white/5 p-6 rounded-2xl">
-                <h3 class="text-lg font-bold text-white mb-2">Exit Codes</h3>
-                <p class="text-sm text-hc-muted mb-4 leading-relaxed">
-                    You can append an integer exit code. Any non-zero code is treated as a failure.
-                </p>
-                <code class="text-blue-200 text-xs bg-black/20 p-2 rounded block font-mono">https://healthycron.com/ping/&lt;id&gt;/1</code>
-            </div>
-        </div>
-    </section>
-
-    <section class="space-y-4 bg-hc-black-light border border-white/10 rounded-2xl p-8">
-        <h2 class="text-2xl font-black text-white mb-2">Technical Details</h2>
-        <div class="space-y-4">
-            <div class="flex gap-4">
-                <div class="w-10 h-10 rounded-xl bg-blue/10 flex items-center justify-center shrink-0">
-                    <i data-lucide="globe" class="w-5 h-5 text-blue"></i>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-1">HTTP Methods</h4>
-                    <p class="text-sm text-hc-muted leading-relaxed">
-                        HealthyCron accepts <code>GET</code>, <code>POST</code>, <code>PUT</code>, and <code>HEAD</code> requests. Use whichever is most convenient for your environment.
-                    </p>
-                </div>
-            </div>
-            
-            <div class="flex gap-4 pt-4 border-t border-white/5">
-                <div class="w-10 h-10 rounded-xl bg-blue/10 flex items-center justify-center shrink-0">
-                    <i data-lucide="file-json" class="w-5 h-5 text-blue"></i>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold mb-1">Capturing Logs</h4>
-                    <p class="text-sm text-hc-muted leading-relaxed">
-                        If you use <code>POST</code>, HealthyCron will capture the request body (up to 10KB) and store it in your ping logs. This is perfect for capturing stack traces or error messages from failed jobs.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Failure Ping -->
+<h2 class="text-base font-medium text-white mb-4 mt-12 flex items-center gap-3">
+    <span class="method-badge method-get">GET/POST</span> 
+    <code class="font-mono text-sm text-[#F2F2F2]">/ping/{uuid}/fail</code>
+</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-6">
+    The failure ping. Call this inside your <code>catch</code> or error handler. It immediately transitions the monitor to the failed state and triggers alerts, bypassing any remaining grace period.
+</p>
+<div class="tabbed-code bg-[#111114] border border-white/6 rounded-xl overflow-hidden mb-12">
+    <div class="flex gap-0 border-b border-white/6 bg-[#0A0A0B] px-4">
+        <button onclick="switchTab(this, 0)" class="tab-btn text-xs font-medium text-white border-b-2 border-[#22C55E] -mb-px px-3 py-2.5">cURL</button>
+        <button onclick="switchTab(this, 1)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">C#</button>
+        <button onclick="switchTab(this, 2)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">Python</button>
+        <button onclick="switchTab(this, 3)" class="tab-btn text-xs font-medium text-[#4A4A52] hover:text-[#8A8A93] px-3 py-2.5">Node.js</button>
+    </div>
+    
+    <div class="code-container tab-content block">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]">curl -fsS https://healthycron.io/ping/{uuid}/fail</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">var</span> client = <span class="text-[#60A5FA]">new</span> HttpClient();
+<span class="text-[#60A5FA]">await</span> client.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}/fail"</span>);</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">import</span> requests
+requests.get(<span class="text-[#22C55E]">'https://healthycron.io/ping/{uuid}/fail'</span>)</code></pre></div>
+    </div>
+    <div class="code-container tab-content hidden">
+        <div class="p-5 overflow-x-auto"><pre><code class="font-mono text-sm text-[#F2F2F2]">fetch(<span class="text-[#22C55E]">'https://healthycron.io/ping/{uuid}/fail'</span>);</code></pre></div>
+    </div>
 </div>

@@ -99,47 +99,30 @@
             }
         }
 
-        /* Glow Button */
+        /* Minimalist Button (formerly Glow Button) */
         .glow-btn {
             position: relative;
-            background: #ffffff;
-            color: #000000 !important;
-            transition: all 0.3s ease;
-        }
-
-        .glow-btn::before {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: #ffffff;
-            border-radius: inherit;
-            filter: blur(12px);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: -1;
-        }
-
-        .glow-btn:hover::before {
-            opacity: 0.25;
+            background: #6366F1;
+            color: #ffffff !important;
+            transition: all 0.2s ease;
         }
 
         .glow-btn:hover {
-            transform: translateY(-2px);
-            background: #f0f0f0;
+            transform: translateY(-1px);
+            background: #4F52D9;
         }
 
-        /* Glass Card */
+        /* Solid Card (formerly Glass Card) */
         .glass-card {
-            background: rgba(17, 17, 17, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(38, 38, 38, 0.8);
-            transition: all 0.3s ease;
+            background: var(--hc-ink);
+            border: 1px solid var(--hc-border);
+            transition: all 0.2s ease;
         }
 
         .glass-card:hover {
-            background: rgba(26, 26, 26, 0.9);
-            hc-border: rgba(82, 82, 82, 0.6);
-            transform: translateY(-4px);
+            background: var(--hc-surface);
+            border-color: var(--hc-border-mid);
+            transform: translateY(-2px);
         }
 
         /* Navbar Scroll */
@@ -217,6 +200,26 @@
             background-size: 32px 32px;
         }
 
+        /* Logo marquee scroll */
+        @@keyframes logo-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .logo-scroll {
+            animation: logo-scroll 28s linear infinite;
+        }
+
+        /* Testimonial marquee scroll */
+        @@keyframes testimonial-scroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .testimonial-track {
+            animation: testimonial-scroll 35s linear infinite;
+        }
+        .testimonial-track:hover,
+        .logo-scroll:hover { animation-play-state: paused; }
+
         /* FAQ Accordion */
         .faq-content {
             max-height: 0;
@@ -229,8 +232,12 @@
         }
 
         .tab-btn.active {
-            background: rgba(79, 148, 255, 0.1);
-            hc-border: #4F94FF;
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .tab-btn.active .w-8.h-8 svg {
+            color: #6366F1;
+            filter: drop-shadow(0 0 8px rgba(99,102,241,0.5));
         }
 
         .feature-image {
@@ -274,47 +281,41 @@
     <partial name="_Footer" />
 
     <script>
-        // Navbar scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
+        // 1. Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            var nav = document.getElementById('navbar');
+            if(nav) {
+                if(window.scrollY > 50) { nav.classList.add('navbar-scrolled'); }
+                else { nav.classList.remove('navbar-scrolled'); }
             }
         });
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
+        // 2. Mobile menu toggle
+        function toggleMobileMenu() {
+            var menu = document.getElementById('mobile-menu');
+            if(menu) menu.classList.toggle('hidden');
         }
 
-        // FAQ toggle
+        // 3. FAQ toggle
         function toggleFaq(button) {
-            const content = button.nextElementSibling;
-            const icon = button.querySelector('svg');
-            content.classList.toggle('open');
-            icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+            var content = button.nextElementSibling;
+            var icon = button.querySelector('svg');
+            if(content) {
+                content.classList.toggle('open');
+                if(icon) icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+            }
         }
 
-        // Feature tabs logic
-        let currentTab = 0;
-        let tabInterval;
+        // 4. Feature tabs logic
+        var currentFeatureTab = 0;
+        var featureTabInterval = null;
 
         function switchFeatureTab(index) {
-            currentTab = index;
-
-            // Update tab buttons
-            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            currentFeatureTab = index;
+            document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
                 btn.classList.toggle('active', i === index);
             });
-
-            // Update content
-            document.querySelectorAll('.feature-image').forEach((img, i) => {
+            document.querySelectorAll('.feature-image').forEach(function(img, i) {
                 if (i === index) {
                     img.classList.add('active');
                     img.classList.remove('absolute', 'inset-0');
@@ -325,78 +326,60 @@
                     img.style.position = 'absolute';
                 }
             });
-
-            // Reset interval
-            clearInterval(tabInterval);
+            clearInterval(featureTabInterval);
             startTabRotation();
         }
 
         function startTabRotation() {
-            const tabs = document.querySelectorAll('.tab-btn');
-            if (tabs.length === 0) return;
-
-            tabInterval = setInterval(() => {
-                currentTab = (currentTab + 1) % tabs.length;
-                switchFeatureTab(currentTab);
-            }, 5000);
+            var tabs = document.querySelectorAll('.tab-btn');
+            if (tabs.length > 0) {
+                featureTabInterval = setInterval(function() {
+                    currentFeatureTab = (currentFeatureTab + 1) % tabs.length;
+                    switchFeatureTab(currentFeatureTab);
+                }, 5000);
+            }
         }
+        window.addEventListener('load', startTabRotation);
 
-        // Scroll reveal animation
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+        // 5. Scroll reveal animation (Fixes black screen bug)
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 }
             });
-        }, observerOptions);
+        }, { root: null, rootMargin: '0px', threshold: 0.1 });
+        
+        document.querySelectorAll('.fade-in').forEach(function(el) { 
+            observer.observe(el); 
+        });
 
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // 6. Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                const target = document.querySelector(targetId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // Close mobile menu if open
-                    if (mobileMenu) {
-                        mobileMenu.classList.add('hidden');
+                var targetId = this.getAttribute('href');
+                if (targetId !== '#') {
+                    var target = document.querySelector(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        var menu = document.getElementById('mobile-menu');
+                        if (menu) menu.classList.add('hidden');
                     }
                 }
             });
         });
 
-        // Initialize features if they exist
-        window.addEventListener('load', () => {
-            if (document.querySelector('.tab-btn')) {
-                startTabRotation();
-            }
-        });
-
-        // Global logout function
+        // 7. Global logout
         async function handleLogout() {
             try {
-                const response = await fetch('/auth/logout', {
+                var response = await fetch('/auth/logout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
-
-                if (response.ok) {
-                    window.location.href = '/login';
-                } else {
-                    alert('Logout failed. Please try again.');
-                }
+                if (response.ok) { window.location.href = '/login'; } 
+                else { alert('Logout failed.'); }
             } catch (err) {
-                console.error(err);
                 alert('Connection error.');
             }
         }

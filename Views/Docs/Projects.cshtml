@@ -1,96 +1,64 @@
 @{
     Layout = "_DocsLayout";
-    ViewData["Title"] = "Projects & Teams - HealthyCron Documentation";
+    ViewData["Title"] = "Projects & Teams";
+    ViewData["Breadcrumb"] = "Integrations  /  Projects & Teams";
+    ViewData["PrevPageTitle"] = "Notifications & Alerts";
+    ViewData["PrevPageUrl"] = "/docs/notifications";
+    ViewData["NextPageTitle"] = ".NET & C# Integration";
+    ViewData["NextPageUrl"] = "/docs/dotnet-integration";
 }
 
-<div class="space-y-12">
-    <header>
-        <h1 class="text-4xl font-black text-white mb-6">Projects & Teams</h1>
-        <p class="text-lg text-hc-muted leading-relaxed">
-            Organize your monitors and collaborate with your team using HealthyCron Projects.
-        </p>
-    </header>
+<h1 class="text-2xl font-semibold text-white tracking-tight">Projects & Teams</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    Projects are logical containers used to organize your monitors and access control within HealthyCron.
+</p>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white">Projects</h2>
-        <p class="text-hc-muted leading-relaxed">
-            Projects are the highest level of organization in HealthyCron. Each project acts as a completely isolated container for your monitors and integrations.
-        </p>
+<h2 class="text-base font-medium text-white mb-4 mt-8">Organizing with Projects</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    We recommend grouping your monitors into projects by environment or by service boundaries. For example:
+</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-            <div class="bg-hc-black-light border border-white/5 p-6 rounded-2xl">
-                <h3 class="text-white font-bold mb-3 flex items-center gap-2">
-                    <i data-lucide="key" class="w-4 h-4 text-blue"></i>
-                    Isolation
-                </h3>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    Each project has its own unique <strong>Ping Keys</strong> and <strong>API Keys</strong>. Moving a monitor between projects will change its slug-based Ping URL.
-                </p>
-            </div>
-            <div class="bg-hc-black-light border border-white/5 p-6 rounded-2xl">
-                <h3 class="text-white font-bold mb-3 flex items-center gap-2">
-                    <i data-lucide="users" class="w-4 h-4 text-blue"></i>
-                    Scoped Access
-                </h3>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    Team members invited to one project cannot see monitors or configurations in other projects unless explicitly invited to those as well.
-                </p>
-            </div>
-        </div>
-    </section>
+<ul>
+    <li>Create a <strong>"Production"</strong> project for critical user-facing jobs. Route these alerts directly to PagerDuty or an on-call phone number.</li>
+    <li>Create a <strong>"Staging"</strong> project for testing. Route these alerts to a low-priority Slack channel or ignore them entirely.</li>
+</ul>
 
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white">Role-Based Access (RBAC)</h2>
-        <p class="text-hc-muted leading-relaxed">
-            Collaborate effectively by assigning specific roles to your team members. HealthyCron supports three distinct roles:
-        </p>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-4">
+    Monitors can be moved between projects freely from the Dashboard. Each project maintains its own isolated set of Integrations; a monitor in Staging cannot accidentally trigger an Integration assigned exclusively to Production.
+</p>
 
-        <div class="space-y-4 shadow-2xl">
-            <div class="glass-card border border-white/5 p-6 rounded-2xl hover:border-blue/30 transition-colors">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-white">Project Owner</h3>
-                    <span class="px-2 py-1 rounded bg-blue/10 text-blue text-[10px] uppercase font-black tracking-widest">Full Access</span>
-                </div>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    The user who created the project. Can delete the project, manage billings, and invite other Managers or Team Members.
-                </p>
-            </div>
+<h2 class="text-base font-medium text-white mb-4 mt-12">Managing Teams</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-6">
+    You can invite team members to collaborate on a Project by navigating to the Project Settings and initiating an email invitation. Roles are scoped <em>per project</em>.
+</p>
 
-            <div class="glass-card border border-white/5 p-6 rounded-2xl hover:border-blue/30 transition-colors">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-white">Project Manager</h3>
-                    <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-[10px] uppercase font-black tracking-widest">Administrative</span>
-                </div>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    Can create, edit, and delete monitors and integrations. Can also invite other Team Members but cannot delete the project or manage the Owner's access.
-                </p>
-            </div>
+<div class="docs-table-wrapper mb-12">
+    <table class="docs-table">
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Permissions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Owner</td>
+                <td>Full access. Can create/edit/delete monitors, configure ping settings, add/remove integrations, and invite or remove other members.</td>
+            </tr>
+            <tr>
+                <td>Member</td>
+                <td>Read/Write access to monitors. They can pause monitors and view logs, but cannot edit integrations or invite new members to the project.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-            <div class="glass-card border border-white/5 p-6 rounded-2xl hover:border-blue/30 transition-colors">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-white">Team Member</h3>
-                    <span class="px-2 py-1 rounded bg-emerald-500/10 text-hc-green text-[10px] uppercase font-black tracking-widest">Collaborative</span>
-                </div>
-                <p class="text-sm text-hc-muted leading-relaxed">
-                    Can view all monitors and configurations. Can perform pings and see logs but has limited administrative permissions.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section class="space-y-6">
-        <h2 class="text-2xl font-black text-white">Inviting Team Members</h2>
-        <div class="bg-hc-black-light border border-white/10 rounded-2xl p-8 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-5">
-                <i data-lucide="send" class="w-32 h-32"></i>
-            </div>
-            <p class="text-hc-muted leading-relaxed mb-6">
-                To invite someone to your project, navigate to <strong>Project Settings → Team</strong>. You can send invitations via email. The recipient will receive a unique link to join the project.
-            </p>
-            <div class="flex gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
-                <i data-lucide="mail-plus" class="w-6 h-6 text-blue shrink-0"></i>
-                <p class="text-sm text-hc-muted">Invitations expire after 7 days for security. You can revoke pending invitations at any time from the Team management page.</p>
-            </div>
-        </div>
-    </section>
+<div class="callout callout-info mt-12">
+    <div class="callout-title">
+        <span class="callout-icon">ℹ</span>
+        Project Ping Keys
+    </div>
+    <div class="callout-body">
+        Each project generates a specific <strong>Ping Key</strong> for Auto-Provisioning. When a ping hits the slug format URL (<code>/ping/key/slug</code>) using that project's key, HealthyCron can automatically provision a new monitor inside that target Project.
+    </div>
 </div>

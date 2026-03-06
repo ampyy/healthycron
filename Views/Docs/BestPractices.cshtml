@@ -1,0 +1,70 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "Cron Job Best Practices";
+    ViewData["Breadcrumb"] = "Guides  /  Cron Job Best Practices";
+    ViewData["PrevPageTitle"] = ".NET & C# Integration";
+    ViewData["PrevPageUrl"] = "/docs/dotnet-integration";
+    ViewData["NextPageTitle"] = "API Reference";
+    ViewData["NextPageUrl"] = "/docs/api-reference";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">Cron Job Best Practices</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    Whether you run one cron job or a thousand, following these reliability patterns will drastically reduce false alerts and make debugging easier when a genuine problem occurs.
+</p>
+
+<!-- Rule 1 -->
+<div class="bg-[#111114] border border-white/6 rounded-2xl p-6 mb-8 hover:border-[#22C55E]/30 transition-colors group">
+    <h3 class="text-base font-medium text-white mb-2 flex items-center gap-3">
+        <span class="text-[#22C55E] font-mono text-sm opacity-50 group-hover:opacity-100">01</span>
+        Ping on Start and Success
+    </h3>
+    <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+        Always send a <code>/start</code> ping at the beginning of your script, and a success ping at the very end. This accomplishes two things: it proves the scheduler triggered the job, and it allows HealthyCron to measure exact execution duration.
+    </p>
+</div>
+
+<!-- Rule 2 -->
+<div class="bg-[#111114] border border-white/6 rounded-2xl p-6 mb-8 hover:border-[#E03E2D]/30 transition-colors group">
+    <h3 class="text-base font-medium text-white mb-2 flex items-center gap-3">
+        <span class="text-[#E03E2D] font-mono text-sm opacity-50 group-hover:opacity-100">02</span>
+        Use the Fail Endpoint in Exception Handlers
+    </h3>
+    <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+        Don't let errors go silent by waiting for the grace period to expire. Inside your universal try/catch handler, immediately ping <code>/fail</code>. This guarantees instant alerts to your team rather than waiting for HealthyCron to assume it timed out.
+    </p>
+    <code class="font-mono text-xs text-[#E03E2D] bg-[#E03E2D]/10 border border-[#E03E2D]/20 px-2 py-1 rounded">catch(Exception e) { ping(".../fail"); throw e; }</code>
+</div>
+
+<!-- Rule 3 -->
+<div class="bg-[#111114] border border-white/6 rounded-2xl p-6 mb-8 hover:border-[#F59E0B]/30 transition-colors group">
+    <h3 class="text-base font-medium text-white mb-2 flex items-center gap-3">
+        <span class="text-[#F59E0B] font-mono text-sm opacity-50 group-hover:opacity-100">03</span>
+        Set Grace Periods Thoughtfully
+    </h3>
+    <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+        Too short = false alarms whenever a server has high I/O temporarily. Too long = delayed alerts resulting in downtime. A solid rule of thumb is setting the grace period to <strong>20-30% of the job's execution time</strong> or at minimum 2-3 minutes to accommodate network jitter.
+    </p>
+</div>
+
+<!-- Rule 4 -->
+<div class="bg-[#111114] border border-white/6 rounded-2xl p-6 mb-8 hover:border-white/20 transition-colors group">
+    <h3 class="text-base font-medium text-white mb-2 flex items-center gap-3">
+        <span class="text-[#4A4A52] font-mono text-sm opacity-50 group-hover:opacity-100">04</span>
+        Name Monitors Descriptively
+    </h3>
+    <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+        Use names like "<code>Daily-Invoice-Export</code>", not "<code>Job1</code>". In pager-duty at 3:00am, a clear human-readable name is far more valuable than a generic ID.
+    </p>
+</div>
+
+<!-- Rule 5 -->
+<div class="bg-[#111114] border border-white/6 rounded-2xl p-6 mb-8 hover:border-[#60A5FA]/30 transition-colors group">
+    <h3 class="text-base font-medium text-white mb-2 flex items-center gap-3">
+        <span class="text-[#60A5FA] font-mono text-sm opacity-50 group-hover:opacity-100">05</span>
+        Use Environment-Specific Projects
+    </h3>
+    <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+        Your staging and production monitors should be completely segregated. Staging monitors usually shouldn't trigger PagerDuty. Keep production monitors in a "Production" Project, and staging inside "Staging".
+    </p>
+</div>

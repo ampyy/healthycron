@@ -1,0 +1,94 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "FAQ";
+    ViewData["Breadcrumb"] = "Reference  /  FAQ";
+    ViewData["PrevPageTitle"] = "Monitor States";
+    ViewData["PrevPageUrl"] = "/docs/monitor-states";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">Frequently Asked Questions</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-12">
+    Answers to common questions about limits, data retention, and infrastructure.
+</p>
+
+<div class="space-y-8">
+    <!-- Q1 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">1. How much does HealthyCron cost?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            HealthyCron offers a generous free tier that includes up to 50 active monitors and 7 days of log retention. Paid plans start at $12/month for teams hitting higher scale, longer retention, or requiring advanced webhook/PagerDuty integrations.
+        </p>
+    </div>
+
+    <!-- Q2 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">2. What are the API rate limits?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Ping endpoints (<code>/ping/*</code>) are limited to 1 request per second per monitor. The Management API (<code>/api/*</code>) is limited to 100 requests per minute per project. Wait at least 1 second before retrying if you hit a limit.
+        </p>
+    </div>
+
+    <!-- Q3 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">3. What programming languages do you support?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Because our core API is just a standard HTTP endpoint, we support <strong>everything</strong>. If your environment can execute a network request (Bash, PowerShell, Python, C#, Rust, Node), it can integrate with HealthyCron instantly.
+        </p>
+    </div>
+
+    <!-- Q4 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">4. What happens if HealthyCron goes down?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            We operate redundant infrastructure across multiple AWS availability zones. Our alerting engine is decoupled from our web dashboard. If the primary UI database fails, the alerting instances continue to ingest pings and fire webhooks without interruption. We maintain a public status page.
+        </p>
+    </div>
+
+    <!-- Q5 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">5. How long do you keep ping logs?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Log retention depends on your plan. The Free tier stores logs for 7 days. Pro tier stores them for 30 days. Business tier stores them for 90 days. Raw logs older than your retention policy are permanently deleted.
+        </p>
+    </div>
+
+    <!-- Q6 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">6. Are you GDPR compliant?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Yes. We do not require or collect PII inside monitor payloads. The only personal data we process is the billing and email information required to maintain your account, handled strictly in accordance with GDPR requirements.
+        </p>
+    </div>
+
+    <!-- Q7 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">7. Do you support short-interval polling (checking a server every 5 seconds)?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            No. HealthyCron is designed for background jobs, cron tasks, and logical processes, not active TCP/HTTP uptime probing. The minimum allowed interval is 1 minute.
+        </p>
+    </div>
+
+    <!-- Q8 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">8. Can a monitor alert multiple channels?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Yes. You can assign as many integrations as you like to a single monitor. For example, a failure could simultaneously send an email, trigger a Slack message, and call a webhook.
+        </p>
+    </div>
+
+    <!-- Q9 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">9. Does pinging affect my application's performance?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            No. Because ping requests are entirely fire-and-forget, you should trigger them asynchronously or use a short HTTP timeout (e.g. 5 seconds) to ensure your own app does not hang waiting on the network.
+        </p>
+    </div>
+
+    <!-- Q10 -->
+    <div>
+        <h3 class="text-base font-medium text-white mb-2">10. Can I self-host HealthyCron?</h3>
+        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Currently, HealthyCron is available exclusively as a managed SaaS solution. We do not offer a self-hosted or open-source tier at this time.
+        </p>
+    </div>
+</div>

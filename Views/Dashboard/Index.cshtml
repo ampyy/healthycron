@@ -8,12 +8,12 @@
 <div class="mb-8">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-white mb-2">My Projects</h1>
-            <p class="text-hc-muted">Manage your monitors and alerts</p>
+            <h1 class="text-xl font-semibold text-white mb-1 tracking-tight">My Projects</h1>
+            <p class="text-sm text-[#8A8A93] font-normal">Manage your monitors and alerts</p>
         </div>
         <button onclick="document.getElementById('createProjectModal').classList.remove('hidden')"
-            class="glow-btn px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            class="hc-btn-primary">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             New Project
@@ -36,7 +36,7 @@
         <p class="text-hc-muted mb-6 max-w-sm mx-auto">Create your first project to start monitoring your cron jobs
             and background tasks.</p>
         <button onclick="document.getElementById('createProjectModal').classList.remove('hidden')"
-            class="glow-btn px-6 py-2.5 rounded-lg text-sm font-semibold">
+            class="hc-btn-primary px-6 py-2.5">
             Create Project
         </button>
     </div>
@@ -101,39 +101,24 @@ else
 }
 
 <!-- Create Project Modal -->
-<div id="createProjectModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
-    role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div class="fixed inset-0 bg-black/70 transition-opacity" aria-hidden="true"
-            onclick="document.getElementById('createProjectModal').classList.add('hidden')"></div>
-
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-        <!-- Modal Panel -->
-        <div
-            class="inline-block align-bottom bg-hc-black-light rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-hc-border">
+<div id="createProjectModal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 bg-black/75" onclick="document.getElementById('createProjectModal').classList.add('hidden')"></div>
+        <div class="relative bg-[#111114] border border-white/5 rounded-2xl shadow-xl w-full sm:max-w-md z-10">
             <form action="/dashboard/create-project" method="POST">
-                <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-xl font-bold text-white mb-4" id="modal-title">Create New Project</h3>
-                    <div class="mt-2">
-                        <label for="name" class="block text-sm font-medium text-hc-muted mb-2">Project
-                            Name</label>
-                        <input type="text" name="name" id="name" required
-                            class="w-full bg-hc-black border border-hc-border rounded-lg px-4 py-2.5 text-white placeholder-hc-muted focus:outline-none focus:ring-2 focus:ring-blue/50 focus:border-transparent transition-all"
-                            placeholder="e.g. My Website, API Service">
-                    </div>
+                <div class="px-6 py-5 border-b border-white/5 flex items-center justify-between">
+                    <h3 class="text-base font-semibold text-white" id="modal-title">New Project</h3>
+                    <button type="button" onclick="document.getElementById('createProjectModal').classList.add('hidden')" class="text-[#8A8A93] hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
                 </div>
-                <div class="bg-hc-black px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-hc-border">
-                    <button type="submit"
-                        class="glow-btn w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm">
-                        Create Project
-                    </button>
-                    <button type="button"
-                        onclick="document.getElementById('createProjectModal').classList.add('hidden')"
-                        class="mt-3 w-full inline-flex justify-center rounded-lg border border-hc-border shadow-sm px-4 py-2 bg-transparent text-base font-medium text-hc-muted hover:text-white sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm hover:bg-white/5 transition-colors">
-                        Cancel
-                    </button>
+                <div class="p-6">
+                    <label class="hc-label">Project Name</label>
+                    <input type="text" name="name" id="name" required class="hc-input" placeholder="e.g. My Website, API Service">
+                </div>
+                <div class="p-6 border-t border-white/5 flex items-center justify-end gap-3 bg-[rgba(0,0,0,0.2)]">
+                    <button type="button" onclick="document.getElementById('createProjectModal').classList.add('hidden')" class="hc-btn-secondary px-5 py-2">Cancel</button>
+                    <button type="submit" class="hc-btn-primary px-6 py-2">Create Project</button>
                 </div>
             </form>
         </div>

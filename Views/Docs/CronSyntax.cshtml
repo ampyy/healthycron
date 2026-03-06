@@ -1,0 +1,136 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "Cron Expression Syntax";
+    ViewData["Breadcrumb"] = "Reference  /  Cron Expression Syntax";
+    ViewData["PrevPageTitle"] = "API Reference";
+    ViewData["PrevPageUrl"] = "/docs/api-reference";
+    ViewData["NextPageTitle"] = "Monitor States";
+    ViewData["NextPageUrl"] = "/docs/monitor-states";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">Cron Expression Syntax</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    A quick reference cheat-sheet for standard 5-part POSIX cron syntax.
+</p>
+
+<h2 class="text-base font-medium text-white mb-4 mt-8">Field Reference</h2>
+
+<div class="docs-table-wrapper mb-12">
+    <table class="docs-table">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Field Name</th>
+                <th>Allowed Values</th>
+                <th>Allowed Special Characters</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Minute</td>
+                <td>0-59</td>
+                <td><code>*</code> <code>,</code> <code>-</code> <code>/</code></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Hour</td>
+                <td>0-23</td>
+                <td><code>*</code> <code>,</code> <code>-</code> <code>/</code></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Day of Month</td>
+                <td>1-31</td>
+                <td><code>*</code> <code>,</code> <code>-</code> <code>/</code></td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Month</td>
+                <td>1-12 or JAN-DEC</td>
+                <td><code>*</code> <code>,</code> <code>-</code> <code>/</code></td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Day of Week</td>
+                <td>0-7 (0 or 7 is Sunday) or SUN-SAT</td>
+                <td><code>*</code> <code>,</code> <code>-</code> <code>/</code></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h2 class="text-base font-medium text-white mb-4 mt-12">15 Common Examples</h2>
+
+<div class="docs-table-wrapper mb-12">
+    <table class="docs-table">
+        <thead>
+            <tr>
+                <th>Cron Expression</th>
+                <th>Run Schedule (Plain English)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>* * * * *</code></td>
+                <td>Every minute</td>
+            </tr>
+            <tr>
+                <td><code>*/5 * * * *</code></td>
+                <td>Every 5 minutes</td>
+            </tr>
+            <tr>
+                <td><code>*/15 * * * *</code></td>
+                <td>Every 15 minutes</td>
+            </tr>
+            <tr>
+                <td><code>0,30 * * * *</code></td>
+                <td>Twice an hour (at minute 0 and 30)</td>
+            </tr>
+            <tr>
+                <td><code>0 * * * *</code></td>
+                <td>Every hour, exactly on the hour</td>
+            </tr>
+            <tr>
+                <td><code>0 */2 * * *</code></td>
+                <td>Every 2 hours, exactly on the hour</td>
+            </tr>
+            <tr>
+                <td><code>0 0 * * *</code></td>
+                <td>Every day at midnight</td>
+            </tr>
+            <tr>
+                <td><code>0 9 * * *</code></td>
+                <td>Every day at 9:00 AM</td>
+            </tr>
+            <tr>
+                <td><code>0 17 * * 1-5</code></td>
+                <td>Every weekday (Monday–Friday) at 5:00 PM</td>
+            </tr>
+            <tr>
+                <td><code>0 0 * * 1</code></td>
+                <td>Every week on Monday at midnight</td>
+            </tr>
+            <tr>
+                <td><code>0 0 * * 0</code></td>
+                <td>Every week on Sunday at midnight</td>
+            </tr>
+            <tr>
+                <td><code>0 0 1 * *</code></td>
+                <td>Every month on the 1st at midnight</td>
+            </tr>
+            <tr>
+                <td><code>0 0 15 * *</code></td>
+                <td>Every month on the 15th at midnight</td>
+            </tr>
+            <tr>
+                <td><code>0 0 1 1 *</code></td>
+                <td>Every year on January 1st at midnight</td>
+            </tr>
+            <tr>
+                <td><code>* * * * 1-5</code></td>
+                <td>Every minute during the weekdays (Mon-Fri)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

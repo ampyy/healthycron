@@ -1,4 +1,4 @@
-@* Navigation — Floating Pill Navbar *@
+@* Navigation — Clean flat navbar per design system *@
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     var action = ViewContext.RouteData.Values["action"]?.ToString();
@@ -7,153 +7,117 @@
 }
 
 <style>
-    #navbar-pill {
-        transition: border-radius 0.3s ease;
+    #navbar { transition: border-color 0.2s ease, background 0.2s ease; }
+    #navbar.scrolled {
+        background: rgba(10,10,11,0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom-color: rgba(255,255,255,0.06);
     }
-    .nav-link-wrap {
-        display: inline-block;
-        overflow: hidden;
-        height: 1.25rem;
-        position: relative;
-    }
-    .nav-link-inner {
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.25s ease;
-    }
-    .nav-link-wrap:hover .nav-link-inner {
-        transform: translateY(-50%);
-    }
-    .nav-link-inner span:first-child { color: #8B949E; }
-    .nav-link-inner span:last-child  { color: #FFFFFF; }
 </style>
 
-<nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto">
-    <div id="navbar-pill"
-         class="flex flex-col items-center pl-5 pr-5 py-3 rounded-full border border-[#333] bg-[rgba(13,17,23,0.75)] backdrop-blur-md">
-
-        <!-- Main row -->
-        <div class="flex items-center justify-between w-full gap-x-5 sm:gap-x-8">
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent">
+    <div class="max-w-5xl mx-auto px-6">
+        <div class="flex items-center justify-between h-14">
 
             <!-- Logo -->
             <a href="/" class="flex items-center gap-2 flex-shrink-0">
-                <img src="/images/logo.png" alt="HealthyCron" class="w-6 h-6 rounded-md object-contain">
-                <span class="text-sm font-bold text-white hidden sm:block">HealthyCron</span>
+                <span style="color:#E03E2D; font-size:14px; line-height:1;">⬤</span>
+                <span class="text-sm font-medium text-white tracking-tight">HealthyCron</span>
             </a>
 
             @if (isHome)
             {
                 <!-- Desktop nav links -->
-                <nav class="hidden lg:flex items-center gap-5 text-sm">
-                    <a href="#features" class="nav-link-wrap text-sm"><div class="nav-link-inner"><span>Features</span><span>Features</span></div></a>
-                    <a href="#monitor"  class="nav-link-wrap text-sm"><div class="nav-link-inner"><span>Monitor</span><span>Monitor</span></div></a>
-                    <a href="#integrations" class="nav-link-wrap text-sm"><div class="nav-link-inner"><span>Integrations</span><span>Integrations</span></div></a>
-                    <a href="#pricing"  class="nav-link-wrap text-sm"><div class="nav-link-inner"><span>Pricing</span><span>Pricing</span></div></a>
-                    <a href="#faq"      class="nav-link-wrap text-sm"><div class="nav-link-inner"><span>FAQ</span><span>FAQ</span></div></a>
+                <nav class="hidden lg:flex items-center gap-6">
+                    <a href="#features"     class="text-sm font-normal text-[#8A8A93] hover:text-white transition-colors duration-150">Features</a>
+                    <a href="#monitor"      class="text-sm font-normal text-[#8A8A93] hover:text-white transition-colors duration-150">Monitor</a>
+                    <a href="#integrations" class="text-sm font-normal text-[#8A8A93] hover:text-white transition-colors duration-150">Integrations</a>
+                    <a href="#pricing"      class="text-sm font-normal text-[#8A8A93] hover:text-white transition-colors duration-150">Pricing</a>
+                    <a href="#faq"          class="text-sm font-normal text-[#8A8A93] hover:text-white transition-colors duration-150">FAQ</a>
                 </nav>
             }
 
-            <!-- Auth buttons -->
-            <div class="hidden sm:flex items-center gap-2">
+            <!-- Auth area -->
+            <div class="hidden sm:flex items-center gap-3">
                 @if (user != null)
                 {
-                    <a href="/dashboard"
-                       class="px-4 py-1.5 text-xs font-medium border border-[#333] bg-[rgba(31,31,31,0.62)] text-[#C9D1D9] rounded-full hover:border-white/50 hover:text-white transition-colors">
-                        Dashboard
-                    </a>
-                    <button onclick="handleLogout()"
-                        class="relative px-4 py-1.5 text-xs font-semibold text-[#0D1117] bg-gradient-to-br from-gray-100 to-gray-300 rounded-full hover:from-gray-200 hover:to-gray-400 transition-all">
-                        Logout
-                    </button>
+                    <a href="/login" class="text-sm font-medium text-[#8A8A93] hover:text-white px-3 py-1.5 transition-colors">Dashboard</a>
+                    <button onclick="handleLogout()" class="bg-white text-[#0A0A0B] font-medium text-sm rounded-lg px-4 py-1.5 hover:bg-white/90 transition-all">Logout</button>
                 }
                 else
                 {
-                    <a href="/login"
-                       class="px-4 py-1.5 text-xs font-medium border border-[#333] bg-[rgba(31,31,31,0.62)] text-[#C9D1D9] rounded-full hover:border-white/50 hover:text-white transition-colors">
-                        Login
-                    </a>
-                    <a href="/signup"
-                       class="relative px-4 py-1.5 text-xs font-semibold text-[#0D1117] bg-gradient-to-br from-gray-100 to-gray-300 rounded-full hover:from-gray-200 hover:to-gray-400 transition-all">
-                        Signup
-                    </a>
+                    <a href="/login" class="text-sm font-medium text-[#8A8A93] hover:text-white px-3 py-1.5 transition-colors">Login</a>
+                    <a href="/signup" class="bg-indigo-600 text-white font-medium text-sm rounded-lg px-4 py-1.5 hover:bg-indigo-500 transition-all border border-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.25)]">Sign up</a>
                 }
             </div>
 
             <!-- Mobile hamburger -->
             <button id="mobile-menu-btn"
-                class="sm:hidden flex items-center justify-center w-8 h-8 text-hc-dim hover:text-white focus:outline-none"
+                class="sm:hidden flex items-center justify-center w-8 h-8 text-[#8A8A93] hover:text-white focus:outline-none"
                 onclick="toggleMobileMenu()"
                 aria-label="Toggle menu">
                 <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
                 <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
+    </div>
 
-        <!-- Mobile menu (collapsed) -->
-        <div id="mobile-menu"
-             class="sm:hidden flex flex-col items-center w-full max-h-0 overflow-hidden opacity-0 transition-all duration-300 ease-in-out pointer-events-none">
+    <!-- Mobile menu -->
+    <div id="mobile-menu"
+         class="sm:hidden overflow-hidden max-h-0 transition-all duration-300 ease-in-out border-t border-transparent"
+         style="background:rgba(10,10,11,0.97); backdrop-filter:blur(20px);">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-3">
             @if (isHome)
             {
-                <nav class="flex flex-col items-center gap-3 text-sm mt-4 w-full">
-                    <a href="#features"     class="text-hc-dim hover:text-white transition-colors w-full text-center">Features</a>
-                    <a href="#monitor"      class="text-hc-dim hover:text-white transition-colors w-full text-center">Monitor</a>
-                    <a href="#integrations" class="text-hc-dim hover:text-white transition-colors w-full text-center">Integrations</a>
-                    <a href="#pricing"      class="text-hc-dim hover:text-white transition-colors w-full text-center">Pricing</a>
-                    <a href="#faq"          class="text-hc-dim hover:text-white transition-colors w-full text-center">FAQ</a>
-                </nav>
+                <a href="#features"     class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1" onclick="if(mobileOpen)toggleMobileMenu()">Features</a>
+                <a href="#monitor"      class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1" onclick="if(mobileOpen)toggleMobileMenu()">Monitor</a>
+                <a href="#integrations" class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1" onclick="if(mobileOpen)toggleMobileMenu()">Integrations</a>
+                <a href="#pricing"      class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1" onclick="if(mobileOpen)toggleMobileMenu()">Pricing</a>
+                <a href="#faq"          class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1" onclick="if(mobileOpen)toggleMobileMenu()">FAQ</a>
+                <div class="h-px bg-white/6 my-1"></div>
             }
-            <div class="flex flex-col items-center gap-3 mt-4 w-full pb-1">
-                @if (user != null)
-                {
-                    <a href="/dashboard" class="w-full text-center px-4 py-2 text-sm border border-[#333] bg-[rgba(31,31,31,0.62)] text-[#C9D1D9] rounded-full">Dashboard</a>
-                    <button onclick="handleLogout()" class="w-full px-4 py-2 text-sm font-semibold text-[#0D1117] bg-gradient-to-br from-gray-100 to-gray-300 rounded-full">Logout</button>
-                }
-                else
-                {
-                    <a href="/login"  class="w-full text-center px-4 py-2 text-sm border border-[#333] bg-[rgba(31,31,31,0.62)] text-[#C9D1D9] rounded-full">Login</a>
-                    <a href="/signup" class="w-full text-center px-4 py-2 text-sm font-semibold text-[#0D1117] bg-gradient-to-br from-gray-100 to-gray-300 rounded-full">Signup</a>
-                }
-            </div>
+            @if (user != null)
+            {
+                <a href="/dashboard" class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1">Dashboard</a>
+                <button onclick="handleLogout()" class="text-left text-sm text-[#8A8A93] hover:text-white transition-colors py-1">Logout</button>
+            }
+            else
+            {
+                <a href="/login"  class="text-sm text-[#8A8A93] hover:text-white transition-colors py-1">Login</a>
+                <a href="/signup" class="text-sm font-medium text-white bg-white/10 rounded-lg px-4 py-2 text-center">Sign up</a>
+            }
         </div>
     </div>
 </nav>
 
 <script>
+    // Scroll effect
+    var navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
+        navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
     var mobileOpen = false;
     function toggleMobileMenu() {
         mobileOpen = !mobileOpen;
         var menu = document.getElementById('mobile-menu');
-        var pill = document.getElementById('navbar-pill');
         var ham  = document.getElementById('hamburger-icon');
         var cls  = document.getElementById('close-icon');
-
         if (mobileOpen) {
-            menu.style.maxHeight = '600px';
-            menu.style.opacity = '1';
-            menu.classList.remove('pointer-events-none');
-            menu.style.paddingTop = '1rem';
-            pill.style.borderRadius = '1rem';
+            menu.style.maxHeight = '400px';
+            menu.style.borderTopColor = 'rgba(255,255,255,0.06)';
             ham.classList.add('hidden');
             cls.classList.remove('hidden');
         } else {
             menu.style.maxHeight = '0';
-            menu.style.opacity = '0';
-            menu.classList.add('pointer-events-none');
-            menu.style.paddingTop = '0';
-            setTimeout(function(){ pill.style.borderRadius = '9999px'; }, 300);
+            menu.style.borderTopColor = 'transparent';
             ham.classList.remove('hidden');
             cls.classList.add('hidden');
         }
     }
-
-    // Close mobile menu when clicking nav links
-    document.querySelectorAll('#mobile-menu a').forEach(function(a) {
-        a.addEventListener('click', function() {
-            if (mobileOpen) toggleMobileMenu();
-        });
-    });
 </script>

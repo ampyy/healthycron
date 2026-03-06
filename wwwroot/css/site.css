@@ -4746,3 +4746,25 @@ video {
     line-height: 1.5rem;
   }
 }
+
+/* Minalmist UI Classes */
+.glow-btn {
+    position: relative;
+    background: var(--hc-white, #FAFAFA);
+    color: var(--hc-black, #0A0A0B) !important;
+    transition: all 0.2s ease;
+}
+.glow-btn:hover {
+    transform: translateY(-1px);
+    background: #e5e5e5;
+}
+.glass-card {
+    background: var(--hc-ink, #111114);
+    border: 1px solid var(--hc-border, #27272D);
+    transition: all 0.2s ease;
+}
+.glass-card:hover {
+    background: var(--hc-surface, #18181C);
+    border-color: var(--hc-border-mid, #38383F);
+    transform: translateY(-2px);
+}

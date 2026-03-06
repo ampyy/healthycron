@@ -1,0 +1,103 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = ".NET & C# Integration";
+    ViewData["Breadcrumb"] = "Guides  /  .NET & C# Integration";
+    ViewData["PrevPageTitle"] = "Projects & Teams";
+    ViewData["PrevPageUrl"] = "/docs/projects";
+    ViewData["NextPageTitle"] = "Cron Job Best Practices";
+    ViewData["NextPageUrl"] = "/docs/best-practices";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">.NET & C# Integration</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    HealthyCron fits naturally into modern .NET applications. Here are the most common ways to integrate the pinging API inside your background workers and services.
+</p>
+
+<h2 class="text-base font-medium text-white mb-4 mt-8">Using IHostedService (ASP.NET Core Worker)</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    If you're building a .NET Worker Service or running an <code>IHostedService</code> in ASP.NET Core, use an <code>HttpClient</code> to ping after the work loop executes.
+</p>
+
+<div class="code-container bg-[#111114] border border-white/6 rounded-xl overflow-hidden mb-12">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-white/6">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">C# (.NET 8.0)</span>
+        <button onclick="copyCode(this)" class="text-[#4A4A52] hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        </button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+<pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">public class</span> <span class="text-[#34D399]">DataExportWorker</span> : <span class="text-[#34D399]">BackgroundService</span>
+{
+    <span class="text-[#60A5FA]">private readonly</span> <span class="text-[#34D399]">HttpClient</span> _httpClient;
+
+    <span class="text-[#60A5FA]">public</span> DataExportWorker(<span class="text-[#34D399]">IHttpClientFactory</span> httpClientFactory)
+    {
+        _httpClient = httpClientFactory.CreateClient();
+    }
+
+    <span class="text-[#60A5FA]">protected override async</span> <span class="text-[#34D399]">Task</span> ExecuteAsync(<span class="text-[#34D399]">CancellationToken</span> stoppingToken)
+    {
+        <span class="text-[#4A4A52]">// Run every day, measuring success via PeriodicTimer</span>
+        <span class="text-[#60A5FA]">using var</span> timer = <span class="text-[#60A5FA]">new</span> PeriodicTimer(<span class="text-[#34D399]">TimeSpan</span>.FromDays(<span class="text-amber-500">1</span>));
+
+        <span class="text-[#60A5FA]">while</span> (<span class="text-[#60A5FA]">await</span> timer.WaitForNextTickAsync(stoppingToken))
+        {
+            <span class="text-[#60A5FA]">try</span> 
+            {
+                <span class="text-[#4A4A52]">// 1. Optional Start Ping (measures duration)</span>
+                <span class="text-[#60A5FA]">await</span> _httpClient.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}/start"</span>, stoppingToken);
+
+                <span class="text-[#4A4A52]">// Do heavy work</span>
+                <span class="text-[#60A5FA]">await</span> ExportDataToWarehouseAsync(stoppingToken);
+
+                <span class="text-[#4A4A52]">// 2. Success Ping</span>
+                <span class="text-[#60A5FA]">await</span> _httpClient.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}"</span>, stoppingToken);
+            }
+            <span class="text-[#60A5FA]">catch</span> (<span class="text-[#34D399]">Exception</span> ex)
+            {
+                <span class="text-[#4A4A52]">// 3. Failure Ping (bypasses grace period for instant alert)</span>
+                <span class="text-[#60A5FA]">await</span> _httpClient.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}/fail"</span>, stoppingToken);
+            }
+        }
+    }
+}</code></pre>
+    </div>
+</div>
+
+<h2 class="text-base font-medium text-white mb-4 mt-8">AWS Lambda (Scheduled CloudWatch Events)</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    If invoking a Lambda via Amazon EventBridge on a cron schedule, use the standard <code>HttpClient</code> to ping at the end of the handler.
+</p>
+<div class="code-container bg-[#111114] border border-white/6 rounded-xl overflow-hidden mb-12">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-white/6">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">C# LAMBDA</span>
+        <button onclick="copyCode(this)" class="text-[#4A4A52] hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        </button>
+    </div>
+    <div class="p-5 overflow-x-auto">
+<pre><code class="font-mono text-sm text-[#F2F2F2]"><span class="text-[#60A5FA]">public async</span> <span class="text-[#34D399]">Task</span> FunctionHandler(<span class="text-[#34D399]">ILambdaContext</span> context)
+{
+    <span class="text-[#60A5FA]">try</span> 
+    {
+        <span class="text-[#60A5FA]">await</span> ProcessQueueAsync();
+        <span class="text-[#60A5FA]">await</span> _httpClient.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}"</span>);
+    }
+    <span class="text-[#60A5FA]">catch</span> (<span class="text-[#34D399]">Exception</span>)
+    {
+        <span class="text-[#60A5FA]">await</span> _httpClient.GetAsync(<span class="text-[#22C55E]">"https://healthycron.io/ping/{uuid}/fail"</span>);
+        <span class="text-[#60A5FA]">throw</span>;
+    }
+}</code></pre>
+    </div>
+</div>
+
+<div class="callout callout-warning mt-12">
+    <div class="callout-title">
+        <span class="callout-icon">⚠</span>
+        The Number One Mistake
+    </div>
+    <div class="callout-body">
+        <strong>Never swallow exceptions without pinging the fail endpoint.</strong> If your script catches an error, logs it to DataDog, and exits successfully, HealthyCron will NOT alert you because to us, the job never arrived (which is <strong>Late</strong> wait time), rather than an explicit Failure. Always call <code>/ping/{uuid}/fail</code> in your <code>catch</code> block before re-throwing or exiting!
+    </div>
+</div>

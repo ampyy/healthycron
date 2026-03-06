@@ -1,0 +1,103 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "Monitors";
+    ViewData["Breadcrumb"] = "Core Concepts  /  Monitors";
+    ViewData["PrevPageTitle"] = "How Monitoring Works";
+    ViewData["PrevPageUrl"] = "/docs/how-monitoring-works";
+    ViewData["NextPageTitle"] = "Pinging API";
+    ViewData["NextPageUrl"] = "/docs/pinging-api";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">Monitors</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    A monitor represents a single scheduled task or cron job. It holds the configuration for when the job should run and who should be notified if it fails.
+</p>
+
+<h2 class="text-base font-medium text-white mb-6">Monitor Fields</h2>
+
+<div class="border-t border-white/5 pb-2">
+    <div class="border-b border-white/5 py-4 grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-6">
+        <div class="font-mono text-sm text-white flex items-center gap-2">Name</div>
+        <div class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            A human-readable name for your monitor, such as "Daily Database Backup" or "Weekly Invoice Generation".
+        </div>
+    </div>
+    
+    <div class="border-b border-white/5 py-4 grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-6">
+        <div class="font-mono text-sm text-white flex items-center gap-2">Slug</div>
+        <div class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            A URL-safe identifier automatically generated from the name. Used in the ping URL if you are using auto-provisioning with Project Ping Keys.
+        </div>
+    </div>
+
+    <div class="border-b border-white/5 py-4 grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-6">
+        <div class="font-mono text-sm text-white flex items-center gap-2">Schedule</div>
+        <div class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            Defines when HealthyCron expects to receive a ping. Can be either a simple interval (e.g. every 5 minutes) or a traditional cron expression (e.g. <code>0 * * * *</code>).
+        </div>
+    </div>
+
+    <div class="border-b border-white/5 py-4 grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-6">
+        <div class="font-mono text-sm text-white flex items-center gap-2">Grace Period</div>
+        <div class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            The additional "leeway" time allowed before a late job triggers an alert. 
+        </div>
+    </div>
+
+    <div class="border-b border-white/5 py-4 grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-6">
+        <div class="font-mono text-sm text-white flex items-center gap-2">Project</div>
+        <div class="text-sm font-normal text-[#8A8A93] leading-relaxed">
+            The logical group or environment this monitor belongs to (e.g. Production vs Staging).
+        </div>
+    </div>
+</div>
+
+<h2 class="text-base font-medium text-white mb-4 mt-12">Understanding Grace Periods</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    If your job runs at 9:00am and has a 5 minute grace period, an alert fires at 9:05am if no ping is received. It is highly recommended to set a grace period of at least 20% of the job's duration to avoid false positives due to server load or network lag.
+</p>
+
+<h2 class="text-base font-medium text-white mb-4 mt-12">Monitor States</h2>
+
+<div class="docs-table-wrapper mb-12">
+    <table class="docs-table">
+        <thead>
+            <tr>
+                <th>State</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#22C55E]">Healthy</span></td>
+                <td>Pings are arriving on time. No action required.</td>
+            </tr>
+            <tr>
+                <td><span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-amber-400">Late</span></td>
+                <td>The ping is overdue, but the grace period has not fully elapsed.</td>
+            </tr>
+            <tr>
+                <td><span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#E03E2D]/90">Failed</span></td>
+                <td>The grace period has elapsed. Alerts have been sent.</td>
+            </tr>
+            <tr>
+                <td><span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#8A8A93]">Paused</span></td>
+                <td>Alerts are temporarily suppressed. Pings will be ignored until unpaused.</td>
+            </tr>
+            <tr>
+                <td><span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">New</span></td>
+                <td>The monitor was just created and has not received its first ping yet.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="callout callout-info mt-12">
+    <div class="callout-title">
+        <span class="callout-icon">ℹ</span>
+        Maintenance Windows
+    </div>
+    <div class="callout-body">
+        If you are performing planned maintenance and expect jobs to fail, you can manually toggle a monitor into the PAUSED state from the dashboard. This prevents false alarms from waking up your team.
+    </div>
+</div>

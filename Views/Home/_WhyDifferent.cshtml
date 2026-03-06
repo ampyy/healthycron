@@ -1,73 +1,56 @@
-@* Why We're Different — grid-feature-cards style *@
-<section class="py-24 relative">
-
-    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(167,139,250,0.04) 0%, transparent 70%)"></div>
-
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12 fade-in">
-            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-wide text-white mb-4">
-                Power. Speed. Control.
-            </h2>
-            <p class="text-[#94A3B8] max-w-2xl mx-auto text-sm sm:text-base">
+@* Why We're Different — solid border grid, no dashes, no color blobs *@
+<section class="py-24">
+    <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14 fade-in">
+            <h2 class="text-3xl font-semibold text-white tracking-tight">Power. Speed. Control.</h2>
+            <p class="text-sm font-normal text-[#8A8A93] text-center max-w-lg mx-auto mt-3">
                 Everything you need to build a reliable job monitoring pipeline — without the ops overhead.
             </p>
         </div>
 
-        <!-- Feature grid: dashed border grid like grid-feature-cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-dashed border-[#1E293B] divide-y divide-x divide-dashed divide-[#1E293B] fade-in rounded-2xl overflow-hidden">
+        <!-- Solid grid — no dashes, barely-visible dividers -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border border-white/6 divide-y divide-x divide-white/6 rounded-2xl overflow-hidden fade-in">
 
             <!-- 1 -->
-            <div class="feature-cell relative overflow-hidden p-7 group">
-                <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                     style="background: radial-gradient(circle at 50% 0%, rgba(91,142,255,0.08) 0%, transparent 70%)"></div>
-                <svg class="w-5 h-5 text-white/50 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <h3 class="text-sm font-semibold text-white mb-2">Deep Cron Awareness</h3>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">Understands cron syntax, grace periods, and missed executions. Not just simple uptime pings.</p>
+            <div class="p-8 bg-[#111114] hover:bg-[#161618] transition-colors duration-200">
+                <svg class="w-5 h-5 text-indigo-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <h3 class="text-sm font-medium text-white">Deep Cron Awareness</h3>
+                <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-2">Understands cron syntax, grace periods, and missed executions. Not just simple uptime pings.</p>
             </div>
 
             <!-- 2 -->
-            <div class="feature-cell relative overflow-hidden p-7 group">
-                <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                     style="background: radial-gradient(circle at 50% 0%, rgba(167,139,250,0.08) 0%, transparent 70%)"></div>
-                <svg class="w-5 h-5 text-white/50 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <h3 class="text-sm font-semibold text-white mb-2">Minimal False Positives</h3>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">Verification checks before alerts. No more alert fatigue from noisy monitoring systems.</p>
+            <div class="p-8 bg-[#111114] hover:bg-[#161618] transition-colors duration-200">
+                <svg class="w-5 h-5 text-emerald-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <h3 class="text-sm font-medium text-white">Minimal False Positives</h3>
+                <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-2">Verification checks before alerts. No more alert fatigue from noisy monitoring systems.</p>
             </div>
 
             <!-- 3 -->
-            <div class="feature-cell relative overflow-hidden p-7 group">
-                <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                     style="background: radial-gradient(circle at 50% 0%, rgba(34,211,238,0.08) 0%, transparent 70%)"></div>
-                <svg class="w-5 h-5 text-white/50 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                <h3 class="text-sm font-semibold text-white mb-2">Alerts in &lt;5 Seconds</h3>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">When your job fails, you know immediately. Not in minutes — in seconds. Every time.</p>
+            <div class="p-8 bg-[#111114] hover:bg-[#161618] transition-colors duration-200">
+                <svg class="w-5 h-5 text-amber-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <h3 class="text-sm font-medium text-white">Alerts in &lt;5 Seconds</h3>
+                <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-2">When your job fails, you know immediately. Not in minutes — in seconds. Every time.</p>
             </div>
 
             <!-- 4 -->
-            <div class="feature-cell relative overflow-hidden p-7 group">
-                <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                     style="background: radial-gradient(circle at 50% 0%, rgba(52,211,153,0.08) 0%, transparent 70%)"></div>
-                <svg class="w-5 h-5 text-white/50 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                <h3 class="text-sm font-semibold text-white mb-2">API-First Design</h3>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">REST API, SDKs, and CLI tools for every language. Integrate in minutes, not days.</p>
+            <div class="p-8 bg-[#111114] hover:bg-[#161618] transition-colors duration-200">
+                <svg class="w-5 h-5 text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                <h3 class="text-sm font-medium text-white">API-First Design</h3>
+                <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-2">REST API, SDKs, and CLI tools for every language. Integrate in minutes, not days.</p>
             </div>
 
             <!-- 5 -->
-            <div class="feature-cell relative overflow-hidden p-7 group">
-                <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                     style="background: radial-gradient(circle at 50% 0%, rgba(251,191,36,0.08) 0%, transparent 70%)"></div>
-                <svg class="w-5 h-5 text-white/50 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                <h3 class="text-sm font-semibold text-white mb-2">Environment Tags</h3>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">Organize monitors by production, staging, or dev. Full context per environment, at a glance.</p>
+            <div class="p-8 bg-[#111114] hover:bg-[#161618] transition-colors duration-200">
+                <svg class="w-5 h-5 text-rose-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                <h3 class="text-sm font-medium text-white">Environment Tags</h3>
+                <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-2">Organize monitors by production, staging, or dev. Full context per environment, at a glance.</p>
             </div>
 
             <!-- 6 -->
-            <div class="feature-cell relative overflow-hidden p-7 group">
-                <div class="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                     style="background: radial-gradient(circle at 50% 0%, rgba(244,114,182,0.08) 0%, transparent 70%)"></div>
-                <svg class="w-5 h-5 text-white/50 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                <h3 class="text-sm font-semibold text-white mb-2">Detailed Log History</h3>
-                <p class="text-xs text-[#94A3B8] leading-relaxed">Full execution logs with duration, output, and exit codes. Debug failures without any guessing.</p>
+            <div class="p-8 bg-[#111114] hover:bg-[#161618] transition-colors duration-200">
+                <svg class="w-5 h-5 text-purple-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <h3 class="text-sm font-medium text-white">Detailed Log History</h3>
+                <p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-2">Full execution logs with duration, output, and exit codes. Debug failures without any guessing.</p>
             </div>
 
         </div>

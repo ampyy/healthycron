@@ -1,0 +1,94 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "Monitor States";
+    ViewData["Breadcrumb"] = "Reference  /  Monitor States";
+    ViewData["PrevPageTitle"] = "Cron Expression Syntax";
+    ViewData["PrevPageUrl"] = "/docs/cron-syntax";
+    ViewData["NextPageTitle"] = "FAQ";
+    ViewData["NextPageUrl"] = "/docs/faq";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">Monitor States</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    Every monitor in HealthyCron is always within exactly one of these five states.
+</p>
+
+<!-- NEW -->
+<div class="border-t border-white/5 py-8">
+    <div class="flex items-center gap-4 mb-4">
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#8A8A93] bg-white/5 border border-white/8 rounded px-2.5 py-1">New</span>
+        <h3 class="text-lg font-semibold text-white">New Check</h3>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4 mb-3">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Condition</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">The monitor has been created but has never received a ping. It will stay in this state forever until the first ping arrives.</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Action</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">Trigger your job manually to ensure your ping script works and shifts it to Healthy.</span>
+    </div>
+</div>
+
+<!-- HEALTHY -->
+<div class="border-t border-white/5 py-8">
+    <div class="flex items-center gap-4 mb-4">
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/20 rounded px-2.5 py-1">Healthy</span>
+        <h3 class="text-lg font-semibold text-white">Operating Normally</h3>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4 mb-3">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Condition</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">The latest expected ping arrived successfully and within its scheduled interval constraint.</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Action</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">None required. Take a sip of coffee.</span>
+    </div>
+</div>
+
+<!-- LATE -->
+<div class="border-t border-white/5 py-8">
+    <div class="flex items-center gap-4 mb-4">
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/20 rounded px-2.5 py-1">Late</span>
+        <h3 class="text-lg font-semibold text-white">Overdue (In Grace Period)</h3>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4 mb-3">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Condition</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">The ping is overdue past its scheduled time, but the configured grace period has not yet fully elapsed. No alerts have been sent yet.</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Action</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">Investigate if the job is running unusually slowly due to heavy load, or if it has hung entirely.</span>
+    </div>
+</div>
+
+<!-- FAILED -->
+<div class="border-t border-white/5 py-8">
+    <div class="flex items-center gap-4 mb-4">
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#E03E2D] bg-[#E03E2D]/10 border border-[#E03E2D]/20 rounded px-2.5 py-1">Failed</span>
+        <h3 class="text-lg font-semibold text-white">Alert Triggered</h3>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4 mb-3">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Condition</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">The grace period has elapsed without a success ping, <strong>or</strong> you explicitly called the <code>/fail</code> endpoint. Alerts were immediately dispatched.</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Action</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">Check your application logs. The job failed to run or encountered a fatal exception.</span>
+    </div>
+</div>
+
+<!-- PAUSED -->
+<div class="border-t border-white/5 py-8 mb-12">
+    <div class="flex items-center gap-4 mb-4">
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#8A8A93] bg-white/5 border border-white/20 rounded px-2.5 py-1">Paused</span>
+        <h3 class="text-lg font-semibold text-white">Manually Suppressed</h3>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4 mb-3">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Condition</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">You manually toggled this monitor off from the Dashboard using the Pause button. All incoming pings are ignored, and no timers are ticking.</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-4">
+        <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52]">Action</span>
+        <span class="text-sm font-normal text-[#8A8A93] leading-relaxed">Resume the monitor in the Dashboard when your scheduled maintenance is complete.</span>
+    </div>
+</div>

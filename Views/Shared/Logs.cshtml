@@ -32,8 +32,8 @@
         <div class="flex flex-col gap-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-black text-white mb-1 uppercase tracking-tight">Project Activity Logs</h1>
-                    <p class="text-xs text-hc-muted">Viewing recent events for @project?.Name.</p>
+                    <h1 class="text-xl font-semibold text-white mb-1 tracking-tight">Project Activity Logs</h1>
+                    <p class="text-xs text-[#8A8A93]">Recent events for @project?.Name</p>
                 </div>
                 
                 <div class="flex flex-wrap items-center gap-3">
@@ -109,7 +109,7 @@
                                 <span class="text-[10px] text-hc-muted font-mono">@localTime.ToString("HH:mm:ss")</span>
                             </td>
                             <td class="px-4 py-3 w-20">
-                                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest @statusClass">@statusStr</span>
+                                <span class="hc-badge @(statusStr == "OK" ? "hc-badge-success" : statusStr == "Start" ? "hc-badge-info" : "hc-badge-danger")">@statusStr</span>
                             </td>
                             <td class="px-4 py-3">
                                 <span class="text-[10px] text-hc-muted font-mono" title="@ping.UserAgent">@(ping.UserAgent ?? "—")</span>
@@ -142,52 +142,47 @@
 <!-- Ping Details Modal -->
 <div id="pingModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 bg-black/80 transition-opacity" onclick="closePingModal()"></div>
-        <div class="inline-block bg-hc-black-light rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-lg w-full border border-hc-border relative z-10">
-            <div class="px-6 py-4 border-b border-hc-border flex justify-between items-center bg-hc-black/50">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2"><i data-lucide="activity" class="text-blue"></i>Ping Details</h3>
-                <button onclick="closePingModal()" class="text-hc-muted hover:text-white transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+        <div class="fixed inset-0 bg-black/75" onclick="closePingModal()"></div>
+        <div class="relative bg-[#111114] border border-white/5 rounded-2xl shadow-xl w-full sm:max-w-lg z-10">
+            <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center">
+                <h3 class="text-base font-semibold text-white">Ping Details</h3>
+                <button onclick="closePingModal()" class="text-[#8A8A93] hover:text-white transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             <div class="p-6">
-                <div class="space-y-6">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Status</p>
-                            <span id="modal-status" class="text-sm font-black uppercase tracking-widest"></span>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-black/30 rounded-lg p-3.5 border border-white/5">
+                            <p class="hc-label">Status</p>
+                            <span id="modal-status" class="text-sm font-semibold text-white"></span>
                         </div>
-                        <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Received At</p>
-                            <span id="modal-time" class="text-sm text-white font-bold"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Source IP</p>
-                            <span id="modal-ip" class="text-sm text-white font-mono break-all"></span>
-                        </div>
-                        <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                            <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Method</p>
-                            <span id="modal-method" class="text-sm text-white font-mono font-bold"></span>
+                        <div class="bg-black/30 rounded-lg p-3.5 border border-white/5">
+                            <p class="hc-label">Received At</p>
+                            <span id="modal-time" class="text-sm text-white font-normal font-mono"></span>
                         </div>
                     </div>
-
-                    <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">Ping Message</p>
-                        <p id="modal-message" class="text-sm text-white italic"></p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-black/30 rounded-lg p-3.5 border border-white/5">
+                            <p class="hc-label">Source IP</p>
+                            <span id="modal-ip" class="text-sm text-[#8A8A93] font-mono break-all"></span>
+                        </div>
+                        <div class="bg-black/30 rounded-lg p-3.5 border border-white/5">
+                            <p class="hc-label">Method</p>
+                            <span id="modal-method" class="text-sm text-white font-mono"></span>
+                        </div>
                     </div>
-
-                    <div class="bg-hc-black/50 rounded-xl p-4 border border-white/5">
-                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-1">User Agent</p>
-                        <p id="modal-ua" class="text-xs text-hc-muted break-all font-mono"></p>
+                    <div class="bg-black/30 rounded-lg p-3.5 border border-white/5">
+                        <p class="hc-label">Ping Message</p>
+                        <p id="modal-message" class="text-sm text-[#8A8A93]"></p>
                     </div>
-
-                    <div class="bg-black/40 rounded-xl p-4 border border-white/5 overflow-x-auto">
-                        <p class="text-[10px] text-hc-muted uppercase tracking-widest font-black mb-2">Request Headers</p>
-                        <pre id="modal-headers" class="text-[10px] text-hc-green font-mono"></pre>
+                    <div class="bg-black/30 rounded-lg p-3.5 border border-white/5">
+                        <p class="hc-label">User Agent</p>
+                        <p id="modal-ua" class="text-xs text-[#8A8A93] break-all font-mono"></p>
                     </div>
-
-                    <button onclick="closePingModal()" class="w-full bg-blue text-white py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue/20">Close</button>
+                    <div class="bg-black/40 rounded-lg p-3.5 border border-white/5 overflow-x-auto">
+                        <p class="hc-label">Request Headers</p>
+                        <pre id="modal-headers" class="text-[10px] text-emerald-400 font-mono"></pre>
+                    </div>
+                    <button onclick="closePingModal()" class="hc-btn-primary w-full">Close</button>
                 </div>
             </div>
         </div>

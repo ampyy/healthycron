@@ -1,0 +1,73 @@
+@{
+    Layout = "_DocsLayout";
+    ViewData["Title"] = "How Monitoring Works";
+    ViewData["Breadcrumb"] = "Getting Started  /  How Monitoring Works";
+    ViewData["PrevPageTitle"] = "Quick Start";
+    ViewData["PrevPageUrl"] = "/docs/quick-start";
+    ViewData["NextPageTitle"] = "Monitors";
+    ViewData["NextPageUrl"] = "/docs/monitors";
+}
+
+<h1 class="text-2xl font-semibold text-white tracking-tight">How Monitoring Works</h1>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mt-3 mb-10">
+    At its core, HealthyCron uses a "heartbeat" or "dead man's switch" model. It expects an incoming HTTP request at regular intervals.
+</p>
+
+<h2 class="text-base font-medium text-white mb-4 mt-8">The Heartbeat Model</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-6">
+    When your cron job or scheduled task completes successfully, it makes a simple HTTP GET or POST request to HealthyCron. This <code>ping</code> tells HealthyCron that everything is functioning correctly for that interval.
+</p>
+
+<div class="bg-[#111114] border border-white/6 rounded-xl p-8 overflow-x-auto mb-8 flex justify-center text-center">
+<pre class="font-mono text-[13px] text-[#F2F2F2] leading-loose">
+Job runs
+   ↓
+Pings /ping/uuid
+   ↓
+healthycron resets timer
+</pre>
+</div>
+
+<h2 class="text-base font-medium text-white mb-4 mt-12">Failure Modes</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    There are primarily two reasons why a job might fail, and both are caught by this model:
+</p>
+
+<ul>
+    <li><strong>The job never started.</strong> The server crashed, the cron daemon stopped, or the physical server lost power. Because the job never ran, the ping never triggered, and HealthyCron alerts you that it missed its schedule.</li>
+    <li><strong>The job started but crashed.</strong> An exception was thrown, or the script exited gracefully due to an error. Because it exited before reaching the ping at the end of the script, HealthyCron realizes the pulse is missing and alerts you.</li>
+</ul>
+
+<h2 class="text-base font-medium text-white mb-4 mt-12">Start, Success, and Fail States</h2>
+<p class="text-sm font-normal text-[#8A8A93] leading-relaxed mb-4">
+    For advanced tracking, you can emit telemetry at different stages of your job's lifecycle. By pinging at the start, you allow HealthyCron to measure exact execution duration.
+</p>
+
+<div class="docs-table-wrapper">
+    <table class="docs-table">
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th>When to call it</th>
+                <th>Example</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>/start</td>
+                <td>At the very beginning of the job execution. This does not complete the check, but marks it as executing.</td>
+                <td><code>curl .../ping/{uuid}/start</code></td>
+            </tr>
+            <tr>
+                <td>(base url)</td>
+                <td>At the very end of the script, indicating that it ran entirely and succeeded.</td>
+                <td><code>curl .../ping/{uuid}</code></td>
+            </tr>
+            <tr>
+                <td>/fail</td>
+                <td>Inside your exception handler or catch block when you know the job has failed, triggering an <em>immediate</em> alert regardless of remaining grace period.</td>
+                <td><code>curl .../ping/{uuid}/fail</code></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

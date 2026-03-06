@@ -24,23 +24,30 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        hc-black: '#0A0A0B',
+                        'hc-bg':       '#0A0A0B',
+                        'hc-surface':  '#111114',
+                        'hc-elevated': '#1C1C22',
+                        'hc-border':   'rgba(255,255,255,0.05)',
+                        'hc-black':    '#0A0A0B',
                         'hc-black-light': '#111114',
-                        blue: '#7c3aed',
-                        purple: '#a855f7',
-                        'hc-muted': '#737373',
-                        'hc-border': '#27272D'
+                        'hc-muted':    '#8A8A93',
+                        'hc-faint':    '#4A4A52',
+                        blue:          '#3B82F6',
+                        'hc-amber':    '#FBBF24',
+                        'hc-green':    '#34D399',
+                        'hc-red':      '#E03E2D',
                     },
                     fontFamily: {
                         sans: ['Sora', 'system-ui', 'sans-serif'],
-                        mono: ['DM Mono', 'monospace']
+                        body: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['DM Mono', 'Courier New', 'monospace']
                     }
                 }
             }
@@ -48,91 +55,199 @@
     </script>
     <style>
         :root {
-            --hc-black: #0A0A0B;
-            --hc-ink: #111114;
-            --hc-surface: #18181C;
-            --hc-border: #27272D;
-            --hc-border-mid: #38383F;
-
-            --hc-white: #FAFAFA;
-            --hc-silver: #D4D4D8;
-            --hc-dim: #A1A1AA;
-            --hc-muted: #52525B;
-
-            --hc-red: #EF3340;
-            --hc-red-deep: #C41E27;
-            --hc-red-subtle: #2D1215;
-            --hc-green: #22C55E;
-            --hc-green-subtle: #0D2318;
-            --hc-amber: #F59E0B;
-            --hc-amber-subtle: #261D09;
-            --hc-blue: #3B82F6;
-            --hc-blue-subtle: #0D1B38;
+            --hc-bg:         #0A0A0B;
+            --hc-surface:    #111114;
+            --hc-elevated:   #1C1C22;
+            --hc-border:     rgba(255,255,255,0.05);
+            --hc-border-mid: rgba(255,255,255,0.08);
+            --hc-text:       #FFFFFF;
+            --hc-muted:      #8A8A93;
+            --hc-faint:      #4A4A52;
+            --hc-success:    #34D399;
+            --hc-danger:     #F87171;
+            --hc-warning:    #FBBF24;
+            --hc-info:       #60A5FA;
+            --hc-red:        #E03E2D;
         }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
             font-family: 'Sora', sans-serif;
-            background-color: var(--hc-black);
-            color: var(--hc-white);
+            background-color: var(--hc-bg);
+            color: var(--hc-text);
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* ─── Sidebar ─── */
         .sidebar-transition {
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-sidebar {
-            background: rgba(10, 10, 11, 0.97); /* #0A0A0B */
-            backdrop-filter: blur(10px);
-            border-right: 1px solid var(--hc-border);
+            background: var(--hc-surface);
+            /* No border-right — contrast only */
         }
 
-        .glass-sidebar.minimized {
-            width: 80px;
-        }
+        .glass-sidebar.minimized { width: 64px; }
 
-        .main-content {
-            padding-left: 0;
-            transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .main-content { padding-left: 0; transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
         @@media(min-width: 1024px) {
-            .main-content {
-                padding-left: 16rem;
-            }
-
-            .main-content.minimized {
-                padding-left: 80px;
-            }
+            .main-content { padding-left: 16rem; }
+            .main-content.minimized { padding-left: 64px; }
         }
 
+        /* Active nav item — subtle bg, no left accent border */
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(124, 58, 237, 0.12) 0%, transparent 100%);
-            border-left: 2px solid #7c3aed;
-            color: #fff;
+            background: rgba(255,255,255,0.05);
+            color: #ffffff;
+            border-radius: 6px;
         }
 
-        .minimized .sidebar-text {
-            opacity: 0;
-            pointer-events: none;
-            width: 0;
-            display: none;
+        .minimized .sidebar-text { opacity: 0; pointer-events: none; width: 0; display: none; }
+        .minimized #minimize-icon { transform: rotate(180deg); }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--hc-bg); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+        /* ─── Global Component Utilities ─── */
+
+        /* Primary button: indigo accent — a real CTA button */
+        .hc-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #6366F1;
+            color: #ffffff;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 7px 14px;
+            transition: background 150ms ease, transform 100ms ease, opacity 150ms ease;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+        }
+        .hc-btn-primary:hover { background: #4F52D9; transform: translateY(-1px); }
+        .hc-btn-primary:active { opacity: 0.9; transform: translateY(0); }
+
+        /* Secondary button: ghost with border — clearly a button */
+        .hc-btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.03);
+            color: #8A8A93;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 6px 13px;
+            transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+            border: 1px solid rgba(255,255,255,0.10);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .hc-btn-secondary:hover { background: rgba(255,255,255,0.07); color: #ffffff; border-color: rgba(255,255,255,0.18); }
+
+        /* Dark form input */
+        .hc-input {
+            width: 100%;
+            background: var(--hc-elevated);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: #ffffff;
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+            outline: none;
+            font-family: 'Sora', sans-serif;
+        }
+        .hc-input::placeholder { color: var(--hc-faint); }
+        .hc-input:focus { border-color: rgba(99,102,241,0.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
+
+        /* Mono input (slugs, cron, etc.) */
+        .hc-input-mono {
+            font-family: 'DM Mono', monospace;
         }
 
-        .minimized #minimize-icon {
-            transform: rotate(180deg);
+        /* Form label */
+        .hc-label {
+            display: block;
+            font-size: 0.625rem; /* 10px */
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #8A8A93;
+            margin-bottom: 6px;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
+        /* Dark card / modal surface */
+        .glass-card {
+            background: var(--hc-surface);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: border-color 0.15s ease;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--hc-black);
+        /* Legacy glow-btn → now just primary white */
+        .glow-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #ffffff;
+            color: #0A0A0B;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 7px 14px;
+            transition: background 150ms ease;
+            border: none;
+            cursor: pointer;
+        }
+        .glow-btn:hover { background: rgba(255,255,255,0.9); }
+
+        /* Status badge variants */
+        .hc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.625rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-radius: 4px;
+            padding: 2px 7px;
+        }
+        .hc-badge-success { color: #34D399; background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.15); }
+        .hc-badge-danger  { color: #F87171; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.15); }
+        .hc-badge-warning { color: #FBBF24; background: rgba(251,191,36,0.08);  border: 1px solid rgba(251,191,36,0.15); }
+        .hc-badge-info    { color: #60A5FA; background: rgba(96,165,250,0.08);  border: 1px solid rgba(96,165,250,0.15); }
+        .hc-badge-neutral { color: #8A8A93; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+
+        /* Navbar (public) scroll */
+        .navbar-scrolled {
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--hc-border);
-            border-radius: 3px;
+        /* Animations */
+        .fade-in { opacity:0; transform:translateY(20px); transition: all 0.5s ease-out; }
+        .fade-in.visible { opacity:1; transform:translateY(0); }
+        .logo-scroll { animation: scroll-left 30s linear infinite; }
+        @@keyframes scroll-left { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        .bg-gradient-animated {
+            background-color: #000;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
     </style>
 </head>
@@ -140,8 +255,7 @@
 <body class="flex h-screen overflow-hidden">
 
     <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleMobileSidebar()">
-    </div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden" onclick="toggleMobileSidebar()"></div>
 
     <!-- Sidebar -->
     <aside id="sidebar"
@@ -149,68 +263,63 @@
 
         <!-- Minimize Toggle (Desktop) -->
         <button id="minimize-btn" onclick="toggleSidebarMinimize()"
-            class="hidden lg:flex absolute -right-3 top-20 w-6 h-6 bg-hc-black-light border border-hc-border rounded-full items-center justify-center text-hc-muted hover:text-white z-50 transition-all shadow-lg active:scale-95">
-            <i data-lucide="chevron-left" class="w-3.5 h-3.5 transition-transform duration-300" id="minimize-icon"></i>
+            class="hidden lg:flex absolute -right-3 top-20 w-6 h-6 bg-[#1C1C22] rounded-full items-center justify-center text-[#8A8A93] hover:text-white z-50 transition-all shadow-lg active:scale-95">
+            <i data-lucide="chevron-left" class="w-3 h-3 transition-transform duration-300" id="minimize-icon"></i>
         </button>
 
         <!-- Logo -->
-        <div class="h-16 flex items-center px-6 border-b border-hc-border shrink-0 overflow-hidden">
-            <a href="/dashboard" class="flex items-center gap-3 min-w-[200px]">
-                    <img src="/images/logo.png" alt="HealthyCron" class="w-8 h-8 rounded-lg object-contain shrink-0">
-                <span
-                    class="text-xl font-bold text-white tracking-tight sidebar-text transition-opacity duration-300">HealthyCron</span>
+        <div class="h-14 flex items-center px-5 shrink-0 overflow-hidden">
+            <a href="/dashboard" class="flex items-center gap-2.5 min-w-[200px]">
+                <img src="/images/logo.png" alt="HealthyCron" class="w-6 h-6 rounded object-contain shrink-0">
+                <span class="text-sm font-medium text-white tracking-tight sidebar-text transition-opacity duration-300">HealthyCron</span>
             </a>
         </div>
 
-        <!-- User Profile (Mini) -->
-        <div class="px-4 py-6 border-b border-hc-border sidebar-text">
-            <div class="bg-hc-black-light/50 rounded-xl p-3 border border-white/5">
-                <p class="text-[10px] uppercase tracking-widest text-hc-muted mb-1">Account</p>
-                <p class="text-sm font-bold text-white truncate">@ViewBag.UserEmail</p>
-            </div>
+        <!-- User Account -->
+        <div class="px-4 pb-4 sidebar-text">
+            <p class="text-[10px] font-medium uppercase tracking-widest text-[#8A8A93] mb-1 px-1">Account</p>
+            <p class="text-sm font-normal text-white truncate px-1">@ViewBag.UserEmail</p>
         </div>
 
-        <!-- Links -->
-        <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+        <!-- Nav Links -->
+        <nav class="flex-1 overflow-y-auto px-3 space-y-0.5">
             <a href="/dashboard"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-hc-muted hover:text-white transition-all @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
-                <span class="sidebar-text font-medium truncate">Overview</span>
+                class="nav-item flex items-center gap-2.5 px-3 py-2 text-[#8A8A93] hover:text-white hover:bg-white/5 rounded-md transition-all text-sm @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0 opacity-50"></i>
+                <span class="sidebar-text font-normal truncate">Overview</span>
             </a>
             <a href="/dashboard/projects"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-hc-muted hover:text-white transition-all @((ViewContext.RouteData.Values["Controller"]?.ToString() is "Project" or "Monitor" or "Log" or "Integration" or "Dashboard" && ViewContext.RouteData.Values["Action"]?.ToString() is "Projects" or "Monitors" or null || ViewContext.RouteData.Values["Controller"]?.ToString() is "Project" or "Monitor" or "Log" or "Integration") ? "active" : "")">
-                <i data-lucide="folder" class="w-5 h-5 shrink-0"></i>
-                <span class="sidebar-text font-medium truncate">Project</span>
+                class="nav-item flex items-center gap-2.5 px-3 py-2 text-[#8A8A93] hover:text-white hover:bg-white/5 rounded-md transition-all text-sm @((ViewContext.RouteData.Values["Controller"]?.ToString() is "Project" or "Monitor" or "Log" or "Integration" or "Dashboard" && ViewContext.RouteData.Values["Action"]?.ToString() is "Projects" or "Monitors" or null || ViewContext.RouteData.Values["Controller"]?.ToString() is "Project" or "Monitor" or "Log" or "Integration") ? "active" : "")">
+                <i data-lucide="folder" class="w-4 h-4 shrink-0 opacity-50"></i>
+                <span class="sidebar-text font-normal truncate">Project</span>
             </a>
             <a href="/teams"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-hc-muted hover:text-white transition-all @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GlobalTeams" ? "active" : "")">
-                <i data-lucide="users" class="w-5 h-5 shrink-0"></i>
-                <span class="sidebar-text font-medium truncate">Teams</span>
+                class="nav-item flex items-center gap-2.5 px-3 py-2 text-[#8A8A93] hover:text-white hover:bg-white/5 rounded-md transition-all text-sm @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GlobalTeams" ? "active" : "")">
+                <i data-lucide="users" class="w-4 h-4 shrink-0 opacity-50"></i>
+                <span class="sidebar-text font-normal truncate">Teams</span>
             </a>
 
-            <!-- Project specific links removed for cleaner sidebar -->
-
-            <div class="px-6 py-4 sidebar-text">
+            <div class="px-1 py-3 sidebar-text">
                 <div class="h-px bg-white/5 w-full"></div>
             </div>
 
             <a href="/docs"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-hc-muted hover:text-white transition-all @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Docs" ? "active" : "")">
-                <i data-lucide="book-open" class="w-5 h-5 shrink-0"></i>
-                <span class="sidebar-text font-medium truncate">Documentation</span>
+                class="nav-item flex items-center gap-2.5 px-3 py-2 text-[#8A8A93] hover:text-white hover:bg-white/5 rounded-md transition-all text-sm @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Docs" ? "active" : "")">
+                <i data-lucide="book-open" class="w-4 h-4 shrink-0 opacity-50"></i>
+                <span class="sidebar-text font-normal truncate">Documentation</span>
             </a>
             <a href="#"
-                class="nav-item flex items-center gap-3 px-6 py-3 text-hc-muted hover:text-white/50 cursor-not-allowed transition-all">
-                <i data-lucide="credit-card" class="w-5 h-5 shrink-0"></i>
-                <span class="sidebar-text font-medium truncate">Billing</span>
+                class="nav-item flex items-center gap-2.5 px-3 py-2 text-[#8A8A93]/40 cursor-not-allowed transition-all text-sm">
+                <i data-lucide="credit-card" class="w-4 h-4 shrink-0 opacity-30"></i>
+                <span class="sidebar-text font-normal truncate">Billing</span>
             </a>
         </nav>
 
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-hc-border shrink-0 overflow-hidden">
+        <div class="p-3 shrink-0 overflow-hidden">
             <button onclick="handleLogout()"
-                class="flex items-center gap-3 w-full px-4 py-2 text-sm text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all font-bold">
-                <i data-lucide="log-out" class="w-5 h-5 shrink-0"></i>
+                class="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-[#8A8A93] hover:text-white hover:bg-white/5 rounded-md transition-all font-normal">
+                <i data-lucide="log-out" class="w-4 h-4 shrink-0 opacity-50"></i>
                 <span class="sidebar-text truncate">Sign Out</span>
             </button>
         </div>
@@ -219,73 +328,58 @@
     <!-- Main Content -->
     <div id="main-content" class="flex-1 flex flex-col h-screen transition-all duration-300 main-content overflow-x-hidden w-full max-w-[100vw]">
         <!-- Top Bar -->
-        <header
-            class="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-hc-border bg-hc-black/50 backdrop-blur-md">
-            <button class="lg:hidden text-hc-muted hover:text-white p-2" onclick="toggleMobileSidebar()">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        <header class="h-14 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-[#0A0A0B] border-b border-white/5 shrink-0">
+            <button class="lg:hidden text-[#8A8A93] hover:text-white p-2" onclick="toggleMobileSidebar()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
 
-            <!-- Spacer for desktop to align right -->
+            <!-- Spacer for desktop -->
             <div class="hidden lg:block"></div>
 
-                @{
-                    var userEmail = ViewBag.UserEmail as string;
-                    var initial = !string.IsNullOrEmpty(userEmail) ? userEmail.Substring(0, 1).ToUpper() : "U";
-                }
-                
-                <div class="flex items-center gap-4">
-                    <a href="/account" class="flex items-center gap-3 group">
-                        <div class="hidden sm:block text-right">
-                            <div class="text-sm font-bold text-white group-hover:text-blue transition-colors">@userEmail</div>
-                            <div class="text-xs text-hc-muted">Account Settings</div>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform border border-white/10">
-                            @initial
-                        </div>
-                    </a>
+            @{
+                var userEmail = ViewBag.UserEmail as string;
+                var initial = !string.IsNullOrEmpty(userEmail) ? userEmail.Substring(0, 1).ToUpper() : "U";
+            }
 
-                    <div class="h-8 w-px bg-white/10 hidden sm:block"></div>
+            <div class="flex items-center gap-3">
+                <a href="/account" class="flex items-center gap-2.5 group">
+                    <div class="hidden sm:block text-right">
+                        <div class="text-xs font-normal text-[#8A8A93] group-hover:text-white transition-colors truncate max-w-[160px]">@userEmail</div>
+                        <div class="text-[10px] text-[#4A4A52]">Account Settings</div>
+                    </div>
+                    <div class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs font-medium text-white">
+                        @initial
+                    </div>
+                </a>
 
-                    <button onclick="handleLogout()" 
-                        class="text-hc-muted hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-white/5" title="Sign Out">
-                        <i data-lucide="log-out" class="w-5 h-5"></i>
-                    </button>
-                </div>
+                <button onclick="handleLogout()"
+                    class="text-[#8A8A93] hover:text-white transition-colors p-1.5 rounded-md hover:bg-white/5" title="Sign Out">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                </button>
+            </div>
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-7">
             @RenderBody()
         </main>
     </div>
 
     <style>
-        .glass-sidebar.minimized {
-            width: 80px;
-        }
-
-        .main-content.minimized {
-            padding-left: 80px;
-        }
-
-        .minimized .sidebar-text {
-            opacity: 0;
-            pointer-events: none;
-            width: 0;
-        }
-
-        .minimized #minimize-icon {
-            transform: rotate(180deg);
-        }
+        .glass-sidebar.minimized { width: 64px; }
+        .main-content.minimized { padding-left: 64px; }
+        .minimized .sidebar-text { opacity: 0; pointer-events: none; width: 0; }
+        .minimized #minimize-icon { transform: rotate(180deg); }
+        /* Active nav — icon full opacity */
+        .nav-item.active i { opacity: 1 !important; }
     </style>
 
     <script>
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-
             if (sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.remove('-translate-x-full');
                 overlay.classList.remove('hidden');
@@ -298,24 +392,18 @@
         function toggleSidebarMinimize() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
-
             sidebar.classList.toggle('minimized');
             mainContent.classList.toggle('minimized');
-
-            // Persist preference
             localStorage.setItem('sidebar-minimized', sidebar.classList.contains('minimized'));
         }
 
-        // Initialize sidebar state
         document.addEventListener('DOMContentLoaded', () => {
             const isMinimized = localStorage.getItem('sidebar-minimized') === 'true';
             if (isMinimized && window.innerWidth >= 1024) {
                 document.getElementById('sidebar').classList.add('minimized');
                 document.getElementById('main-content').classList.add('minimized');
             }
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         });
 
         async function handleLogout() {
