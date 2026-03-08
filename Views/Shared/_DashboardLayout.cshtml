@@ -100,11 +100,13 @@
             .main-content.minimized { padding-left: 64px; }
         }
 
-        /* Active nav item — subtle bg, no left accent border */
+        /* Active nav item — green left tick accent, subtle bg */
         .nav-item.active {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.06);
             color: #ffffff;
             border-radius: 6px;
+            border-left: 2px solid #22C55E;
+            padding-left: calc(0.75rem - 2px);
         }
 
         .minimized .sidebar-text { opacity: 0; pointer-events: none; width: 0; display: none; }
@@ -117,26 +119,25 @@
 
         /* ─── Global Component Utilities ─── */
 
-        /* Primary button: indigo accent — a real CTA button */
+        /* Primary button: blue CTA */
         .hc-btn-primary {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background: #6366F1;
+            background: #2563EB;
             color: #ffffff;
             font-size: 0.8125rem;
             font-weight: 500;
             border-radius: 8px;
             padding: 7px 14px;
-            transition: background 150ms ease, transform 100ms ease, opacity 150ms ease;
+            transition: background 150ms ease;
             border: none;
             cursor: pointer;
             white-space: nowrap;
-            letter-spacing: 0.01em;
         }
-        .hc-btn-primary:hover { background: #4F52D9; transform: translateY(-1px); }
-        .hc-btn-primary:active { opacity: 0.9; transform: translateY(0); }
+        .hc-btn-primary:hover { background: #1D4ED8; }
+        .hc-btn-primary:active { opacity: 0.9; }
 
         /* Secondary button: ghost with border — clearly a button */
         .hc-btn-secondary {

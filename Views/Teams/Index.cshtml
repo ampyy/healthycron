@@ -12,10 +12,7 @@
 
 <div class="max-w-4xl mx-auto pb-20">
     <div class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-            <i data-lucide="users" class="text-blue"></i>
-            Teams
-        </h1>
+        <h1 class="text-xl font-semibold text-white">Teams</h1>
     </div>
 
     @if (!byProject.Any())
@@ -35,17 +32,14 @@
         {
             <section class="glass-card rounded-2xl overflow-hidden mb-6">
                 <!-- Project header -->
-                <div class="px-6 py-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                            <i data-lucide="folder" class="w-4 h-4 text-white/50"></i>
-                        </div>
                         <div>
-                            <h2 class="font-bold text-white">@group.Key.ProjectName</h2>
-                            <p class="text-[10px] text-hc-muted">@group.Count() member@(group.Count() == 1 ? "" : "s")</p>
+                            <h2 class="text-sm font-medium text-white">@group.Key.ProjectName</h2>
+                            <p class="text-xs text-[#8A8A93]">@group.Count() member@(group.Count() == 1 ? "" : "s")</p>
                         </div>
                     </div>
-                    <a href="/project/@group.Key.ProjectSlug/settings" class="text-xs text-white/50 hover:text-white transition-colors flex items-center gap-1">
+                    <a href="/project/@group.Key.ProjectSlug/settings" class="inline-flex items-center gap-1.5 text-sm font-medium text-[#8A8A93] hover:text-white bg-white/5 hover:bg-white/8 border border-white/8 rounded-lg px-3 py-1.5 transition-all">
                         <i data-lucide="settings" class="w-3 h-3"></i>
                         Manage
                     </a>
@@ -64,9 +58,9 @@
                             @foreach (var member in group.OrderBy(m => m.JoinedAt))
                             {
                                 var (badgeCls, roleLabel) = member.Role switch {
-                                    HealthyCron.Enums.ProjectRole.Manager  => ("bg-white/10 text-white border border-white/20", "Manager"),
-                                    HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-white/5 text-white/40 border border-white/10", "Read Only"),
-                                    _                                      => ("bg-white/5 text-white/60 border border-white/10", "Member")
+                                    HealthyCron.Enums.ProjectRole.Manager  => ("bg-white/5 text-white", "Manager"),
+                                    HealthyCron.Enums.ProjectRole.ReadOnly => ("bg-white/5 text-[#4A4A52]", "Read Only"),
+                                    _                                      => ("bg-white/5 text-[#8A8A93]", "Member")
                                 };
                                 <tr class="border-b border-white/5 transition-colors hover:bg-white/[0.02] group">
                                     <td class="p-4 pl-6 align-middle">

@@ -313,7 +313,31 @@
         function switchFeatureTab(index) {
             currentFeatureTab = index;
             document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
-                btn.classList.toggle('active', i === index);
+                var isActive = (i === index);
+                btn.classList.toggle('active', isActive);
+
+                // Use inline style for bg — Tailwind CDN JIT won't generate dynamically-toggled classes
+                btn.style.backgroundColor = isActive ? 'rgba(17,17,20,1)' : '';
+                btn.style.borderRadius = isActive ? '12px' : '';
+
+                // Icon color — use inline style
+                var iconSvg = btn.querySelector('.tab-icon svg');
+                if (iconSvg) iconSvg.style.color = isActive ? '#22C55E' : '#4A4A52';
+
+                // Icon box bg
+                var iconBox = btn.querySelector('.tab-icon');
+                if (iconBox) iconBox.style.backgroundColor = isActive ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)';
+
+                // Title style
+                var title = btn.querySelector('.tab-title');
+                if (title) {
+                    title.style.color = isActive ? '#ffffff' : '#8A8A93';
+                    title.style.fontWeight = isActive ? '500' : '400';
+                }
+
+                // Sub text
+                var sub = btn.querySelector('.tab-sub');
+                if (sub) sub.style.display = isActive ? 'block' : 'none';
             });
             document.querySelectorAll('.feature-image').forEach(function(img, i) {
                 if (i === index) {
@@ -329,6 +353,11 @@
             clearInterval(featureTabInterval);
             startTabRotation();
         }
+
+        // Init first tab visuals on load
+        window.addEventListener('DOMContentLoaded', function() {
+            switchFeatureTab(0);
+        });
 
         function startTabRotation() {
             var tabs = document.querySelectorAll('.tab-btn');

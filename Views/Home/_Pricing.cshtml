@@ -1,10 +1,10 @@
-@* Pricing *@
+@* Pricing — colored accents per plan *@
 <section id="pricing" class="relative py-24 overflow-hidden">
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10 fade-in">
             <h2 class="text-3xl font-semibold text-white tracking-tight mb-4">Plans &amp; Pricing</h2>
-            <p class="text-hc-dim max-w-2xl mx-auto">Choose the plan that matches your workflow and scale with ease.</p>
+            <p class="text-sm font-normal text-[#8A8A93] max-w-md mx-auto">Choose the plan that matches your workflow and scale with ease.</p>
         </div>
 
         <!-- Toggle -->
@@ -12,131 +12,143 @@
             <span id="billing-monthly-label" class="text-sm font-medium text-white">Monthly</span>
             <button id="billing-toggle"
                 onclick="toggleBilling()"
-                class="relative w-11 h-6 rounded-full bg-hc-border border-2 border-transparent transition-colors duration-200 focus:outline-none"
+                class="relative w-11 h-6 rounded-full bg-white/10 transition-colors duration-200 focus:outline-none"
                 role="switch" aria-checked="false">
                 <span id="billing-thumb"
-                    class="block w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 translate-x-0"></span>
+                    class="block w-4 h-4 rounded-full bg-white shadow transition-transform duration-200 translate-x-1 mt-1"></span>
             </button>
-            <span id="billing-yearly-label" class="text-sm font-medium text-hc-dim">Yearly <span class="text-hc-green text-xs font-semibold">Save 25%</span></span>
+            <span id="billing-yearly-label" class="text-sm font-medium text-[#8A8A93]">Yearly <span class="text-[#22C55E] text-xs font-semibold">Save 25%</span></span>
         </div>
 
         <!-- Cards -->
         <div class="flex flex-col items-stretch gap-6 md:flex-row md:items-end justify-center fade-in">
 
-            <!-- Free -->
-            <div class="glass-card rounded-2xl p-8 w-full md:w-80 flex flex-col justify-between">
+            <!-- Free — green accent -->
+            <div class="bg-[#111114] rounded-2xl p-8 w-full md:w-80 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-1">Free</h3>
-                    <p class="text-sm text-hc-dim mb-6">For personal projects</p>
+                    <div class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#22C55E] bg-[#22C55E]/8 border border-[#22C55E]/15 rounded-full px-2.5 py-1 mb-4">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E]"></span>
+                        Free forever
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-1">Free</h3>
+                    <p class="text-sm text-[#8A8A93] mb-6">For personal projects</p>
                     <div class="mb-2">
                         <span class="text-4xl font-medium text-white font-mono">$0</span>
-                        <span class="text-hc-dim text-sm ml-1">/ mo</span>
+                        <span class="text-[#8A8A93] text-sm ml-1">/ mo</span>
                     </div>
-                    <p class="text-xs text-hc-dim mb-8">Free forever</p>
-                    <div class="w-full h-px bg-hc-border mb-6"></div>
+                    <p class="text-xs text-[#4A4A52] mb-8">No credit card required</p>
+                    <div class="w-full h-px bg-white/5 mb-6"></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#22C55E] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Up to 5 monitors
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
-                            Email alerts
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#22C55E] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                            Email &amp; Telegram alerts
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#22C55E] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             7-day log retention
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#22C55E] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Community support
                         </li>
                     </ul>
                 </div>
-                <button disabled class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-hc-surface border border-hc-border cursor-not-allowed opacity-60">
+                <button disabled class="w-full py-2.5 rounded-xl text-sm font-medium text-[#8A8A93] bg-white/5 cursor-not-allowed">
                     Coming Soon
                 </button>
             </div>
 
-            <!-- Pro (featured) -->
-            <div class="glass-card rounded-2xl p-8 w-full md:w-80 flex flex-col justify-between border ring-1 ring-indigo-500/50 border-indigo-500/50 relative shadow-[0_0_30px_rgba(79,70,229,0.15)] md:-translate-y-2">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-600 border border-indigo-500 text-xs font-medium text-white whitespace-nowrap">
+            <!-- Pro — amber/yellow accent, featured -->
+            <div class="bg-[#111114] rounded-2xl p-8 w-full md:w-80 flex flex-col justify-between border border-[#F59E0B]/20 relative md:-translate-y-2" style="box-shadow: 0 0 40px rgba(245,158,11,0.06);">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#F59E0B] text-[#0A0A0B] text-xs font-semibold whitespace-nowrap">
                     Most Popular
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-1">Pro</h3>
-                    <p class="text-sm text-hc-dim mb-6">For growing teams</p>
+                    <div class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#F59E0B] bg-[#F59E0B]/8 border border-[#F59E0B]/15 rounded-full px-2.5 py-1 mb-4">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                        Pro plan
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-1">Pro</h3>
+                    <p class="text-sm text-[#8A8A93] mb-6">For growing teams</p>
                     <div class="mb-2">
                         <span class="text-4xl font-medium text-white font-mono price-display" data-monthly="$29" data-yearly="$22">$29</span>
-                        <span class="text-hc-dim text-sm ml-1">/ mo</span>
+                        <span class="text-[#8A8A93] text-sm ml-1">/ mo</span>
                     </div>
-                    <p class="text-xs text-hc-dim mb-8 billing-note" data-monthly="Billed $348 annually" data-yearly="Billed $264 annually">Billed $348 annually</p>
-                    <div class="w-full h-px bg-hc-border mb-6"></div>
+                    <p class="text-xs text-[#4A4A52] mb-8 billing-note" data-monthly="Billed $348 annually" data-yearly="Billed $264 annually">Billed $348 annually</p>
+                    <div class="w-full h-px bg-white/5 mb-6"></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#F59E0B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Up to 50 monitors
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
-                            Slack, Email, PagerDuty
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#F59E0B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                            All integrations included
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#F59E0B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             30-day log retention
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#F59E0B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Priority email support
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#F59E0B] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Team collaboration
                         </li>
                     </ul>
                 </div>
-                <button disabled class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 border border-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.25)] cursor-not-allowed opacity-70 transition-colors flex items-center justify-center gap-1">
+                <button disabled class="w-full py-2.5 rounded-xl text-sm font-semibold text-[#0A0A0B] bg-[#F59E0B] cursor-not-allowed opacity-80 transition-colors flex items-center justify-center gap-1">
                     Coming Soon
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </button>
             </div>
 
-            <!-- Enterprise -->
-            <div class="glass-card rounded-2xl p-8 w-full md:w-80 flex flex-col justify-between">
+            <!-- Enterprise — blue accent -->
+            <div class="bg-[#111114] rounded-2xl p-8 w-full md:w-80 flex flex-col justify-between border border-[#3B82F6]/15">
                 <div>
-                    <h3 class="text-lg font-semibold text-white mb-1">Enterprise</h3>
-                    <p class="text-sm text-hc-dim mb-6">For large organizations</p>
+                    <div class="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-widest text-[#3B82F6] bg-[#3B82F6]/8 border border-[#3B82F6]/15 rounded-full px-2.5 py-1 mb-4">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#3B82F6]"></span>
+                        Enterprise
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-1">Enterprise</h3>
+                    <p class="text-sm text-[#8A8A93] mb-6">For large organizations</p>
                     <div class="mb-2">
                         <span class="text-4xl font-medium text-white font-mono">Custom</span>
                     </div>
-                    <p class="text-xs text-hc-dim mb-8">Contact us for a quote</p>
-                    <div class="w-full h-px bg-hc-border mb-6"></div>
+                    <p class="text-xs text-[#4A4A52] mb-8">Contact us for a quote</p>
+                    <div class="w-full h-px bg-white/5 mb-6"></div>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#3B82F6] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Unlimited monitors
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#3B82F6] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             All integrations
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#3B82F6] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             1-year log retention
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#3B82F6] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             Dedicated support + SLA
                         </li>
-                        <li class="flex items-center gap-2 text-sm text-[#C9D1D9]">
-                            <svg class="w-4 h-4 text-hc-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+                        <li class="flex items-center gap-2 text-sm text-[#D0D0D3]">
+                            <svg class="w-4 h-4 text-[#3B82F6] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
                             SSO &amp; SAML
                         </li>
                     </ul>
                 </div>
-                <button disabled class="w-full py-2.5 rounded-xl text-sm font-semibold text-white bg-hc-surface border border-hc-border cursor-not-allowed opacity-60">
-                    Talk to Sales
-                </button>
+                <a href="mailto:team@healthycron.com?subject=Enterprise inquiry" class="w-full py-2.5 rounded-xl text-sm font-medium text-[#3B82F6] bg-[#3B82F6]/10 border border-[#3B82F6]/20 hover:bg-[#3B82F6]/15 transition-colors flex items-center justify-center gap-1.5">
+                    Talk to Sales →
+                </a>
             </div>
 
         </div>
@@ -148,23 +160,22 @@
 
     function toggleBilling() {
         isYearly = !isYearly;
-        var toggle = document.getElementById('billing-toggle');
         var thumb = document.getElementById('billing-thumb');
+        var toggle = document.getElementById('billing-toggle');
         var monthlyLabel = document.getElementById('billing-monthly-label');
         var yearlyLabel = document.getElementById('billing-yearly-label');
 
         toggle.setAttribute('aria-checked', isYearly.toString());
+        toggle.style.backgroundColor = isYearly ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)';
 
         if (isYearly) {
             thumb.style.transform = 'translateX(20px)';
-            toggle.style.backgroundColor = isYearly ? 'rgba(255,255,255,0.3)' : '#30363D';
-            monthlyLabel.style.color = '#8B949E';
+            monthlyLabel.style.color = '#8A8A93';
             yearlyLabel.style.color = '#FFFFFF';
         } else {
             thumb.style.transform = 'translateX(0px)';
-            toggle.style.backgroundColor = '#30363D';
             monthlyLabel.style.color = '#FFFFFF';
-            yearlyLabel.style.color = '#8B949E';
+            yearlyLabel.style.color = '#8A8A93';
         }
 
         document.querySelectorAll('.price-display').forEach(function(el) {

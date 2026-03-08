@@ -21,7 +21,7 @@
 
                 <h1 class="text-5xl font-semibold text-white leading-tight tracking-tight mb-4">
                     Never miss a failing<br>
-                    <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">cron job again.</span>
+                    <span class="text-[#22C55E]">cron job again.</span>
                 </h1>
 
                 <p class="text-base font-normal text-[#8A8A93] leading-relaxed max-w-lg mb-8">
@@ -30,26 +30,28 @@
 
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-3 mb-12">
-                    <a href="/signup" class="bg-indigo-600 text-white font-medium text-sm rounded-lg px-5 py-2.5 hover:bg-indigo-500 transition-all text-center shadow-[0_0_20px_rgba(79,70,229,0.3)] border border-indigo-500 overflow-hidden relative group">
-                        <span class="relative z-10">Get Started Free</span>
+                    <a href="/signup" class="bg-white text-[#0A0A0B] font-medium text-sm rounded-lg px-5 py-2.5 hover:bg-white/90 transition-all text-center">
+                        Get Started Free
                     </a>
-                    <a href="/docs" class="font-medium text-sm text-[#8A8A93] hover:text-white px-5 py-2.5 transition-colors">
+                    <a href="/docs" class="text-sm font-normal text-[#8A8A93] hover:text-white px-5 py-2.5 transition-colors">
                         View Docs →
                     </a>
                 </div>
 
-                <!-- Stats row -->
-                <div class="bg-[#111114] border border-white/6 rounded-xl px-6 py-5 grid grid-cols-3 divide-x divide-white/6">
-                    <div class="pr-6">
-                        <p class="font-mono text-xl font-medium text-white">150+</p>
+                <!-- Stats row — no box, just inline -->
+                <div class="flex items-center gap-8">
+                    <div>
+                        <p class="font-mono text-2xl font-medium text-white">150+</p>
                         <p class="text-xs font-normal text-[#8A8A93] mt-1">Edge Nodes</p>
                     </div>
-                    <div class="px-6">
-                        <p class="font-mono text-xl font-medium text-white">&lt;50ms</p>
+                    <span class="text-[#4A4A52] text-lg">·</span>
+                    <div>
+                        <p class="font-mono text-2xl font-medium text-white">&lt;50ms</p>
                         <p class="text-xs font-normal text-[#8A8A93] mt-1">Avg Latency</p>
                     </div>
-                    <div class="pl-6">
-                        <p class="font-mono text-xl font-medium text-white">99.99%</p>
+                    <span class="text-[#4A4A52] text-lg">·</span>
+                    <div>
+                        <p class="font-mono text-2xl font-medium text-white">99.99%</p>
                         <p class="text-xs font-normal text-[#8A8A93] mt-1">Uptime SLA</p>
                     </div>
                 </div>
@@ -57,61 +59,52 @@
 
             <!-- Right: Terminal mockup -->
             <div class="flex-1 flex items-center justify-center relative">
-                <!-- Ambient Glow -->
-                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-purple-600/10 to-transparent blur-[80px] rounded-full scale-150 transform -translate-y-8"></div>
-                
-                <div class="w-full max-w-md bg-[#111114] border border-white/8 rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 ring-1 ring-white/5">
-                    <!-- Terminal title bar -->
-                    <div class="flex items-center gap-2 px-4 py-3 border-b border-white/6 bg-[#0A0A0B]">
-                        <span class="w-3 h-3 rounded-full bg-[#E03E2D]/70"></span>
-                        <span class="w-3 h-3 rounded-full bg-[#F59E0B]/50"></span>
-                        <span class="w-3 h-3 rounded-full bg-[#22C55E]/50"></span>
-                        <span class="ml-2 text-xs font-mono text-[#4A4A52]">cron-monitor.sh</span>
+                <div class="w-full max-w-md bg-[#0D0D0F] border border-white/6 rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10">
+                    <!-- Terminal title bar — filename only, no traffic lights -->
+                    <div class="flex items-center px-4 py-3 border-b border-white/5 bg-[#0A0A0B]">
+                        <span class="font-mono text-xs text-[#4A4A52]">cron-monitor.sh</span>
                     </div>
                     <!-- Terminal body -->
-                    <div class="p-5 font-mono text-xs leading-7 space-y-1">
-                        <div class="text-[#4A4A52]"># ping on successful run</div>
+                    <div class="p-5 font-mono text-xs leading-7">
+                        <div class="text-[#4A4A52]"># 1. signal job start</div>
                         <div>
-                            <span class="text-[#22C55E]">curl</span>
-                            <span class="text-[#8A8A93]"> -sf </span>
-                            <span class="text-white">https://healthycron.com/ping/</span><span class="text-[#22C55E]">a3f8b2c1</span>
+                            <span class="text-[#F2F2F2]">curl</span>
+                            <span class="text-[#8A8A93]"> -sf https://healthycron.com/ping/</span><span class="text-[#22C55E]">a3f8b2c1</span><span class="text-[#F59E0B]">/start</span>
                         </div>
-                        <div class="text-[#4A4A52] mt-2"># signal start of job</div>
+                        <div class="mt-3 text-[#4A4A52]"># 2. run your job</div>
+                        <div class="text-[#F2F2F2]">php artisan send:invoices</div>
+                        <div class="mt-3 text-[#4A4A52]"># 3. signal success (or failure)</div>
                         <div>
-                            <span class="text-[#22C55E]">curl</span>
-                            <span class="text-[#8A8A93]"> -sf </span>
-                            <span class="text-white">https://healthycron.com/ping/</span><span class="text-[#22C55E]">a3f8b2c1</span><span class="text-[#8A8A93]">/start</span>
+                            <span class="text-[#F2F2F2]">curl</span>
+                            <span class="text-[#8A8A93]"> -sf https://healthycron.com/ping/</span><span class="text-[#22C55E]">a3f8b2c1</span>
                         </div>
-                        <div class="text-[#4A4A52] mt-2"># signal failure</div>
                         <div>
-                            <span class="text-[#22C55E]">curl</span>
-                            <span class="text-[#8A8A93]"> -sf </span>
-                            <span class="text-white">https://healthycron.com/ping/</span><span class="text-[#22C55E]">a3f8b2c1</span><span class="text-[#E03E2D]">/fail</span>
+                            <span class="text-[#4A4A52]"># on error: </span>
+                            <span class="text-[#F2F2F2]">curl</span>
+                            <span class="text-[#8A8A93]"> -sf ...ping/</span><span class="text-[#22C55E]">a3f8b2c1</span><span class="text-[#E03E2D]">/fail</span>
                         </div>
+
                         <!-- Live status indicator -->
-                        <div class="flex items-center gap-2 pt-4 mt-2 border-t border-white/6">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse"></span>
-                            <span class="text-[#22C55E]">backup-db</span>
-                            <span class="text-[#4A4A52]">·</span>
-                            <span class="text-[#8A8A93]">last ping 2m ago</span>
-                            <span class="text-[#4A4A52]">·</span>
-                            <span class="text-[#22C55E]">healthy</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#E03E2D] animate-pulse"></span>
-                            <span class="text-[#E03E2D]">sync-reports</span>
-                            <span class="text-[#4A4A52]">·</span>
-                            <span class="text-[#8A8A93]">missed schedule</span>
-                            <span class="text-[#4A4A52]">·</span>
-                            <span class="text-[#E03E2D]">down</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                            <span class="text-[#F59E0B]">cleanup-cache</span>
-                            <span class="text-[#4A4A52]">·</span>
-                            <span class="text-[#8A8A93]">due in 4m</span>
-                            <span class="text-[#4A4A52]">·</span>
-                            <span class="text-[#F59E0B]">late</span>
+                        <div class="mt-5 pt-4 border-t border-white/5 space-y-2">
+                            <div class="text-[#4A4A52]"># live status ─────────────────────────</div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse flex-shrink-0"></span>
+                                <span class="text-[#F2F2F2] w-28">backup-db</span>
+                                <span class="text-[#4A4A52]">· last ping 2m ago   ·</span>
+                                <span class="text-[#22C55E]">healthy</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#E03E2D] flex-shrink-0"></span>
+                                <span class="text-[#F2F2F2] w-28">sync-reports</span>
+                                <span class="text-[#4A4A52]">· missed schedule    ·</span>
+                                <span class="text-[#E03E2D]">down</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B] flex-shrink-0"></span>
+                                <span class="text-[#F2F2F2] w-28">cleanup-cache</span>
+                                <span class="text-[#4A4A52]">· due in 4m          ·</span>
+                                <span class="text-[#F59E0B]">late</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,25 +123,23 @@
         <div class="overflow-hidden">
             <div class="flex gap-16 logo-scroll" style="width: max-content;">
                 <div class="flex items-center gap-16">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" class="h-7" style="filter:grayscale(1) brightness(0.4); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" class="h-7" style="filter:grayscale(1) brightness(0.4) invert(1); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8) invert(1)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4) invert(1)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="h-7" style="filter:grayscale(1) brightness(0.4) invert(1); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8) invert(1)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4) invert(1)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" class="h-7" style="filter:grayscale(1) brightness(0.4); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" alt="Kubernetes" class="h-7" style="filter:grayscale(1) brightness(0.4); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/digitalocean/digitalocean-original.svg" alt="DigitalOcean" class="h-7" style="filter:grayscale(1) brightness(0.4); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg" alt="GitLab" class="h-7" style="filter:grayscale(1) brightness(0.4); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4)'">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure" class="h-7" style="filter:grayscale(1) brightness(0.4); transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0) brightness(0.8)'" onmouseout="this.style.filter='grayscale(1) brightness(0.4)'">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" alt="Kubernetes" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/digitalocean/digitalocean-original.svg" alt="DigitalOcean" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg" alt="GitLab" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure" class="h-7 opacity-50">
                 </div>
                 <!-- Duplicate set for infinite scroll -->
                 <div class="flex items-center gap-16">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" class="h-7" style="filter:grayscale(1) brightness(0.4);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" class="h-7" style="filter:grayscale(1) brightness(0.4) invert(1);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" class="h-7" style="filter:grayscale(1) brightness(0.4) invert(1);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" class="h-7" style="filter:grayscale(1) brightness(0.4);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" alt="Kubernetes" class="h-7" style="filter:grayscale(1) brightness(0.4);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/digitalocean/digitalocean-original.svg" alt="DigitalOcean" class="h-7" style="filter:grayscale(1) brightness(0.4);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg" alt="GitLab" class="h-7" style="filter:grayscale(1) brightness(0.4);">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure" class="h-7" style="filter:grayscale(1) brightness(0.4);">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" alt="Kubernetes" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/digitalocean/digitalocean-original.svg" alt="DigitalOcean" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg" alt="GitLab" class="h-7 opacity-50">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg" alt="Azure" class="h-7 opacity-50">
                 </div>
             </div>
         </div>
@@ -170,51 +161,51 @@
 
         <div class="grid lg:grid-cols-12 gap-6 fade-in">
             <!-- Left Tabs -->
-            <div class="lg:col-span-4 space-y-2">
-                <button onclick="switchFeatureTab(0)" class="tab-btn active w-full text-left bg-[#111114] border border-white/6 rounded-xl p-5 hover:border-white/12 transition-all" data-tab="0">
+            <div class="lg:col-span-4 space-y-1">
+                <button onclick="switchFeatureTab(0)" class="tab-btn active w-full text-left rounded-xl px-4 py-3 hover:bg-white/4 transition-all" data-tab="0">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#22C55E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                        <div class="tab-icon w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#4A4A52]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-white">Unified Dashboard</h3>
-                            <p class="text-xs font-normal text-[#8A8A93] mt-1">All your jobs in one view</p>
+                            <h3 class="tab-title text-sm font-normal text-[#8A8A93]">Unified Dashboard</h3>
+                            <p class="tab-sub text-xs font-normal text-[#4A4A52] mt-0.5 hidden">All your jobs in one view</p>
                         </div>
                     </div>
                 </button>
 
-                <button onclick="switchFeatureTab(1)" class="tab-btn w-full text-left bg-[#111114] border border-white/6 rounded-xl p-5 hover:border-white/12 transition-all" data-tab="1">
+                <button onclick="switchFeatureTab(1)" class="tab-btn w-full text-left rounded-xl px-4 py-3 hover:bg-white/4 transition-all" data-tab="1">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#8A8A93]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                        <div class="tab-icon w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#4A4A52]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-white">Smart Alerts</h3>
-                            <p class="text-xs font-normal text-[#8A8A93] mt-1">Instant multi-channel notifications</p>
+                            <h3 class="tab-title text-sm font-normal text-[#8A8A93]">Smart Alerts</h3>
+                            <p class="tab-sub text-xs font-normal text-[#4A4A52] mt-0.5 hidden">Instant multi-channel notifications</p>
                         </div>
                     </div>
                 </button>
 
-                <button onclick="switchFeatureTab(2)" class="tab-btn w-full text-left bg-[#111114] border border-white/6 rounded-xl p-5 hover:border-white/12 transition-all" data-tab="2">
+                <button onclick="switchFeatureTab(2)" class="tab-btn w-full text-left rounded-xl px-4 py-3 hover:bg-white/4 transition-all" data-tab="2">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#8A8A93]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                        <div class="tab-icon w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#4A4A52]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-white">Detailed Logs</h3>
-                            <p class="text-xs font-normal text-[#8A8A93] mt-1">Full execution history & traces</p>
+                            <h3 class="tab-title text-sm font-normal text-[#8A8A93]">Detailed Logs</h3>
+                            <p class="tab-sub text-xs font-normal text-[#4A4A52] mt-0.5 hidden">Full execution history &amp; traces</p>
                         </div>
                     </div>
                 </button>
 
-                <button onclick="switchFeatureTab(3)" class="tab-btn w-full text-left bg-[#111114] border border-white/6 rounded-xl p-5 hover:border-white/12 transition-all" data-tab="3">
+                <button onclick="switchFeatureTab(3)" class="tab-btn w-full text-left rounded-xl px-4 py-3 hover:bg-white/4 transition-all" data-tab="3">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center flex-shrink-0">
-                            <svg class="w-4 h-4 text-[#8A8A93]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        <div class="tab-icon w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-[#4A4A52]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-medium text-white">Status Pages</h3>
-                            <p class="text-xs font-normal text-[#8A8A93] mt-1">Public & internal status updates</p>
+                            <h3 class="tab-title text-sm font-normal text-[#8A8A93]">Status Pages</h3>
+                            <p class="tab-sub text-xs font-normal text-[#4A4A52] mt-0.5 hidden">Public &amp; internal status updates</p>
                         </div>
                     </div>
                 </button>
@@ -222,7 +213,7 @@
 
             <!-- Right Content Area -->
             <div class="lg:col-span-8">
-                <div class="bg-[#111114] border border-white/8 rounded-xl overflow-hidden shadow-2xl h-full">
+                <div class="bg-[#111114] rounded-xl overflow-hidden shadow-2xl h-full">
                     <div id="feature-content" class="relative min-h-[280px]">
                         <div class="feature-image active" data-content="0">
                             <img src="/images/dashboard.png" alt="Dashboard Overview" class="w-full rounded-t-xl">
@@ -279,79 +270,163 @@
             <p class="text-sm font-normal text-[#8A8A93] text-center mt-3 max-w-md mx-auto">Get alerted via every channel you use — from messaging apps to incident management.</p>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 fade-in">
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 fade-in">
 
             <!-- Email -->
-            <div class="bg-[#111114] border border-white/6 rounded-xl p-6 flex flex-col gap-4 hover:border-white/12 transition-colors duration-200">
-                <div class="w-10 h-10 opacity-70">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="5" fill="#EA4335"/>
+                        <path d="M4 7l8 5 8-5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        <rect x="4" y="7" width="16" height="12" rx="1" stroke="white" stroke-width="1.5" fill="none"/>
+                    </svg>
                 </div>
                 <div class="flex-1">
                     <h3 class="text-sm font-medium text-white">Email</h3>
-                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Receive formatted job failure reports directly in your inbox. Works with any email provider.</p>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Formatted job failure reports directly in your inbox. Works with any email provider.</p>
                 </div>
-                <span class="text-xs font-medium text-[#22C55E]">Available now →</span>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
             </div>
 
             <!-- Telegram -->
-            <div class="bg-[#111114] border border-white/6 rounded-xl p-6 flex flex-col gap-4 hover:border-white/12 transition-colors duration-200">
-                <div class="w-10 h-10 opacity-70">
-                    <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="12" fill="#229ED9"/>
+                        <path d="M5 12l3.5 1.5L15 8l-4.5 6L13 17l5-9-13 4z" fill="white"/>
+                    </svg>
                 </div>
                 <div class="flex-1">
                     <h3 class="text-sm font-medium text-white">Telegram</h3>
                     <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Send job failure alerts to Telegram bots or channels. Perfect for developer-first teams.</p>
                 </div>
-                <span class="text-xs font-medium text-[#22C55E]">Available now →</span>
-            </div>
-
-            <!-- Pushover -->
-            <div class="bg-[#111114] border border-white/6 rounded-xl p-6 flex flex-col gap-4 hover:border-white/12 transition-colors duration-200">
-                <div class="w-10 h-10 opacity-70">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                </div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-medium text-white">Pushover</h3>
-                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Send job failure alerts to your mobile device via push notification instantly.</p>
-                </div>
-                <span class="text-xs font-medium text-[#22C55E]">Available now →</span>
-            </div>
-
-            <!-- Spike.sh -->
-            <div class="bg-[#111114] border border-white/6 rounded-xl p-6 flex flex-col gap-4 hover:border-white/12 transition-colors duration-200">
-                <div class="w-10 h-10 opacity-70">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-medium text-white">Spike.sh</h3>
-                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Trigger on-call alerts and escalations seamlessly integrating with your incident workflow.</p>
-                </div>
-                <span class="text-xs font-medium text-[#22C55E]">Available now →</span>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
             </div>
 
             <!-- Slack -->
-            <div class="bg-[#111114] border border-white/6 rounded-xl p-6 flex flex-col gap-4 hover:border-white/12 transition-colors duration-200">
-                <div class="w-10 h-10 opacity-70">
-                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/slack/slack-original.svg" alt="Slack" class="w-10 h-10" style="filter:grayscale(1) brightness(1.5);">
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A"/>
+                        <path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z" fill="#36C5F0"/>
+                        <path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z" fill="#2EB67D"/>
+                        <path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.687a2.527 2.527 0 0 1-2.52-2.522 2.526 2.526 0 0 1 2.52-2.521h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.522h-6.313z" fill="#ECB22E"/>
+                    </svg>
                 </div>
                 <div class="flex-1">
                     <h3 class="text-sm font-medium text-white">Slack</h3>
-                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Get instant job failure alerts in your Slack channels. Rich message formatting with job context.</p>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Get instant job failure alerts in your Slack channels with rich message formatting and job context.</p>
                 </div>
-                <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52] bg-white/4 rounded px-2 py-0.5 w-fit">Coming soon</span>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
+            </div>
+
+            <!-- Discord -->
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="#5865F2" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.031.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-white">Discord</h3>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Send monitor alerts to your Discord server channels via webhooks with rich embed formatting.</p>
+                </div>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
+            </div>
+
+            <!-- Google Chat -->
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" fill="#00AC47"/>
+                        <path d="M7.5 9.5h9M7.5 12h9M7.5 14.5h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M5 19l2-3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-white">Google Chat</h3>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Post formatted job failure alerts to Google Chat spaces and rooms via webhooks.</p>
+                </div>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
+            </div>
+
+            <!-- Pushover -->
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="5" fill="#F25D27"/>
+                        <path d="M7 9h10M7 12h8M7 15h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-white">Pushover</h3>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Send job failure alerts to your mobile device via instant push notification.</p>
+                </div>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
+            </div>
+
+            <!-- Spike.sh -->
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="5" fill="#7B2FBE"/>
+                        <path d="M13 4l-7 11h7l-2 5 7-11h-7l2-5z" fill="white"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-white">Spike.sh</h3>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Trigger on-call escalations and incident workflows seamlessly on job failures.</p>
+                </div>
+                <span class="text-xs font-medium text-[#22C55E] mt-auto">Available →</span>
             </div>
 
             <!-- Webhooks -->
-            <div class="bg-[#111114] border border-white/6 rounded-xl p-6 flex flex-col gap-4 hover:border-white/12 transition-colors duration-200">
-                <div class="w-10 h-10 opacity-70">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3">
+                <div class="w-8 h-8">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="5" fill="#1C1C1C"/>
+                        <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
                 </div>
                 <div class="flex-1">
                     <h3 class="text-sm font-medium text-white">Webhooks</h3>
                     <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">POST job events to any endpoint — build your own alerting pipeline or connect to any service.</p>
                 </div>
-                <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52] bg-white/4 rounded px-2 py-0.5 w-fit">Coming soon</span>
+                <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52] mt-auto">Coming soon</span>
             </div>
+
+            <!-- GitHub -->
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3 opacity-60">
+                <div class="w-8 h-8 grayscale">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 0C5.372 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.113.82-.26.82-.577v-2.165c-3.338.726-4.043-1.61-4.043-1.61-.546-1.385-1.332-1.755-1.332-1.755-1.087-.745.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.834 2.809 1.304 3.495.997.108-.775.419-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.652.242 2.873.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.218.694.825.576C20.565 21.795 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-white">GitHub</h3>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Automatically create issues on job failures and sync status with pull requests.</p>
+                </div>
+                <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52] mt-auto">Coming soon</span>
+            </div>
+
+            <!-- Jira -->
+            <div class="bg-[#111114] rounded-2xl p-5 flex flex-col gap-3 opacity-60">
+                <div class="w-8 h-8 grayscale">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg" alt="Jira" class="w-8 h-8">
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-medium text-white">Jira</h3>
+                    <p class="text-xs font-normal text-[#8A8A93] leading-relaxed line-clamp-2 mt-1">Create actionable Jira tickets for team engineering tracking on job failures.</p>
+                </div>
+                <span class="text-[10px] font-medium uppercase tracking-widest text-[#4A4A52] mt-auto">Coming soon</span>
+            </div>
+
+            <!-- Request Integration — dashed CTA card -->
+            <a href="mailto:team@healthycron.com?subject=Integration Request" class="bg-transparent border border-dashed border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center gap-2 hover:border-[#22C55E]/30 hover:bg-[#22C55E]/3 cursor-pointer transition-all group">
+                <span class="text-2xl text-[#4A4A52] group-hover:text-[#22C55E] transition-colors">+</span>
+                <p class="text-sm font-medium text-[#8A8A93] group-hover:text-white transition-colors">Request an integration</p>
+                <p class="text-xs text-[#4A4A52]">Vote for what you need next</p>
+            </a>
 
         </div>
     </div>
@@ -376,7 +451,7 @@
             top: 12px;
             left: 18px;
             font-size: 52px;
-            color: rgba(34,197,94,0.12);
+            color: rgba(34,197,94,0.08);
             font-family: Georgia, serif;
             line-height: 1;
             pointer-events: none;
@@ -385,10 +460,10 @@
     </style>
 
     <div class="overflow-hidden">
-        <div class="flex gap-5 testimonial-track" style="width: max-content;">
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+        <div class="flex gap-4 testimonial-track" style="width: max-content;">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">We got instant alerts and finally stopped missing silent failures.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Marcus Chen" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div>
                         <p class="text-sm font-medium text-white">Marcus Chen</p>
@@ -397,9 +472,9 @@
                 </div>
             </div>
 
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">Setup was done in under 2 minutes. Incredible clarity!</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Sarah Johnson" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div>
                         <p class="text-sm font-medium text-white">Sarah Johnson</p>
@@ -408,9 +483,9 @@
                 </div>
             </div>
 
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">The dashboard gives insights we never had before.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80" alt="Alex Rivera" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div>
                         <p class="text-sm font-medium text-white">Alex Rivera</p>
@@ -419,9 +494,9 @@
                 </div>
             </div>
 
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">Alerts come in Slack and PagerDuty exactly the way we want.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" alt="Jamie Lee" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div>
                         <p class="text-sm font-medium text-white">Jamie Lee</p>
@@ -430,9 +505,9 @@
                 </div>
             </div>
 
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">This changed our SLA game entirely.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="David Park" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div>
                         <p class="text-sm font-medium text-white">David Park</p>
@@ -441,9 +516,9 @@
                 </div>
             </div>
 
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">Best cron monitoring tool we've used yet.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="Emma Wilson" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div>
                         <p class="text-sm font-medium text-white">Emma Wilson</p>
@@ -453,23 +528,23 @@
             </div>
 
             <!-- Duplicate set for infinite scroll -->
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">We got instant alerts and finally stopped missing silent failures.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" alt="Marcus Chen" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div><p class="text-sm font-medium text-white">Marcus Chen</p><p class="text-xs font-normal text-[#8A8A93] mt-0.5">CTO @@ ScaleTech</p></div>
                 </div>
             </div>
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">Setup was done in under 2 minutes. Incredible clarity!</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Sarah Johnson" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div><p class="text-sm font-medium text-white">Sarah Johnson</p><p class="text-xs font-normal text-[#8A8A93] mt-0.5">Dev Lead @@ FastApps</p></div>
                 </div>
             </div>
-            <div class="testimonial-card bg-[#111114] border border-white/6 rounded-xl p-6 w-72 flex-shrink-0">
+            <div class="testimonial-card bg-[#111114] rounded-2xl p-6 w-72 flex-shrink-0">
                 <p class="text-sm font-normal text-[#D0D0D3] leading-relaxed relative z-10">The dashboard gives insights we never had before.</p>
-                <div class="flex items-center gap-3 mt-5 pt-5 border-t border-white/6">
+                <div class="flex items-center gap-3 mt-5">
                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80" alt="Alex Rivera" class="w-8 h-8 rounded-full object-cover ring-1 ring-white/10">
                     <div><p class="text-sm font-medium text-white">Alex Rivera</p><p class="text-xs font-normal text-[#8A8A93] mt-0.5">SRE @@ DataFlow</p></div>
                 </div>

@@ -1,4 +1,4 @@
-@* FAQ + CTA Section *@
+@* FAQ + CTA Section — with green accent on active state *@
 <section id="faq" class="py-24">
     <div class="max-w-5xl mx-auto px-6">
         <div class="max-w-xl mx-auto text-center mb-12 fade-in">
@@ -7,66 +7,80 @@
         </div>
 
         <div class="max-w-xl mx-auto fade-in">
-            <!-- Accordion container: solid dividers, no dashes -->
-            <div class="border border-white/6 rounded-xl overflow-hidden divide-y divide-white/6">
+            <div class="rounded-xl overflow-hidden divide-y divide-white/5">
 
                 <div class="faq-item">
-                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#161618] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
+                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#16161A] transition-colors cursor-pointer rounded-t-xl" onclick="toggleFaqNew(this)">
                         <span class="text-sm font-medium text-white">What is cron job monitoring?</span>
                         <svg class="w-4 h-4 text-[#8A8A93] flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="faq-body overflow-hidden max-h-0 transition-all duration-300 ease-out bg-[#111114]">
-                        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed px-6 pb-4">Cron job monitoring tracks your scheduled tasks and alerts you when they fail, run late, or don't run at all. It ensures your background processes stay healthy and your team is immediately notified of any issues.</p>
+                        <div class="px-6 pb-4 flex gap-3">
+                            <div class="w-1 rounded-full bg-[#22C55E] self-stretch flex-shrink-0"></div>
+                            <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">Cron job monitoring tracks your scheduled tasks and alerts you when they fail, run late, or don't run at all. It ensures your background processes stay healthy and your team is immediately notified of any issues.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#161618] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
+                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#16161A] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
                         <span class="text-sm font-medium text-white">How quickly do alerts get delivered?</span>
                         <svg class="w-4 h-4 text-[#8A8A93] flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="faq-body overflow-hidden max-h-0 transition-all duration-300 ease-out bg-[#111114]">
-                        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed px-6 pb-4">Alerts are delivered within seconds of detecting an issue. We maintain a 99.99% alert delivery rate and support multiple channels including Slack, PagerDuty, Discord, and email.</p>
+                        <div class="px-6 pb-4 flex gap-3">
+                            <div class="w-1 rounded-full bg-[#22C55E] self-stretch flex-shrink-0"></div>
+                            <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">Alerts are delivered within seconds of detecting an issue. We maintain a 99.99% alert delivery rate and support multiple channels including Slack, PagerDuty, Discord, and email.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#161618] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
+                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#16161A] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
                         <span class="text-sm font-medium text-white">Can I monitor jobs in different environments?</span>
                         <svg class="w-4 h-4 text-[#8A8A93] flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="faq-body overflow-hidden max-h-0 transition-all duration-300 ease-out bg-[#111114]">
-                        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed px-6 pb-4">Yes. HealthyCron supports environment tags so you can organize monitors by production, staging, development, or any custom environment. Each environment is tracked independently.</p>
+                        <div class="px-6 pb-4 flex gap-3">
+                            <div class="w-1 rounded-full bg-[#22C55E] self-stretch flex-shrink-0"></div>
+                            <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">Yes. HealthyCron supports environment tags so you can organize monitors by production, staging, development, or any custom environment. Each environment is tracked independently.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#161618] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
+                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#16161A] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
                         <span class="text-sm font-medium text-white">Is there a free tier available?</span>
                         <svg class="w-4 h-4 text-[#8A8A93] flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="faq-body overflow-hidden max-h-0 transition-all duration-300 ease-out bg-[#111114]">
-                        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed px-6 pb-4">Yes. Our free tier includes up to 5 monitors, email alerts, and 7-day log retention. No credit card required.</p>
+                        <div class="px-6 pb-4 flex gap-3">
+                            <div class="w-1 rounded-full bg-[#22C55E] self-stretch flex-shrink-0"></div>
+                            <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">Yes. Our free tier includes up to 5 monitors, email alerts, and 7-day log retention. No credit card required.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="faq-item">
-                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#161618] transition-colors cursor-pointer" onclick="toggleFaqNew(this)">
+                    <button class="faq-trigger w-full px-6 py-4 flex items-center justify-between text-left gap-4 bg-[#111114] hover:bg-[#16161A] transition-colors cursor-pointer rounded-b-xl" onclick="toggleFaqNew(this)">
                         <span class="text-sm font-medium text-white">How do I integrate with my existing setup?</span>
                         <svg class="w-4 h-4 text-[#8A8A93] flex-shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
                     <div class="faq-body overflow-hidden max-h-0 transition-all duration-300 ease-out bg-[#111114]">
-                        <p class="text-sm font-normal text-[#8A8A93] leading-relaxed px-6 pb-4">Integration takes just 2 minutes. Add a ping using curl, wget, or our SDK. We provide copy-paste snippets for all major languages and platforms.</p>
+                        <div class="px-6 pb-4 flex gap-3">
+                            <div class="w-1 rounded-full bg-[#22C55E] self-stretch flex-shrink-0"></div>
+                            <p class="text-sm font-normal text-[#8A8A93] leading-relaxed">Integration takes just 2 minutes. Add a ping using curl, wget, or our SDK. We provide copy-paste snippets for all major languages and platforms.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -74,7 +88,7 @@
 
             <p class="text-sm font-normal text-[#8A8A93] mt-5 px-1">
                 Can't find what you're looking for?
-                <a href="mailto:support@healthycron.com" class="text-[#8A8A93] hover:text-white transition-colors ml-1">Contact our support team →</a>
+                <a href="mailto:support@healthycron.com" class="text-[#22C55E] hover:text-[#22C55E]/80 transition-colors ml-1">Contact our support team →</a>
             </p>
         </div>
     </div>
@@ -83,10 +97,14 @@
 @* CTA Section *@
 <section class="py-24 border-t border-white/5">
     <div class="max-w-5xl mx-auto px-6 text-center fade-in">
+        <div class="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-widest text-[#22C55E] bg-[#22C55E]/8 border border-[#22C55E]/15 rounded-full px-3 py-1.5 mb-6">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+            Open for early access
+        </div>
         <h2 class="text-3xl font-semibold text-white tracking-tight">Ready to stop missing failures?</h2>
         <p class="text-sm font-normal text-[#8A8A93] mt-4 mb-8 max-w-md mx-auto leading-relaxed">Join thousands of engineering teams who trust HealthyCron to keep their scheduled jobs running.</p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="/signup" class="bg-indigo-600 text-white font-medium text-sm rounded-lg px-6 py-2.5 hover:bg-indigo-500 transition-all border border-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.25)]">Get Started Free</a>
+            <a href="/signup" class="bg-white text-[#0A0A0B] font-medium text-sm rounded-lg px-6 py-2.5 hover:bg-white/90 transition-all">Get Started Free</a>
             <a href="/docs" class="font-medium text-sm text-[#8A8A93] hover:text-white px-6 py-2.5 transition-colors">View Docs →</a>
         </div>
     </div>
@@ -100,10 +118,12 @@
 
         document.querySelectorAll('.faq-body').forEach(function(b) { b.style.maxHeight = '0px'; });
         document.querySelectorAll('.faq-trigger svg').forEach(function(i) { i.style.transform = 'rotate(0deg)'; });
+        document.querySelectorAll('.faq-trigger').forEach(function(t) { t.style.color = ''; });
 
         if (!isOpen) {
             body.style.maxHeight = body.scrollHeight + 'px';
             icon.style.transform = 'rotate(180deg)';
+            icon.style.color = '#22C55E';
         }
     }
 </script>

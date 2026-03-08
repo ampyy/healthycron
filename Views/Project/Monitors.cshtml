@@ -17,25 +17,22 @@
 
 <!-- Project Header -->
 <div class="mb-8">
-    <div class="glass-card rounded-2xl p-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="py-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="min-w-0 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
-                <i data-lucide="folder" class="w-4 h-4 text-[#8A8A93]"></i>
-            </div>
             <div>
                 <h1 class="text-lg font-semibold text-white leading-none mb-0.5 tracking-tight">@project.Name</h1>
-                <p class="text-[10px] text-[#8A8A93] font-medium uppercase tracking-widest">Project Overview</p>
+                <p class="text-[10px] text-[#4A4A52] font-medium uppercase tracking-widest">Project Overview</p>
             </div>
         </div>
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-4 flex-wrap">
             @if (Model.CanManage)
             {
-                <a href="/project/@project.Slug/settings" class="text-xs font-medium text-hc-muted hover:text-white flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 hover:bg-white/5" title="Settings">
+                <a href="/project/@project.Slug/settings" class="inline-flex items-center gap-1.5 text-sm font-medium text-[#8A8A93] hover:text-white bg-white/5 hover:bg-white/8 border border-white/8 rounded-lg px-3 py-1.5 transition-all" title="Settings">
                     <i data-lucide="settings" class="w-3.5 h-3.5"></i>
                     <span class="hidden sm:inline">Settings</span>
                 </a>
             }
-            <a href="/project/@project.Slug/integrations" class="text-xs font-medium text-blue-400 hover:text-blue-300 flex items-center gap-1.5 transition-colors px-3 py-1.5 rounded-lg border border-blue-500/20 hover:border-blue-500/40 bg-blue-500/5 hover:bg-blue-500/10">
+            <a href="/project/@project.Slug/integrations" class="inline-flex items-center gap-1.5 text-sm font-medium text-[#8A8A93] hover:text-white bg-white/5 hover:bg-white/8 border border-white/8 rounded-lg px-3 py-1.5 transition-all">
                 <i data-lucide="zap" class="w-3.5 h-3.5"></i>
                 <span class="hidden sm:inline">Integrations</span>
             </a>
@@ -166,7 +163,7 @@ else
                                                             <img src="/images/pushover.png" class="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain" alt="Pushover" />
                                                             break;
                                                         case HealthyCron.Enums.IntegrationType.Spike:
-                                                            <img src="/images/spike.png" class="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain" alt="Spike.sh" />
+                                                            <img src="/images/spike.webp" class="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain" alt="Spike.sh" />
                                                             break;
                                                         case HealthyCron.Enums.IntegrationType.Webhook:
                                                             <img src="/images/webhook.png" class="w-3.5 h-3.5 sm:w-4 sm:h-4 object-contain" alt="Webhook" />
